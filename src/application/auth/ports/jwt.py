@@ -6,7 +6,7 @@ from typing import Any, NamedTuple
 
 class JWTPair(NamedTuple):
     access_token: str
-    refresh_toke: str
+    refresh_token: str
 
 
 @dataclass(slots=True)

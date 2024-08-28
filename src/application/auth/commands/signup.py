@@ -34,5 +34,5 @@ class SignUpHandler(CommandHandler[SignUp, JWTPair]):
         )
         jwt = self._jwt_manager.create(payload=dict(sub=user.id, email=command.email))
         await self._auth_repo.create_user(user=user)
-        await self._auth_repo.save_jwt(jwt=jwt)
+        await self._auth_repo.create_jwt(jwt=jwt, user_id=user.id)
         return jwt
