@@ -20,7 +20,12 @@ class Gender(str, enum.Enum):
     other = "other"
 
 
-class User(TimedBaseModel):
+class AuthBase(TimedBaseModel):
+    __abstract__ = True
+    __table_args__ = {"schema": "auth"}
+
+
+class User(AuthBase):
     __tablename__ = "user"
     id = Column(
         types.Uuid,
@@ -39,7 +44,7 @@ class User(TimedBaseModel):
     image = Column(String, nullable=True)
 
 
-class RefreshToken(TimedBaseModel):
+class RefreshToken(AuthBase):
     __tablename__ = "refresh_token"
     id = Column(
         types.Uuid,
@@ -48,11 +53,11 @@ class RefreshToken(TimedBaseModel):
         index=True,
     )
 
-    user_id = Column(ForeignKey("user.id", ondelete="CASCADE"))
+    user_id = Column(ForeignKey("auth.user.id", ondelete="CASCADE"))
     refresh_token = Column(String, nullable=False)
 
 
-class VerifyCode(TimedBaseModel):
+class VerifyCode(AuthBase):
     __tablename__ = "verify_code"
     id = Column(
         types.Uuid,
