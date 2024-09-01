@@ -2,7 +2,10 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+from src.api import api_router
+
 app = FastAPI()
+app.include_router(api_router)
 
 
 @app.get("/")
