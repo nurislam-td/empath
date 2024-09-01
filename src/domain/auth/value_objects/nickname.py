@@ -7,5 +7,5 @@ from domain.common.value_object.base import ValueObject
 @dataclass(frozen=True, slots=True)
 class Nickname(ValueObject[str]):
     def _validate(self):
-        if not len(self.value) > 12:
+        if len(self.value) > 12:
             raise TooLongNicknameError(self.value)
