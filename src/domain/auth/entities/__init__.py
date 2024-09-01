@@ -1,4 +1,3 @@
-from .jwt import JWT
 from .user import User
 
-__all__ = ("User", "JWT")
+__all__ = ("User",)
