@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from domain.auth.value_objects import password
 from domain.common.exceptions import ValueObjectError
 
 
@@ -10,7 +9,7 @@ class MismatchPasswordError(ValueObjectError):
 
     @property
     def message(self):
-        return f"Mismatch pattern: password must contain at least one lower character, one upper character, digit and special symbol, {password}."
+        return f"Mismatch pattern: password must contain at least one lower character, one upper character, digit and special symbol, {self.password}."
 
 
 @dataclass(eq=False, slots=True)
