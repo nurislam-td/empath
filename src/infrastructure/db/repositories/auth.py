@@ -5,6 +5,7 @@ from sqlalchemy import insert
 from src.application.auth.ports.jwt import JWTPair
 from src.application.auth.ports.repo import AuthRepo
 from src.domain.auth import entities
+from src.infrastructure.db.mapper import convert_user_entity_to_db_model
 from src.infrastructure.db.models.auth import RefreshToken, User, VerifyCode
 from src.infrastructure.db.repositories.base import AlchemyRepo
 
@@ -15,11 +16,11 @@ class AlchemyAuthRepo(AuthRepo, AlchemyRepo):
     refresh_token = RefreshToken
 
     async def create_user(self, user: entities.User) -> None:
-        query = insert(self.user).values(user.to_dict())
+        query = insert(self.user).values(**convert_user_entity_to_db_model(user=user))
         await self.execute(query)
 
     async def create_jwt(self, jwt: JWTPair, user_id: UUID) -> None:
         query = insert(self.refresh_token).values(
-            dict(refresh_token=jwt.refresh_token, user_id=user_id)
+            **dict(refresh_token=jwt.refresh_token, user_id=user_id)
         )
         await self.execute(query=query)
