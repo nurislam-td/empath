@@ -2,10 +2,11 @@ from dataclasses import dataclass
 
 from domain.auth import entities
 from domain.auth.value_objects.email import Email
+from domain.auth.value_objects.jwt import JWTPair
 from domain.auth.value_objects.nickname import Nickname
 from domain.auth.value_objects.password import Password
 
-from application.auth.ports.jwt import JWTManager, JWTPair
+from application.auth.ports.jwt import JWTManager
 from application.auth.ports.repo import AuthRepo
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork

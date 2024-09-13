@@ -1,12 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, NamedTuple
+from typing import Any
 
-
-class JWTPair(NamedTuple):
-    access_token: str
-    refresh_token: str
+from domain.auth.value_objects.jwt import JWTPair
 
 
 @dataclass(slots=True)

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.api.auth.dependencies import get_sign_up_handler
 from src.application.auth.commands.signup import SignUp, SignUpHandler
-from src.application.auth.ports.jwt import JWTPair
+from src.domain.auth.value_objects.jwt import JWTPair
 
 router = APIRouter(prefix="/auth", tags=["Authorization"])
 user_router = APIRouter(prefix="/users", tags=["Users"])
