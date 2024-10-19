@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16.1
+    volumes:
+      - em_postgres_data:/var/lib/postgresql/data/
+    container_name: empath-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    networks:
+      - backend
+
+  redis:
+    container_name: redis
+    image: redis:7-alpine
+    networks:
+      - backend
+
+  backend:
+    container_name: empath-backend
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: empath-backend
+#    volumes:
+#      - .:/backend #in container folder
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+      # - test-db
+    environment:
+      DB_HOST: postgres-db
+    entrypoint: ["/backend/docker/app.sh"]
+    networks:
+      - backend
+
+
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  em_postgres_data:
+
