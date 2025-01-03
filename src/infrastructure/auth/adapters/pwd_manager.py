@@ -3,7 +3,7 @@ import string
 
 import bcrypt
 
-from src.application.auth.ports import pwd_manager
+from application.auth.ports import pwd_manager
 
 NUM = string.digits
 

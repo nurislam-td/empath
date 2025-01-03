@@ -1,9 +1,8 @@
 from typing import Protocol
 from uuid import UUID
 
-from domain.auth import entities
-
 from application.auth.ports.jwt import JWTPair
+from domain.auth import entities
 
 
 class AuthRepo(Protocol):
@@ -16,3 +15,5 @@ class AuthRepo(Protocol):
 
 class AuthReader(Protocol):
     async def get_user_by_email(self, email: str) -> entities.User: ...
+
+    async def get_user_code_by_email(self, email: str) -> str: ...

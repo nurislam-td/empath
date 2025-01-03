@@ -1,4 +1,5 @@
-from .auth import RefreshToken, User, VerifyCode
+from infrastructure.auth.models import RefreshToken, User, VerifyCode
+
 from .base import BaseModel, TimedBaseModel
 
 __all__ = (

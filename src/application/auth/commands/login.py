@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from shutil import ExecError
 
 from application.auth.ports.jwt import JWTManager
 from application.auth.ports.pwd_manager import PasswordManager
@@ -10,7 +9,7 @@ from domain.auth.value_objects.jwt import JWTPair
 
 
 @dataclass
-class Login(Command):
+class Login(Command[JWTPair]):
     email: str
     password: str
 
@@ -28,8 +27,8 @@ class LoginHandler(CommandHandler[Login, JWTPair]):
         if not self.pwd_manager.verify_password(
             password=command.password, hash_password=user.password
         ):
-            raise Exception("invalid credantials")  # TODO InvalidCredantialsError
-        jwt = self.jwt_manager.create(
+            raise Exception("invalid credentials")  # TODO InvalidCredentialsError
+        jwt = self.jwt_manager.create_pair(
             payload=dict(sub=str(user.id), email=command.email)
         )
         await self.auth_repo.refresh_jwt(jwt=jwt, user_id=user.id)

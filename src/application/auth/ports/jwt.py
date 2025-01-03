@@ -16,23 +16,33 @@ class JWTManager(ABC):
     refresh_public_path: Path
     refresh_token_expire: int
 
-    @staticmethod
     @abstractmethod
-    def encode_jwt(
-        payload: dict[str, Any], expire_minutes: int, key: str, algorithm: str
+    def _encode_jwt(
+        self, payload: dict[str, Any], expire_minutes: int, key: str
     ) -> str: ...
 
-    def create(self, payload: dict[str, Any]) -> JWTPair:
-        access_token = self.encode_jwt(
+    @abstractmethod
+    def _decode_jwt(self, token: str, key: str) -> dict[str, Any]: ...
+
+    def create_pair(self, payload: dict[str, Any]) -> JWTPair:
+        access_token = self._encode_jwt(
             payload=payload,
             expire_minutes=self.access_token_expire,
             key=self.access_private_path.read_text(),
-            algorithm=self.jwt_alg,
         )
-        refresh_token = self.encode_jwt(
+        refresh_token = self._encode_jwt(
             payload=payload,
             expire_minutes=self.refresh_token_expire,
             key=self.refresh_private_path.read_text(),
-            algorithm=self.jwt_alg,
         )
         return JWTPair(access_token, refresh_token)
+
+    def decode_refresh(self, refresh_token: str) -> dict[str, Any]:
+        return self._decode_jwt(
+            token=refresh_token, key=self.refresh_public_path.read_text()
+        )
+
+    def decode_access(self, access_token: str) -> dict[str, Any]:
+        return self._decode_jwt(
+            token=access_token, key=self.access_public_path.read_text()
+        )

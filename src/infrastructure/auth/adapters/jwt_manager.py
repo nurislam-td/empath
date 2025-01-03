@@ -4,14 +4,13 @@ from typing import Any
 
 import jwt
 
-from src.application.auth.ports.jwt import JWTManager
+from application.auth.ports.jwt import JWTManager
 
 
 @dataclass(slots=True)
 class PyJWTManager(JWTManager):
-    @staticmethod
-    def encode_jwt(
-        payload: dict[str, Any], expire_minutes: int, key: str, algorithm: str
+    def _encode_jwt(
+        self, payload: dict[str, Any], expire_minutes: int, key: str
     ) -> str:
         to_encode = payload.copy()
         now = datetime.now(tz=timezone.utc)
@@ -20,5 +19,8 @@ class PyJWTManager(JWTManager):
             exp=expire,
             iat=now,
         )
-        encoded = jwt.encode(payload=to_encode, key=key, algorithm=algorithm)
+        encoded = jwt.encode(payload=to_encode, key=key, algorithm=self.jwt_alg)
         return encoded
+
+    def _decode_jwt(self, token: str, key: str) -> dict[str, Any]:
+        return jwt.decode(jwt=token, key=key, algorithms=[self.jwt_alg])

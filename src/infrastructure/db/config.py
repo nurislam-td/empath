@@ -1,7 +1,7 @@
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from src.config import ASYNC_DATABASE_URL, MODE
+from config import ASYNC_DATABASE_URL, MODE
 
 if MODE == "DEV":
     DATABASE_URL = ASYNC_DATABASE_URL

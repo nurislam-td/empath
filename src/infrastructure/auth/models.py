@@ -11,7 +11,7 @@ from sqlalchemy import (
     types,
 )
 
-from src.infrastructure.db.models.base import TimedBaseModel
+from infrastructure.db.models.base import TimedBaseModel
 
 
 class Gender(str, enum.Enum):

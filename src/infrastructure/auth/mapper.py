@@ -2,8 +2,8 @@ from typing import Any
 
 from sqlalchemy import RowMapping
 
-from src.domain.auth import entities
-from src.domain.auth import value_objects as vo
+from domain.auth import entities
+from domain.auth import value_objects as vo
 
 
 def convert_user_entity_to_db_model(user: entities.User) -> dict[str, Any]:

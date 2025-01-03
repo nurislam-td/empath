@@ -13,7 +13,7 @@ from domain.auth.value_objects.password import Password
 
 
 @dataclass(slots=True, frozen=True)
-class SignUp(Command):
+class SignUp(Command[JWTPair]):
     email: str
     password: str
     nickname: str
@@ -40,7 +40,7 @@ class SignUpHandler(CommandHandler[SignUp, JWTPair]):
             ),
             nickname=Nickname(command.nickname),
         )
-        jwt = self._jwt_manager.create(
+        jwt = self._jwt_manager.create_pair(
             payload=dict(sub=str(user.id), email=command.email)
         )
         await self._auth_repo.create_user(user=user)

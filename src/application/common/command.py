@@ -1,10 +1,16 @@
-from abc import ABC
-from typing import Protocol
+from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
+
+CRes = TypeVar("CRes")
 
 
-class Command(ABC):
+class Command(ABC, Generic[CRes]):
     pass
 
 
-class CommandHandler[C: Command, CRes](Protocol):
+C = TypeVar("C", bound=Command)
+
+
+class CommandHandler(Generic[C, CRes], ABC):
+    @abstractmethod
     async def __call__(self, command: C) -> CRes: ...

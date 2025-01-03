@@ -2,7 +2,7 @@ from pathlib import Path
 
 from starlette.config import Config
 
-config = Config(".env")
+config = Config("../.env")
 
 # App settings
 SECRET_KEY = config("SECRET_KEY", cast=str, default="ChangeIfNotDebug")
