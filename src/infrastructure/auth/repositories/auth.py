@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import insert, select, update
@@ -21,6 +22,10 @@ class AlchemyAuthRepo(AlchemyRepo, AuthRepo):
 
     async def create_user(self, user: entities.User) -> None:
         query = insert(self.user).values(**convert_user_entity_to_db_model(user=user))
+        await self.execute(query=query)
+
+    async def update_user(self, values: dict[str, Any], filters: dict[str, Any]):
+        query = update(self.user).values(**values).filter_by(**filters)
         await self.execute(query=query)
 
     async def create_jwt(self, jwt: JWTPair, user_id: UUID) -> None:
