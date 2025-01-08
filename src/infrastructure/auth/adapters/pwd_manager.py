@@ -8,7 +8,7 @@ from application.auth.ports import pwd_manager
 NUM = string.digits
 
 
-class PasswordManager(pwd_manager.PasswordManager):
+class PasswordManager(pwd_manager.IPasswordManager):
     @staticmethod
     def hash_password(password: str) -> bytes:
         salt = bcrypt.gensalt()

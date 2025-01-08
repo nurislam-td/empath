@@ -1,7 +1,7 @@
 from typing import Protocol
 
 
-class PasswordManager(Protocol):
+class IPasswordManager(Protocol):
     @staticmethod
     def hash_password(password: str) -> bytes: ...
 
