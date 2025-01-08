@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from application.auth.ports.jwt import JWTManager
-from application.auth.ports.pwd_manager import PasswordManager
+from application.auth.ports.pwd_manager import IPasswordManager
 from application.auth.ports.repo import AuthRepo
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
@@ -25,7 +25,7 @@ class SignUpHandler(CommandHandler[SignUp, JWTPair]):
         auth_repo: AuthRepo,
         uow: UnitOfWork,
         jwt_manager: JWTManager,
-        pwd_manager: PasswordManager,
+        pwd_manager: IPasswordManager,
     ) -> None:
         self._auth_repo = auth_repo
         self._jwt_manager = jwt_manager
