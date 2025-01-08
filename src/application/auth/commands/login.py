@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from application.auth.ports.jwt import JWTManager
-from application.auth.ports.pwd_manager import PasswordManager
+from application.auth.ports.pwd_manager import IPasswordManager
 from application.auth.ports.repo import AuthReader, AuthRepo
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
@@ -14,12 +14,12 @@ class Login(Command[JWTPair]):
     password: str
 
 
-@dataclass
+@dataclass(slots=True)
 class LoginHandler(CommandHandler[Login, JWTPair]):
     uow: UnitOfWork
     auth_reader: AuthReader
     auth_repo: AuthRepo
-    pwd_manager: PasswordManager
+    pwd_manager: IPasswordManager
     jwt_manager: JWTManager
 
     async def __call__(self, command: Login) -> JWTPair:
