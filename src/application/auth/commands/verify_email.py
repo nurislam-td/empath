@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.auth.ports.repo import AuthReader
+from application.auth.ports.repo import VerifyCodeRepo
 from application.common.command import Command, CommandHandler
 
 
@@ -11,9 +11,9 @@ class VerifyEmail(Command[bool]):
 
 
 class VerifyEmailHandler(CommandHandler[VerifyEmail, bool]):
-    def __init__(self, auth_reader: AuthReader):
-        self._auth_reader = auth_reader
+    def __init__(self, verify_code_repo: VerifyCodeRepo):
+        self._repo = verify_code_repo
 
     async def __call__(self, command: VerifyEmail):
-        code = await self._auth_reader.get_user_code_by_email(command.email)
+        code = await self._repo.get_verify_code(command.email)
         return code == command.code
