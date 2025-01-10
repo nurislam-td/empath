@@ -5,7 +5,10 @@ from ssl import create_default_context
 from typing import Any
 
 from application.common.ports.email_sender import IEmailSender
+from config import get_settings
 from infrastructure.common.adapters import render
+
+settings = get_settings().email
 
 
 class EmailSender(IEmailSender):
@@ -15,17 +18,17 @@ class EmailSender(IEmailSender):
         template = render.render_template(template_name, **data)
 
         message = MIMEMultipart("alternative")
-        message["From"] = MAIL_USERNAME
+        message["From"] = settings.MAIL_USERNAME
         message["To"] = ",".join(emails)
         message["Subject"] = "Empath notification"
         message.attach(MIMEText(template, "html"))
         ctx = create_default_context()
         try:
-            with SMTP(MAIL_HOST, MAIL_PORT) as server:
+            with SMTP(settings.MAIL_HOST, settings.MAIL_PORT) as server:
                 server.ehlo()
                 server.starttls(context=ctx)
                 server.ehlo()
-                server.login(MAIL_USERNAME, MAIL_PASSWORD)
+                server.login(settings.MAIL_USERNAME, settings.MAIL_PASSWORD)
                 server.sendmail(
                     from_addr=message["From"],
                     to_addrs=message["To"],

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from application.auth.const import VERIFY_CODE_SEND_TEMPLATE_PATH
 from application.auth.ports.pwd_manager import IPasswordManager
 from application.auth.ports.repo import VerifyCodeRepo
 from application.common.command import Command, CommandHandler
@@ -27,6 +28,6 @@ class RegistryEmailHandler(CommandHandler[RegistryEmail, bool]):
         await self._verify_repo.set_verify_code(email=command.email, code=verify_code)
         self._email_client.send_email_template(
             emails=[command.email],
-            template_name="verify_code_template",
+            template_name=VERIFY_CODE_SEND_TEMPLATE_PATH,
             code=verify_code,
         )

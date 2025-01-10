@@ -10,6 +10,8 @@ load_dotenv("../.env", override=True)
 
 BASE_DIR = Path(__file__).parent.parent
 
+TRUE_VALUES = {"True", "true", "1", "yes", "Y", "T"}
+
 
 @dataclass
 class DBSettings:
@@ -61,16 +63,26 @@ class AuthSettings:
 
 @dataclass
 class RedisSettings:
-    REDIS_PORT: int = field(
+    PORT: int = field(
         default_factory=lambda: int(os.environ.get("REDIS_PORT", default=6379))
     )
-    REDIS_HOST: str = field(
+    HOST: str = field(
         default_factory=lambda: os.environ.get("REDIS_HOST", default="localhost")
     )
-    REDIS_PREFIX: str = field(
+    PREFIX: str = field(
         default_factory=lambda: os.environ.get("REDIS_PREFIX", default="empath-cache")
     )
-    REDIS_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}"
+    URL: str = f"redis://{HOST}:{PORT}"
+    SOCKET_CONNECT_TIMEOUT: int = field(
+        default_factory=lambda: int(os.getenv("REDIS_CONNECT_TIMEOUT", "5"))
+    )
+    HEALTH_CHECK_INTERVAL: int = field(
+        default_factory=lambda: int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL", "5"))
+    )
+    SOCKET_KEEPALIVE: bool = field(
+        default_factory=lambda: os.getenv("REDIS_SOCKET_KEEPALIVE", "True")
+        in TRUE_VALUES,
+    )
 
 
 @dataclass
@@ -87,12 +99,21 @@ class S3Settings:
 
 
 @dataclass(frozen=True, slots=True)
+class EmailSettings:
+    MAIL_HOST: str = os.environ.get("MAIL_HOST", "")
+    MAIL_USERNAME: str = os.environ.get("MAIL_USERNAME", "")
+    MAIL_PASSWORD: str = os.environ.get("MAIL_PASSWORD", "")
+    MAIL_PORT: int = int(os.environ.get("MAIL_PORT", 587))
+
+
+@dataclass(frozen=True, slots=True)
 class AppSettings:
     SECRET_KEY: str = field(
         default_factory=lambda: os.environ.get("SECRET_KEY", "ChangeIfNotDebug")
     )
+
     API_V1_PREFIX = "/api/v1"
-    TEMPLATE_PATH = BASE_DIR / "app" / "templates"
+    TEMPLATE_PATH = BASE_DIR / "src" / "templates"
     ENVIRONMENT: str = field(
         default_factory=lambda: os.environ.get("ENVIRONMENT", "PROD")
     )
@@ -105,6 +126,7 @@ class Settings:
     db: DBSettings = field(default_factory=DBSettings)
     s3: S3Settings = field(default_factory=S3Settings)
     redis: RedisSettings = field(default_factory=RedisSettings)
+    email: EmailSettings = field(default_factory=EmailSettings)
 
 
 @lru_cache(maxsize=1, typed=True)

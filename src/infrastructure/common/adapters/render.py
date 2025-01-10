@@ -1,6 +1,10 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-template_loader = FileSystemLoader(searchpath="template.path")
+from config import get_settings
+
+settings = get_settings().app
+
+template_loader = FileSystemLoader(searchpath=settings.TEMPLATE_PATH)
 template_env = Environment(
     loader=template_loader,
     autoescape=select_autoescape("html", "xml"),
