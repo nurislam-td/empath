@@ -15,12 +15,12 @@ TRUE_VALUES = {"True", "true", "1", "yes", "Y", "T"}
 
 @dataclass
 class DBSettings:
-    DB_HOST: str = field(
-        default_factory=lambda: os.environ.get("DB_HOST", default="localhost")
-    )
     DB_USER: str = field(default_factory=lambda: os.environ.get("DB_USER", "db-user"))
     DB_PASSWORD: str = field(
         default_factory=lambda: os.environ.get("DB_PASSWORD", "db-pass")
+    )
+    DB_HOST: str = field(
+        default_factory=lambda: os.environ.get("DB_HOST", default="localhost")
     )
     DB_PORT: int = field(
         default_factory=lambda: int(os.environ.get("DB_PORT", default=5432))
@@ -39,19 +39,22 @@ class DBSettings:
 class AuthSettings:
     JWT_ALG: str = "RS256"
     ACCESS_PRIVATE_PATH: Path = field(
-        default_factory=lambda: Path(os.environ.get("ACCESS_PRIVATE_PATH", ""))
+        default_factory=lambda: BASE_DIR / Path(os.environ["ACCESS_PRIVATE_PATH"])
     )
     ACCESS_PUBLIC_PATH: Path = field(
-        default_factory=lambda: Path(os.environ.get("ACCESS_PUBLIC_PATH", ""))
+        default_factory=lambda: BASE_DIR
+        / Path(os.environ.get("ACCESS_PUBLIC_PATH", ""))
     )
     ACCESS_TOKEN_EXPIRE: int = 500000  # minutes
 
     REFRESH_PRIVATE_PATH: Path = field(
-        default_factory=lambda: Path(os.environ.get("REFRESH_PRIVATE_PATH", ""))
+        default_factory=lambda: BASE_DIR
+        / Path(os.environ.get("REFRESH_PRIVATE_PATH", ""))
     )
 
     REFRESH_PUBLIC_PATH: Path = field(
-        default_factory=lambda: Path(os.environ.get("ACCESS_PUBLIC_PATH", ""))
+        default_factory=lambda: BASE_DIR
+        / Path(os.environ.get("ACCESS_PUBLIC_PATH", ""))
     )
 
     REFRESH_TOKEN_EXPIRE: int = 60 * 24 * 21  # minutes (21 days)
