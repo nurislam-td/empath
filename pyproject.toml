@@ -8,7 +8,6 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 pyjwt = {extras = ["crypto"], version = "^2.10.0"}
-litestar = {extras = ["standard"], version = "^2.13.0"}
 sqlalchemy = "^2.0.36"
 alembic = "^1.14.0"
 starlette = "^0.45.1"
@@ -17,6 +16,8 @@ cryptography = {extras = ["bcrypt"], version = "^44.0.0"}
 bcrypt = "^4.2.1"
 jinja2 = "^3.1.5"
 redis = "^5.2.1"
+dishka = "^1.4.2"
+litestar = {extras = ["standard"], version = "^2.14.0"}
 
 
 [tool.poetry.group.dev.dependencies]
