@@ -19,7 +19,7 @@ class RedisVerifyCodeRepo(VerifyCodeRepo):
         code: str,
         expires_in: int | timedelta | None = None,
     ):
-        expires_in = expires_in or settings.VERIFICATION_CODE_EXPIRE
+        expires_in = expires_in or timedelta(minutes=settings.VERIFICATION_CODE_EXPIRE)
         return await self._redis_store.set(key=email, value=code, expires_in=expires_in)
 
     async def get_verify_code(self, email: str):
