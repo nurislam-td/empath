@@ -2,7 +2,6 @@ from typing import Any
 from uuid import UUID
 
 from sqlalchemy import insert, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.auth.ports.jwt import JWTPair
 from application.auth.ports.repo import AuthReader, AuthRepo
@@ -11,13 +10,12 @@ from infrastructure.auth.mapper import (
     convert_db_model_to_user_entity,
     convert_user_entity_to_db_model,
 )
-from infrastructure.auth.models import RefreshToken, User, VerifyCode
+from infrastructure.auth.models import RefreshToken, User
 from infrastructure.db.repositories.base import AlchemyReader, AlchemyRepo
 
 
 class AlchemyAuthRepo(AlchemyRepo, AuthRepo):
     user = User
-    verify_code = VerifyCode
     refresh_token = RefreshToken
 
     async def create_user(self, user: entities.User) -> None:
@@ -45,10 +43,6 @@ class AlchemyAuthRepo(AlchemyRepo, AuthRepo):
 
 class AlchemyAuthReader(AlchemyReader, AuthReader):
     user = User
-
-    def __init__(self, session: AsyncSession, verify_code_store) -> None:
-        super().__init__(session)
-        self._verify_code_store = verify_code_store
 
     async def get_user_by_email(self, email: str) -> entities.User:
         if not (

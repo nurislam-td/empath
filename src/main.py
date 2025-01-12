@@ -1,17 +1,32 @@
 import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from dishka import make_async_container
+from dishka.integrations import litestar as litestar_integration
+from litestar import Litestar
 
-from api import api_router
+from api import router
+from api.auth.providers import AuthProvider
+from config import Settings, get_settings
+from infrastructure.di.ioc import AppProvider
 
-app = FastAPI()
-app.include_router(api_router)
+config = get_settings()
+container = make_async_container(
+    AppProvider(), AuthProvider(), context={Settings: config}
+)
 
 
-@app.get("/")
-def default():
-    return JSONResponse(content={"response": "ok"}, status_code=200)
+def get_litestar_app() -> Litestar:
+    litestar_app = Litestar(
+        route_handlers=[router],
+    )
+    litestar_integration.setup_dishka(container, litestar_app)
+    return litestar_app
+
+
+def get_app():
+    litestar_app = get_litestar_app()
+
+    return litestar_app
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:get_app", host="0.0.0.0", port=8000, reload=True)

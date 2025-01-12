@@ -55,16 +55,3 @@ class RefreshToken(AuthBase):
 
     user_id = Column(ForeignKey("auth.user.id", ondelete="CASCADE"))
     refresh_token = Column(String, nullable=False)
-
-
-class VerifyCode(AuthBase):
-    __tablename__ = "verify_code"
-    id = Column(
-        types.Uuid,
-        primary_key=True,
-        server_default=text("gen_random_uuid()"),
-        index=True,
-    )
-    email = Column(String(length=255))
-    code = Column(String(length=6))
-    is_active = Column(Boolean)

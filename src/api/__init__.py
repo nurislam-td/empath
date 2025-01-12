@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from litestar import Router
 
-from .auth.routes import router, user_router
+from api.auth import router as auth_router
+from config import get_settings
 
-api_router = APIRouter(prefix="/api/v1")
-api_router.include_router(user_router)
-api_router.include_router(router)
+settings = get_settings().app
+
+router = Router(path=settings.API_V1_PREFIX, route_handlers=[auth_router])
