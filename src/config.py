@@ -75,7 +75,11 @@ class RedisSettings:
     PREFIX: str = field(
         default_factory=lambda: os.environ.get("REDIS_PREFIX", default="empath-cache")
     )
-    URL: str = f"redis://{HOST}:{PORT}"
+
+    @property
+    def URL(self) -> str:
+        return f"redis://{self.HOST}:{self.PORT}"
+
     SOCKET_CONNECT_TIMEOUT: int = field(
         default_factory=lambda: int(os.getenv("REDIS_CONNECT_TIMEOUT", "5"))
     )

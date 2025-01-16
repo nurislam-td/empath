@@ -20,5 +20,5 @@ class PasswordManager(pwd_manager.IPasswordManager):
         return bcrypt.checkpw(password=password.encode(), hashed_password=hash_password)
 
     @staticmethod
-    def generate_random_num(length: int = 6) -> str:
+    def get_random_num(length: int = 6) -> str:
         return "".join(random.choices(NUM, k=length))

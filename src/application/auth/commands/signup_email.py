@@ -7,12 +7,12 @@ from application.common.command import Command, CommandHandler
 from application.common.ports.email_sender import IEmailSender
 
 
-@dataclass(slots=True)
-class RegistryEmail(Command[bool]):
+@dataclass(slots=True, frozen=True)
+class SignUpEmail(Command[None]):
     email: str
 
 
-class RegistryEmailHandler(CommandHandler[RegistryEmail, bool]):
+class SignUpEmailHandler(CommandHandler[SignUpEmail, None]):
     def __init__(
         self,
         email_client: IEmailSender,
@@ -23,7 +23,7 @@ class RegistryEmailHandler(CommandHandler[RegistryEmail, bool]):
         self._password_manager = pwd_manager
         self._verify_repo = verify_code_repo
 
-    async def __call__(self, command: RegistryEmail):
+    async def __call__(self, command: SignUpEmail):
         verify_code = self._password_manager.get_random_num()
         await self._verify_repo.set_verify_code(email=command.email, code=verify_code)
         self._email_client.send_email_template(

@@ -16,4 +16,6 @@ class VerifyEmailHandler(CommandHandler[VerifyEmail, bool]):
 
     async def __call__(self, command: VerifyEmail):
         code = await self._repo.get_verify_code(command.email)
+        if code != command.code:
+            raise Exception("Code not correct")
         return code == command.code

@@ -16,7 +16,7 @@ services:
       - backend
 
   redis:
-    container_name: redis
+    container_name: empath-redis
     image: redis:7-alpine
     env_file:
       - .env

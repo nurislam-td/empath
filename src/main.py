@@ -17,6 +17,7 @@ container = make_async_container(
 def get_litestar_app() -> Litestar:
     litestar_app = Litestar(
         route_handlers=[router],
+        pdb_on_exception=True,
     )
     litestar_integration.setup_dishka(container, litestar_app)
     return litestar_app

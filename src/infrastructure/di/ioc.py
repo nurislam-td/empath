@@ -10,7 +10,7 @@ from infrastructure.db.config import async_session_maker
 
 
 class AppProvider(Provider):
-    config: Settings = cast(Settings, from_context(provides=Settings, scope=Scope.APP))
+    config = from_context(provides=Settings, scope=Scope.APP)
 
     @provide(scope=Scope.APP)
     def provide_session_maker(self) -> async_sessionmaker[AsyncSession]:
@@ -24,12 +24,12 @@ class AppProvider(Provider):
             yield session
 
     @provide(scope=Scope.APP)
-    def provide_redis_client(self) -> Redis:
+    def provide_redis_client(self, config: Settings) -> Redis:
         return Redis.from_url(
-            url=self.config.redis.URL,
+            url=config.redis.URL,
             encoding="utf-8",
             decode_responses=False,
-            socket_connect_timeout=self.config.redis.SOCKET_CONNECT_TIMEOUT,
-            socket_keepalive=self.config.redis.SOCKET_KEEPALIVE,
-            health_check_interval=self.config.redis.HEALTH_CHECK_INTERVAL,
+            socket_connect_timeout=config.redis.SOCKET_CONNECT_TIMEOUT,
+            socket_keepalive=config.redis.SOCKET_KEEPALIVE,
+            health_check_interval=config.redis.HEALTH_CHECK_INTERVAL,
         )
