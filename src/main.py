@@ -1,24 +1,32 @@
 import uvicorn
-from dishka import make_async_container
 from dishka.integrations import litestar as litestar_integration
 from litestar import Litestar
+from litestar.middleware.base import DefineMiddleware
 
 from api import router
-from api.auth.providers import AuthProvider
-from config import Settings, get_settings
-from infrastructure.di.ioc import AppProvider
+from config import get_settings
+from infrastructure.auth.middlewares import JWTAuthMiddleware
+from infrastructure.di.container import get_ioc
 
 config = get_settings()
-container = make_async_container(
-    AppProvider(), AuthProvider(), context={Settings: config}
-)
+container = get_ioc()
 
 
 def get_litestar_app() -> Litestar:
+    auth_mw = DefineMiddleware(
+        JWTAuthMiddleware,
+        exclude=[
+            "/schema",
+            # "/auth",
+        ],
+    )
+
     litestar_app = Litestar(
         route_handlers=[router],
         pdb_on_exception=True,
+        middleware=[auth_mw],
     )
+
     litestar_integration.setup_dishka(container, litestar_app)
     return litestar_app
 

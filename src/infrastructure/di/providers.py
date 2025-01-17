@@ -1,4 +1,4 @@
-from typing import AsyncIterable, cast
+from typing import AsyncIterable
 
 from dishka import AnyOf, Provider, Scope, from_context, provide
 from redis.asyncio import Redis

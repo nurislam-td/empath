@@ -14,7 +14,11 @@ from domain.auth.value_objects.jwt import JWTPair
 
 
 class AuthController(Controller):
-    @post("/login", status_code=status_codes.HTTP_200_OK)
+    @post(
+        "/login",
+        status_code=status_codes.HTTP_200_OK,
+        exclude_from_auth=True,
+    )
     @inject
     async def login(
         self, data: LoginSchema, login_handler: Depends[LoginHandler]
@@ -22,7 +26,11 @@ class AuthController(Controller):
         login_command = Login(email=data.email, password=data.password)
         return await login_handler(command=login_command)
 
-    @post("/signup", status_code=status_codes.HTTP_201_CREATED)
+    @post(
+        "/signup",
+        status_code=status_codes.HTTP_201_CREATED,
+        exclude_from_auth=True,
+    )
     @inject
     async def signup(
         self,
@@ -32,7 +40,11 @@ class AuthController(Controller):
         signup_command = SignUp(data.email, data.password, data.nickname)
         return await signup_handler(signup_command)
 
-    @post("/signup-email", status_code=status_codes.HTTP_202_ACCEPTED)
+    @post(
+        "/signup-email",
+        status_code=status_codes.HTTP_202_ACCEPTED,
+        exclude_from_auth=True,
+    )
     @inject
     async def send_signup_email(
         self, email: str, send_signup_email: Depends[SignUpEmailHandler]
@@ -44,7 +56,11 @@ class AuthController(Controller):
             background=BackgroundTask(send_signup_email, command),
         )
 
-    @post("/reset-email", status_code=status_codes.HTTP_202_ACCEPTED)
+    @post(
+        "/reset-email",
+        status_code=status_codes.HTTP_202_ACCEPTED,
+        exclude_from_auth=True,
+    )
     @inject
     async def send_reset_email(
         self, email: str, send_reset_email: Depends[ResetEmailHandler]
@@ -56,11 +72,15 @@ class AuthController(Controller):
             background=BackgroundTask(send_reset_email, command),
         )
 
-    @post("/verify-code", status_code=status_codes.HTTP_200_OK)
+    @post(
+        "/verify-code",
+        status_code=status_codes.HTTP_200_OK,
+        exclude_from_auth=True,
+    )
     @inject
     async def verify_code(
         self, email: str, code: str, verify_email: Depends[VerifyEmailHandler]
-    ):
+    ) -> Response:
         command = VerifyEmail(email=email, code=code)
         await verify_email(command)
         return Response(status_code=status_codes.HTTP_200_OK, content="")

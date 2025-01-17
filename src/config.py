@@ -118,7 +118,9 @@ class AppSettings:
     SECRET_KEY: str = field(
         default_factory=lambda: os.environ.get("SECRET_KEY", "ChangeIfNotDebug")
     )
-
+    AUTH_HEADERS: str = field(
+        default_factory=lambda: os.environ.get("AUTH_HEADERS", "Authorization")
+    )
     API_V1_PREFIX = "/api/v1"
     TEMPLATE_PATH = BASE_DIR / "src" / "templates"
     ENVIRONMENT: str = field(

@@ -1,4 +1,6 @@
-from infrastructure.common.schemas import CamelizedBaseStruct
+from uuid import UUID
+
+from infrastructure.common.schemas import BaseStruct, CamelizedBaseStruct
 
 
 class LoginSchema(CamelizedBaseStruct):
@@ -8,3 +10,8 @@ class LoginSchema(CamelizedBaseStruct):
 
 class SignUpSchema(LoginSchema):
     nickname: str
+
+
+class JWTUserPayload(BaseStruct):
+    sub: UUID
+    email: str
