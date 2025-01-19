@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from uuid import UUID
 
+from application.auth.ports.pwd_manager import IPasswordManager
 from application.auth.ports.repo import AuthReader, AuthRepo
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
-from infrastructure.auth.adapters.pwd_manager import PasswordManager
+from domain.auth.value_objects.password import Password
 
 
 @dataclass(slots=True)
@@ -20,7 +21,7 @@ class ResetPasswordHandler(CommandHandler[ResetPassword, None]):
         auth_repo: AuthRepo,
         auth_reader: AuthReader,
         uow: UnitOfWork,
-        pwd_manager: PasswordManager,
+        pwd_manager: IPasswordManager,
     ) -> None:
         self._auth_repo = auth_repo
         self._auth_reader = auth_reader
@@ -33,9 +34,14 @@ class ResetPasswordHandler(CommandHandler[ResetPassword, None]):
             command.old_password, hash_password=user.password
         ):
             await self._auth_repo.update_user(
-                values=dict(password=command.new_password),
+                values=dict(
+                    password=self._pwd_manager.hash_password(
+                        Password(command.new_password).to_base()
+                    )
+                ),
                 filters=dict(id=command.user_id),
             )
             await self._uow.commit()
+            return
 
         raise Exception("Incorrect prev pass")  # TODO custom exception

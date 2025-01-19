@@ -54,3 +54,14 @@ class AlchemyAuthReader(AlchemyReader, AuthReader):
                 "User with that email not exists"
             )  # TODO custom Repo exception
         return convert_db_model_to_user_entity(user=user_map)
+
+    async def get_user_by_id(self, user_id: UUID) -> entities.User:
+        if not (
+            user_map := await self.fetch_one(
+                select(self.user.__table__).where(self.user.id == user_id)
+            )
+        ):
+            raise Exception(
+                "User with that email not exists"
+            )  # TODO custom Repo exception
+        return convert_db_model_to_user_entity(user=user_map)

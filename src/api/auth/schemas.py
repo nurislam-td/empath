@@ -15,3 +15,12 @@ class SignUpSchema(LoginSchema):
 class JWTUserPayload(BaseStruct):
     sub: UUID
     email: str
+
+
+class ResetPasswordSchema(CamelizedBaseStruct):
+    old_password: str
+    new_password: str
+
+
+class ForgetPasswordSchema(LoginSchema):
+    pass
