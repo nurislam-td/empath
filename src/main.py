@@ -2,6 +2,8 @@ import uvicorn
 from dishka.integrations import litestar as litestar_integration
 from litestar import Litestar
 from litestar.middleware.base import DefineMiddleware
+from litestar.openapi.config import OpenAPIConfig
+from litestar.openapi.spec import Components, SecurityScheme
 
 from api import router
 from config import get_settings
@@ -25,6 +27,19 @@ def get_litestar_app() -> Litestar:
         route_handlers=[router],
         pdb_on_exception=True,
         middleware=[auth_mw],
+        openapi_config=OpenAPIConfig(
+            title="Empath API",
+            version="0.0.1",
+            security=[{"BearerToken": []}],
+            components=Components(
+                security_schemes={
+                    "BearerToken": SecurityScheme(
+                        type="http",
+                        scheme="bearer",
+                    )
+                },
+            ),
+        ),
     )
 
     litestar_integration.setup_dishka(container, litestar_app)
