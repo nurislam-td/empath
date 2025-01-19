@@ -9,6 +9,7 @@ from api.auth.schemas import (
     ForgetPasswordSchema,
     JWTUserPayload,
     LoginSchema,
+    RefreshTokenSchema,
     ResetPasswordSchema,
     SignUpSchema,
 )
@@ -17,6 +18,7 @@ from application.auth.commands.forget_password import (
     ForgetPassword,
     ForgetPasswordHandler,
 )
+from application.auth.commands.refresh import Refresh, RefreshHandler
 from application.auth.commands.reset_email import ResetEmail, ResetEmailHandler
 from application.auth.commands.reset_password import ResetPassword, ResetPasswordHandler
 from application.auth.commands.signup import SignUp, SignUpHandler
@@ -130,3 +132,13 @@ class AuthController(Controller):
         command = ForgetPassword(email=data.email, password=data.password)
         await forget_password(command)
         return Response(status_code=status_codes.HTTP_200_OK, content="")
+
+    @post(
+        "/refresh-token", status_code=status_codes.HTTP_200_OK, exclude_from_auth=True
+    )
+    @inject
+    async def refresh_token(
+        self, data: RefreshTokenSchema, refresh_token: Depends[RefreshHandler]
+    ) -> JWTPair:
+        command = Refresh(refresh_token=data.refresh_token)
+        return await refresh_token(command=command)

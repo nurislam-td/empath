@@ -23,6 +23,8 @@ class AuthReader(Protocol):
 
     async def get_user_by_id(self, user_id: UUID) -> entities.User: ...
 
+    async def get_refresh_token(self, user_id: UUID) -> str: ...
+
 
 class VerifyCodeRepo(Protocol):
     async def set_verify_code(

@@ -43,6 +43,7 @@ class AlchemyAuthRepo(AlchemyRepo, AuthRepo):
 
 class AlchemyAuthReader(AlchemyReader, AuthReader):
     user = User
+    token = RefreshToken
 
     async def get_user_by_email(self, email: str) -> entities.User:
         if not (
@@ -65,3 +66,13 @@ class AlchemyAuthReader(AlchemyReader, AuthReader):
                 "User with that email not exists"
             )  # TODO custom Repo exception
         return convert_db_model_to_user_entity(user=user_map)
+
+    async def get_refresh_token(self, user_id: UUID) -> str:
+        refresh_token = await self.fetch_one(
+            select(self.token.__table__).where(self.token.user_id == user_id)
+        )
+        if not refresh_token:
+            raise Exception(
+                "Token for user: {user_id} not found"
+            )  # TODO custom exception
+        return refresh_token.refresh_token

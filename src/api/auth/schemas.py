@@ -24,3 +24,7 @@ class ResetPasswordSchema(CamelizedBaseStruct):
 
 class ForgetPasswordSchema(LoginSchema):
     pass
+
+
+class RefreshTokenSchema(CamelizedBaseStruct):
+    refresh_token: str

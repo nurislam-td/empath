@@ -54,7 +54,7 @@ class AuthSettings:
 
     REFRESH_PUBLIC_PATH: Path = field(
         default_factory=lambda: BASE_DIR
-        / Path(os.environ.get("ACCESS_PUBLIC_PATH", ""))
+        / Path(os.environ.get("REFRESH_PUBLIC_PATH", ""))
     )
 
     REFRESH_TOKEN_EXPIRE: int = 60 * 24 * 21  # minutes (21 days)
