@@ -1,3 +1,5 @@
+from typing import Any
+
 from litestar.connection import ASGIConnection
 from litestar.exceptions import NotAuthorizedException
 from litestar.middleware import AbstractAuthenticationMiddleware, AuthenticationResult
@@ -13,7 +15,7 @@ container = get_ioc()
 
 class JWTAuthMiddleware(AbstractAuthenticationMiddleware):
     async def authenticate_request(
-        self, connection: ASGIConnection
+        self, connection: ASGIConnection[Any, Any, Any, Any]
     ) -> AuthenticationResult:
         auth_header = connection.headers.get(settings.AUTH_HEADERS)
         if not auth_header:

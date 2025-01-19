@@ -60,7 +60,7 @@ class AuthController(Controller):
     @inject
     async def send_signup_email(
         self, email: str, send_signup_email: Depends[SignUpEmailHandler]
-    ) -> Response:
+    ) -> Response[str]:
         command = SignUpEmail(email=email)
         return Response(
             status_code=status_codes.HTTP_202_ACCEPTED,
@@ -76,7 +76,7 @@ class AuthController(Controller):
     @inject
     async def send_reset_email(
         self, email: str, send_reset_email: Depends[ResetEmailHandler]
-    ) -> Response:
+    ) -> Response[str]:
         command = ResetEmail(email=email)
         return Response(
             status_code=status_codes.HTTP_202_ACCEPTED,
@@ -92,7 +92,7 @@ class AuthController(Controller):
     @inject
     async def verify_code(
         self, email: str, code: str, verify_email: Depends[VerifyEmailHandler]
-    ) -> Response:
+    ) -> Response[str]:
         command = VerifyEmail(email=email, code=code)
         await verify_email(command)
         return Response(status_code=status_codes.HTTP_200_OK, content="")
@@ -107,7 +107,7 @@ class AuthController(Controller):
         data: ResetPasswordSchema,
         reset_password: Depends[ResetPasswordHandler],
         request: Request[JWTUserPayload, str, State],
-    ) -> Response:
+    ) -> Response[str]:
         command = ResetPassword(
             old_password=data.old_password,
             new_password=data.new_password,
@@ -126,7 +126,7 @@ class AuthController(Controller):
         self,
         data: ForgetPasswordSchema,
         forget_password: Depends[ForgetPasswordHandler],
-    ) -> Response:
+    ) -> Response[str]:
         command = ForgetPassword(email=data.email, password=data.password)
         await forget_password(command)
         return Response(status_code=status_codes.HTTP_200_OK, content="")

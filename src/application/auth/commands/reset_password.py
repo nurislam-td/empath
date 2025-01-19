@@ -9,7 +9,7 @@ from domain.auth.value_objects.password import Password
 
 
 @dataclass(slots=True)
-class ResetPassword(Command):
+class ResetPassword(Command[None]):
     old_password: str
     new_password: str
     user_id: UUID

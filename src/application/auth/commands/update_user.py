@@ -4,18 +4,17 @@ from uuid import UUID
 from application.auth.ports.repo import AuthReader, AuthRepo
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
-from domain.auth.entities.user import User
 from domain.auth.value_objects.password import Password
 
 
 @dataclass(slots=True)
-class UpdateUser(Command):
+class UpdateUser(Command[None]):
     id: UUID
     name: str | None = None
     password: str | None = None
 
 
-class UpdateUserHandler(CommandHandler[UpdateUser, User]):
+class UpdateUserHandler(CommandHandler[UpdateUser, None]):
     def __init__(self, auth_repo: AuthRepo, auth_reader: AuthReader, uow: UnitOfWork):
         self._auth_repo = auth_repo
         self._auth_reader = auth_reader

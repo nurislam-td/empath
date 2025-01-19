@@ -13,7 +13,7 @@ settings = get_settings().email
 
 class EmailSender(IEmailSender):
     def send_email_template(
-        self, emails: list[str], template_name: str, **data
+        self, emails: list[str], template_name: str, **data: Any
     ) -> str | dict[str, Any]:
         template = render.render_template(template_name, **data)
 

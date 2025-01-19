@@ -8,7 +8,7 @@ from domain.auth.value_objects.password import Password
 
 
 @dataclass(slots=True)
-class ForgetPassword(Command):
+class ForgetPassword(Command[None]):
     email: str
     password: str
 

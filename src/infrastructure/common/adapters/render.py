@@ -1,3 +1,5 @@
+from typing import Any
+
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from config import get_settings
@@ -13,6 +15,6 @@ template_env = Environment(
 )
 
 
-def render_template(template_name, **data):
+def render_template(template_name: str, **data: Any):
     template = template_env.get_template(template_name)
     return template.render(**data)
