@@ -1,4 +1,4 @@
-from dishka import Provider, Scope, from_context, provide
+from dishka import Provider, Scope, from_context, provide  # type: ignore
 
 from application.auth.commands.forget_password import ForgetPasswordHandler
 from application.auth.commands.login import LoginHandler
