@@ -12,6 +12,7 @@ from application.auth.ports.jwt import JWTManager
 from application.auth.ports.pwd_manager import IPasswordManager
 from application.auth.ports.repo import AuthReader, AuthRepo, VerifyCodeRepo
 from application.common.ports.email_sender import IEmailSender
+from application.users.ports.repo import UserReader, UserRepo
 from config import Settings
 from infrastructure.auth.adapters.jwt_manager import PyJWTManager
 from infrastructure.auth.adapters.pwd_manager import PasswordManager
@@ -21,6 +22,7 @@ from infrastructure.auth.repositories import (
     RedisVerifyCodeRepo,
 )
 from infrastructure.common.adapters.email_sender import EmailSender
+from infrastructure.users.repositories.user import AlchemyUserReader, AlchemyUserRepo
 
 
 class AuthProvider(Provider):
@@ -43,6 +45,8 @@ class AuthProvider(Provider):
     auth_repo = provide(AlchemyAuthRepo, provides=AuthRepo)
     auth_reader = provide(AlchemyAuthReader, provides=AuthReader)
     verify_code_repo = provide(RedisVerifyCodeRepo, provides=VerifyCodeRepo)
+    user_reader = provide(AlchemyUserReader, provides=UserReader)
+    user_repo = provide(AlchemyUserRepo, provides=UserRepo)
 
     pwd_manager = provide(PasswordManager, provides=IPasswordManager)
     email_sender = provide(EmailSender, provides=IEmailSender)

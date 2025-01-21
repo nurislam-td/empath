@@ -1,7 +1,6 @@
 import enum
 
 from sqlalchemy import (
-    Boolean,
     Column,
     Enum,
     ForeignKey,
@@ -27,7 +26,7 @@ class AuthBase(TimedBaseModel):
 
 class User(AuthBase):
     __tablename__ = "user"
-    id = Column(
+    id = Column(  # type: ignore
         types.Uuid,
         primary_key=True,
         server_default=text("gen_random_uuid()"),  # use what you have on your server
@@ -46,12 +45,12 @@ class User(AuthBase):
 
 class RefreshToken(AuthBase):
     __tablename__ = "refresh_token"
-    id = Column(
+    id = Column(  # type: ignore
         types.Uuid,
         primary_key=True,
         server_default=text("gen_random_uuid()"),
         index=True,
     )
 
-    user_id = Column(ForeignKey("auth.user.id", ondelete="CASCADE"))
+    user_id = Column(ForeignKey("auth.user.id", ondelete="CASCADE"))  # type: ignore
     refresh_token = Column(String, nullable=False)
