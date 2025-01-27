@@ -2,6 +2,7 @@ from dishka import Provider, Scope, from_context, provide  # type: ignore
 
 from application.auth.commands.forget_password import ForgetPasswordHandler
 from application.auth.commands.login import LoginHandler
+from application.auth.commands.logout import LogoutHandler
 from application.auth.commands.refresh import RefreshHandler
 from application.auth.commands.reset_email import ResetEmailHandler
 from application.auth.commands.reset_password import ResetPasswordHandler
@@ -59,3 +60,4 @@ class AuthProvider(Provider):
     reset_password = provide(ResetPasswordHandler)
     forget_password = provide(ForgetPasswordHandler)
     refresh_token = provide(RefreshHandler)
+    logout_handler = provide(LogoutHandler)

@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import delete, insert, select, update
 
 from application.auth.ports.jwt import JWTPair
 from application.auth.ports.repo import AuthReader, AuthRepo
@@ -23,6 +23,10 @@ class AlchemyAuthRepo(AlchemyRepo, AuthRepo):
             .values(refresh_token=jwt.refresh_token)
             .where(self.refresh_token.user_id == user_id)  # type: ignore
         )
+        await self.execute(query=query)
+
+    async def delete_refresh_jwt(self, user_id: UUID) -> None:
+        query = delete(self.refresh_token).where(self.refresh_token.user_id == user_id)
         await self.execute(query=query)
 
 

@@ -18,6 +18,7 @@ from application.auth.commands.forget_password import (
     ForgetPassword,
     ForgetPasswordHandler,
 )
+from application.auth.commands.logout import Logout, LogoutHandler
 from application.auth.commands.refresh import Refresh, RefreshHandler
 from application.auth.commands.reset_email import ResetEmail, ResetEmailHandler
 from application.auth.commands.reset_password import ResetPassword, ResetPasswordHandler
@@ -142,3 +143,17 @@ class AuthController(Controller):
     ) -> JWTPair:
         command = Refresh(refresh_token=data.refresh_token)
         return await refresh_token(command=command)
+
+    @post(
+        "/logout",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def logout(
+        self,
+        request: Request[JWTUserPayload, str, State],
+        logout: Depends[LogoutHandler],
+    ) -> None:
+        user_id = request.user.sub
+        command = Logout(user_id=user_id)
+        return await logout(command=command)
