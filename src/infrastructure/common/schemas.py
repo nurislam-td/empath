@@ -1,6 +1,7 @@
 from typing import Any
 
 import msgspec
+from litestar.dto import DTOConfig
 
 
 class BaseStruct(msgspec.Struct):
@@ -14,3 +15,6 @@ class BaseStruct(msgspec.Struct):
 
 class CamelizedBaseStruct(BaseStruct, rename="camel"):
     """Camelized Base Struct"""
+
+
+dto_config = DTOConfig(rename_strategy="camel")
