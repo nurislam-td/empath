@@ -1,10 +1,13 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import TypeAlias
 from uuid import UUID
+
+from application.common.dto import DTO, PaginatedDTO
 
 
 @dataclass(frozen=True, slots=True)
-class UserDTO:
+class UserDTO(DTO):
     id: UUID
     nickname: str
     email: str
@@ -15,3 +18,6 @@ class UserDTO:
     date_birth: date | None
     gender: str | None
     image: str | None
+
+
+PaginatedUserDTO: TypeAlias = PaginatedDTO[UserDTO]

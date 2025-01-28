@@ -50,3 +50,18 @@ def convert_user_entity_to_user_dto(user: entities.User) -> UserDTO:
         gender=user.gender,
         image=user.image,
     )
+
+
+def convert_db_model_to_dto(user: RowMapping) -> UserDTO:
+    return UserDTO(
+        id=user.id,
+        nickname=user.nickname,
+        email=user.email,
+        password=user.password,
+        lastname=user.lastname,
+        name=user.name,
+        patronymic=user.patronymic,
+        date_birth=user.date_birth,
+        gender=user.gender,
+        image=user.image,
+    )

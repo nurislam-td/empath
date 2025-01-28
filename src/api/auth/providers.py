@@ -28,7 +28,6 @@ from infrastructure.users.repositories.user import AlchemyUserReader, AlchemyUse
 
 class AuthProvider(Provider):
     scope = Scope.REQUEST
-    config = from_context(provides=Settings, scope=Scope.APP)
 
     @provide
     def provide_jwt_manager(self, config: Settings) -> JWTManager:
