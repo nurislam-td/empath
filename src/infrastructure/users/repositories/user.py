@@ -5,6 +5,7 @@ from sqlalchemy import Select, insert, select, update
 
 from application.common.dto import PaginatedDTO
 from application.users.dto.user import UserDTO
+from application.users.exceptions import UserEmailNotExistError, UserIdNotExistError
 from application.users.ports.repo import UserReader, UserRepo
 from domain.users import entities
 from infrastructure.auth.models import User
@@ -67,9 +68,7 @@ class AlchemyUserReader(AlchemyReader, UserReader):
                 select(self.user.__table__).where(self.user.email == email)
             )
         ):
-            raise Exception(
-                "User with that email not exists"
-            )  # TODO custom Repo exception
+            raise UserEmailNotExistError(email=email)
         return convert_db_model_to_user_entity(user=user_map)
 
     async def get_user_by_id(self, user_id: UUID) -> entities.User:
@@ -78,7 +77,5 @@ class AlchemyUserReader(AlchemyReader, UserReader):
                 select(self.user.__table__).where(self.user.id == user_id)  # type: ignore
             )
         ):
-            raise Exception(
-                "User with that email not exists"
-            )  # TODO custom Repo exception
+            raise UserIdNotExistError(user_id=user_id)
         return convert_db_model_to_user_entity(user=user_map)

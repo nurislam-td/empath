@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy import delete, insert, select, update
 
+from application.auth.exceptions import TokenSubNotFoundError
 from application.auth.ports.jwt import JWTPair
 from application.auth.ports.repo import AuthReader, AuthRepo
 from infrastructure.auth.models import RefreshToken
@@ -26,7 +27,7 @@ class AlchemyAuthRepo(AlchemyRepo, AuthRepo):
         await self.execute(query=query)
 
     async def delete_refresh_jwt(self, user_id: UUID) -> None:
-        query = delete(self.refresh_token).where(self.refresh_token.user_id == user_id)
+        query = delete(self.refresh_token).where(self.refresh_token.user_id == user_id)  # type: ignore
         await self.execute(query=query)
 
 
@@ -38,7 +39,5 @@ class AlchemyAuthReader(AlchemyReader, AuthReader):
             select(self.token.__table__).where(self.token.user_id == user_id)  # type: ignore
         )
         if not refresh_token:
-            raise Exception(
-                "Token for user: {user_id} not found"
-            )  # TODO custom exception
+            raise TokenSubNotFoundError(sub=user_id)
         return refresh_token.refresh_token

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
+from application.auth.exceptions import InvalidPreviousPasswordError
 from application.auth.ports.pwd_manager import IPasswordManager
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
@@ -44,4 +45,4 @@ class ResetPasswordHandler(CommandHandler[ResetPassword, None]):
             await self._uow.commit()
             return
 
-        raise Exception("Incorrect prev pass")  # TODO custom exception
+        raise InvalidPreviousPasswordError()

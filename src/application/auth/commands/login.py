@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from application.auth.exceptions import InvalidCredentialsError
 from application.auth.ports.jwt import JWTManager
 from application.auth.ports.pwd_manager import IPasswordManager
 from application.auth.ports.repo import AuthRepo
@@ -28,7 +29,7 @@ class LoginHandler(CommandHandler[Login, JWTPair]):
         if not self.pwd_manager.verify_password(
             password=command.password, hash_password=user.password
         ):
-            raise Exception("invalid credentials")  # TODO InvalidCredentialsError
+            raise InvalidCredentialsError()
         jwt = self.jwt_manager.create_pair(
             payload=dict(sub=str(user.id), email=command.email)
         )
