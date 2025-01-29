@@ -4,6 +4,7 @@ from application.auth.ports.pwd_manager import IPasswordManager
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
 from application.users.ports.repo import UserReader, UserRepo
+from domain.users.value_objects.email import Email
 from domain.users.value_objects.password import Password
 
 
@@ -21,7 +22,9 @@ class ForgetPasswordHandler(CommandHandler[ForgetPassword, None]):
     _pwd_manager: IPasswordManager
 
     async def __call__(self, command: ForgetPassword) -> None:
-        user = await self._user_reader.get_user_by_email(email=command.email)
+        user = await self._user_reader.get_user_by_email(
+            email=Email(command.email).to_base()
+        )
         await self._user_repo.update_user(
             values=dict(
                 password=self._pwd_manager.hash_password(

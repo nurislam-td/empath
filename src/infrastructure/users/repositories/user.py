@@ -79,3 +79,10 @@ class AlchemyUserReader(AlchemyReader, UserReader):
         ):
             raise UserIdNotExistError(user_id=user_id)
         return convert_db_model_to_user_entity(user=user_map)
+
+    async def check_email_existence(self, email: str) -> bool:
+        return bool(
+            await self.fetch_one(
+                select(self.user.__table__).where(self.user.email == email)
+            )
+        )
