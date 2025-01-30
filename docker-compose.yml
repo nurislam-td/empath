@@ -2,7 +2,7 @@ services:
   db:
     image: postgres:16.1
     volumes:
-      - em_postgres_data:/var/lib/postgresql/data/
+      - empath-db-data-local:/var/lib/postgresql/data/
     container_name: empath-db
     env_file:
       - .env
@@ -12,6 +12,23 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - ${DB_PORT}:5432
+    networks:
+      - backend
+
+  s3:
+    image: minio/minio
+    container_name: empath-s3
+    volumes:
+      - empath-s3-data-local:/data
+    env_file:
+      - .env
+    environment:
+      MINIO_ROOT_USER: ${S3_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${S3_ROOT_PASSWORD}
+    ports:
+      - ${S3_PORT}:9000
+      - ${S3_PORT_GUI}:9001 
+    command: server /data --console-address ":9001"
     networks:
       - backend
 
@@ -33,14 +50,13 @@ services:
       context: .
       dockerfile: Dockerfile
     image: empath-backend
-#    volumes:
-#      - .:/backend #in container folder
+    volumes:
+      - .:/backend #in container folder
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
-      # - test-db
     environment:
       DB_HOST: postgres-db
     entrypoint: ["/backend/docker/app.sh"]
@@ -54,5 +70,6 @@ networks:
     driver: bridge
 
 volumes:
-  em_postgres_data:
+  empath-db-data-local:
+  empath-s3-data-local:
 
