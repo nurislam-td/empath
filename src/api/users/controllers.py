@@ -1,5 +1,6 @@
 from io import BytesIO
 from typing import Annotated
+from uuid import UUID
 
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
@@ -13,7 +14,9 @@ from litestar.response import Response
 
 from api.auth.schemas import JWTUserPayload
 from api.pagination import PaginationParams, pagination_query_params
+from api.users.schemas import UserUpdateSchema
 from application.users.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler
+from application.users.commands.update_user import UpdateUser, UpdateUserHandler
 from application.users.dto.user import PaginatedUserDTO, UserDTO
 from application.users.queries.get_users import GetUsers, GetUsersHandler
 from application.users.queries.user_by_id import GetUserById, GetUserByIdHandler
@@ -58,3 +61,15 @@ class UserController(Controller):
         )
         new_url = await update_avatar(command)
         return Response(content=new_url, status_code=status_codes.HTTP_200_OK)
+
+    @put(path="/{user_id:uuid}", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def update_user(
+        self,
+        data: UserUpdateSchema,
+        user_id: UUID,
+        update_user: Depends[UpdateUserHandler],
+    ) -> Response[None]:
+        command = UpdateUser(**data.to_dict(), user_id=user_id)
+        await update_user(command)
+        return Response(content=None, status_code=status_codes.HTTP_200_OK)

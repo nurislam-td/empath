@@ -2,6 +2,7 @@ from dishka import Provider, Scope, from_context, provide  # type: ignore
 
 from application.common.ports.file_storage import FileStorage
 from application.users.commands.update_avatar import UpdateAvatarHandler
+from application.users.commands.update_user import UpdateUserHandler
 from application.users.ports.repo import UserReader, UserRepo
 from application.users.queries.get_users import GetUsersHandler
 from application.users.queries.user_by_id import GetUserByIdHandler
@@ -21,3 +22,4 @@ class UsersProvider(Provider):
     get_me = provide(GetUserByIdHandler)
     get_users = provide(GetUsersHandler)
     update_avatar = provide(UpdateAvatarHandler)
+    update_user = provide(UpdateUserHandler)
