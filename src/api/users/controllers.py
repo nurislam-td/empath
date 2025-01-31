@@ -1,12 +1,19 @@
+from io import BytesIO
+from typing import Annotated
+
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Request, get, status_codes
+from litestar import Request, get, put, status_codes
 from litestar.controller import Controller
-from litestar.datastructures import State
+from litestar.datastructures import State, UploadFile
 from litestar.di import Provide
+from litestar.enums import RequestEncodingType
+from litestar.params import Body
+from litestar.response import Response
 
 from api.auth.schemas import JWTUserPayload
 from api.pagination import PaginationParams, pagination_query_params
+from application.users.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler
 from application.users.dto.user import PaginatedUserDTO, UserDTO
 from application.users.queries.get_users import GetUsers, GetUsersHandler
 from application.users.queries.user_by_id import GetUserById, GetUserByIdHandler
@@ -36,3 +43,18 @@ class UserController(Controller):
         return await get_users(
             GetUsers(page=pagination_params.page, per_page=pagination_params.per_page)
         )
+
+    @put(path="/me/avatar", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def update_user_avatar(
+        self,
+        data: Annotated[UploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
+        update_avatar: Depends[UpdateAvatarHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> Response[str]:
+        content = await data.read()
+        command = UpdateAvatar(
+            user_id=request.user.sub, file=BytesIO(content), filename=data.filename
+        )
+        new_url = await update_avatar(command)
+        return Response(content=new_url, status_code=status_codes.HTTP_200_OK)

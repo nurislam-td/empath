@@ -8,7 +8,7 @@ class Query(ABC, Generic[QRes]):
     pass
 
 
-Q = TypeVar("Q", bound=Query)
+Q = TypeVar("Q", bound=Query)  # type: ignore
 
 
 class QueryHandler(ABC, Generic[Q, QRes]):
