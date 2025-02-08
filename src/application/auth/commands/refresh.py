@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from application.auth.exceptions import InvalidRefreshTokenError
 from application.auth.ports.jwt import JWTManager
 from application.auth.ports.repo import AuthReader, AuthRepo
 from application.common.command import Command, CommandHandler
@@ -31,7 +32,7 @@ class RefreshHandler(CommandHandler[Refresh, JWTPair]):
             user_id=payload["sub"]
         )
         if refresh_token != command.refresh_token:
-            raise Exception("invalid refresh token")  # TODO custom exception
+            raise InvalidRefreshTokenError()
         jwt_pair = self._jwt_manager.create_pair(payload=payload)
         await self._auth_repo.refresh_jwt(jwt=jwt_pair, user_id=payload["sub"])
         await self._uow.commit()

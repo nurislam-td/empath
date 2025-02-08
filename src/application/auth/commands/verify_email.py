@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from application.auth.exceptions import InvalidVerificationCodeError
 from application.auth.ports.repo import VerifyCodeRepo
 from application.common.command import Command, CommandHandler
 
@@ -17,5 +18,5 @@ class VerifyEmailHandler(CommandHandler[VerifyEmail, bool]):
     async def __call__(self, command: VerifyEmail):
         code = await self._repo.get_verify_code(command.email)
         if code != command.code:
-            raise Exception("Code not correct")
+            raise InvalidVerificationCodeError()
         return code == command.code

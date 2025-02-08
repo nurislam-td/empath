@@ -8,7 +8,7 @@ class Command(ABC, Generic[CRes]):
     pass
 
 
-C = TypeVar("C", bound=Command)
+C = TypeVar("C", bound=Command)  # type: ignore
 
 
 class CommandHandler(Generic[C, CRes], ABC):

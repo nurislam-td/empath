@@ -10,7 +10,7 @@ class TooLongNicknameError(ValueObjectError):
 
     @property
     def message(self):
-        return f"Nickname too long: {self.nickname}"
+        return f"Nickname too long: `{self.nickname}`"
 
 
 @dataclass(frozen=True, slots=True)

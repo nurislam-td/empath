@@ -15,7 +15,7 @@ class MismatchPasswordError(ValueObjectError):
 
     @property
     def message(self):
-        return f"Mismatch pattern: password must contain at least one lower character, one upper character, digit and special symbol, {self.password}."
+        return f"Mismatch pattern: password must contain at least one lower character, one upper character, digit and special symbol: `{self.password}` ."
 
 
 @dataclass(frozen=True, slots=True)

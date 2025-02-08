@@ -13,7 +13,7 @@ class MismatchEmailError(ValueObjectError):
 
     @property
     def message(self):
-        return f"Invalid email:{self.email}"
+        return f"Invalid email: `{self.email}` "
 
 
 @dataclass(frozen=True, slots=True)

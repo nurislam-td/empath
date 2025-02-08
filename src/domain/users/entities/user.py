@@ -2,10 +2,10 @@ from dataclasses import dataclass, field
 from datetime import date
 from uuid import UUID, uuid4
 
-from domain.auth.enums.gender import Gender
-from domain.auth.value_objects.email import Email
-from domain.auth.value_objects.nickname import Nickname
 from domain.common.entities.entity import Entity
+from domain.users.enums.gender import Gender
+from domain.users.value_objects.email import Email
+from domain.users.value_objects.nickname import Nickname
 
 
 @dataclass(slots=True)

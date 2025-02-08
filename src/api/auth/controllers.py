@@ -1,8 +1,11 @@
+from typing import Annotated
+
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
 from litestar import Controller, Request, post, status_codes
 from litestar.background_tasks import BackgroundTask
 from litestar.datastructures import State
+from litestar.dto.dataclass_dto import DataclassDTO
 from litestar.response.base import Response
 
 from api.auth.schemas import (
@@ -18,6 +21,7 @@ from application.auth.commands.forget_password import (
     ForgetPassword,
     ForgetPasswordHandler,
 )
+from application.auth.commands.logout import Logout, LogoutHandler
 from application.auth.commands.refresh import Refresh, RefreshHandler
 from application.auth.commands.reset_email import ResetEmail, ResetEmailHandler
 from application.auth.commands.reset_password import ResetPassword, ResetPasswordHandler
@@ -25,6 +29,7 @@ from application.auth.commands.signup import SignUp, SignUpHandler
 from application.auth.commands.signup_email import SignUpEmail, SignUpEmailHandler
 from application.auth.commands.verify_email import VerifyEmail, VerifyEmailHandler
 from domain.auth.value_objects.jwt import JWTPair
+from infrastructure.common.schemas import dto_config
 
 
 class AuthController(Controller):
@@ -32,6 +37,7 @@ class AuthController(Controller):
         "/login",
         status_code=status_codes.HTTP_200_OK,
         exclude_from_auth=True,
+        return_dto=DataclassDTO[Annotated[JWTPair, dto_config]],
     )
     @inject
     async def login(
@@ -44,6 +50,7 @@ class AuthController(Controller):
         "/signup",
         status_code=status_codes.HTTP_201_CREATED,
         exclude_from_auth=True,
+        return_dto=DataclassDTO[Annotated[JWTPair, dto_config]],
     )
     @inject
     async def signup(
@@ -134,7 +141,10 @@ class AuthController(Controller):
         return Response(status_code=status_codes.HTTP_200_OK, content="")
 
     @post(
-        "/refresh-token", status_code=status_codes.HTTP_200_OK, exclude_from_auth=True
+        "/refresh-token",
+        status_code=status_codes.HTTP_200_OK,
+        exclude_from_auth=True,
+        return_dto=DataclassDTO[Annotated[JWTPair, dto_config]],
     )
     @inject
     async def refresh_token(
@@ -142,3 +152,17 @@ class AuthController(Controller):
     ) -> JWTPair:
         command = Refresh(refresh_token=data.refresh_token)
         return await refresh_token(command=command)
+
+    @post(
+        "/logout",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def logout(
+        self,
+        request: Request[JWTUserPayload, str, State],
+        logout: Depends[LogoutHandler],
+    ) -> None:
+        user_id = request.user.sub
+        command = Logout(user_id=user_id)
+        return await logout(command=command)

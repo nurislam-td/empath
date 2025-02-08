@@ -94,6 +94,8 @@ class RedisSettings:
 
 @dataclass
 class S3Settings:
+    S3_ACCESS_KEY: str = field(default_factory=lambda: os.environ["S3_ACCESS_KEY"])
+    S3_SECRET_KEY: str = field(default_factory=lambda: os.environ["S3_SECRET_KEY"])
     S3_PRIVATE_BUCKET_NAME: str = field(
         default_factory=lambda: os.environ.get("S3_PRIVATE_BUCKET_NAME", "")
     )

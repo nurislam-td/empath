@@ -2,9 +2,11 @@ from dataclasses import dataclass
 
 from application.auth.const import VERIFY_CODE_SEND_TEMPLATE_PATH
 from application.auth.ports.pwd_manager import IPasswordManager
-from application.auth.ports.repo import AuthReader, VerifyCodeRepo
+from application.auth.ports.repo import VerifyCodeRepo
 from application.common.command import Command, CommandHandler
 from application.common.ports.email_sender import IEmailSender
+from application.users.ports.repo import UserReader
+from domain.users.value_objects.email import Email
 
 
 @dataclass(slots=True, frozen=True)
@@ -17,16 +19,16 @@ class ResetEmailHandler(CommandHandler[ResetEmail, None]):
         self,
         email_client: IEmailSender,
         pwd_manager: IPasswordManager,
-        auth_reader: AuthReader,
+        user_reader: UserReader,
         verify_code_repo: VerifyCodeRepo,
     ) -> None:
         self._email_client = email_client
         self._password_manager = pwd_manager
-        self._auth_reader = auth_reader
+        self._user_reader = user_reader
         self._verify_repo = verify_code_repo
 
     async def __call__(self, command: ResetEmail):
-        await self._auth_reader.get_user_by_email(email=command.email)
+        await self._user_reader.get_user_by_email(email=Email(command.email).to_base())
         verify_code = self._password_manager.get_random_num()
         await self._verify_repo.set_verify_code(email=command.email, code=verify_code)
         self._email_client.send_email_template(
