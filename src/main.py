@@ -27,7 +27,7 @@ def get_litestar_app() -> Litestar:
     litestar_app = Litestar(
         route_handlers=[router],
         exception_handlers=exception_handler,  # type: ignore
-        pdb_on_exception=True,
+        # pdb_on_exception=True,
         middleware=[auth_mw],
         openapi_config=OpenAPIConfig(
             title="Empath API",
