@@ -1,3 +1,4 @@
+import mimetypes
 from io import BytesIO
 from typing import AsyncIterable
 
@@ -34,4 +35,5 @@ class FileStorageController(Controller):
     ) -> Stream:
         query = DownloadFile(filepath=filepath)
         file_bytes = await download_file(query)
-        return Stream(bytes_io_generator(file_bytes))
+        media_type, _ = mimetypes.guess_type(filepath)
+        return Stream(bytes_io_generator(file_bytes), media_type=media_type)
