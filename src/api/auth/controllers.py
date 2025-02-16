@@ -94,7 +94,7 @@ class AuthController(Controller):
         )
 
     @post(
-        "/verify-otp",
+        "/verify-code",
         status_code=status_codes.HTTP_200_OK,
         exclude_from_auth=True,
     )
