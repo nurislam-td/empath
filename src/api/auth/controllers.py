@@ -62,7 +62,7 @@ class AuthController(Controller):
         return await signup_handler(signup_command)
 
     @post(
-        "/signup-email",
+        "/signup-otp",
         status_code=status_codes.HTTP_202_ACCEPTED,
         exclude_from_auth=True,
     )
@@ -78,7 +78,7 @@ class AuthController(Controller):
         )
 
     @post(
-        "/reset-email",
+        "/reset-otp",
         status_code=status_codes.HTTP_202_ACCEPTED,
         exclude_from_auth=True,
     )
@@ -94,7 +94,7 @@ class AuthController(Controller):
         )
 
     @post(
-        "/verify-code",
+        "/verify-otp",
         status_code=status_codes.HTTP_200_OK,
         exclude_from_auth=True,
     )
