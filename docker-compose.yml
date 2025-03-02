@@ -50,15 +50,17 @@ services:
       context: .
       dockerfile: Dockerfile
     image: empath-backend
-    volumes:
-      - .:/backend #in container folder
+    # volumes: TODO make possible to use volume for docker driven development
+      # - .:/backend #in container folder
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
+      - s3
     environment:
-      DB_HOST: postgres-db
+      DB_HOST: db
+      DB_PORT: 5432
     entrypoint: ["/backend/docker/app.sh"]
     networks:
       - backend
