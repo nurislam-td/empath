@@ -12,14 +12,14 @@ from domain.common.entities import Aggregate
 class Article(Aggregate):
     title: ArticleTitle
     text: str
-    tags: list[Tag]
     author_id: UUID
+    tags: list[Tag]
+    is_visible: bool = field(default=False)
+    imgs: list[str] = field(default_factory=list)
+    sub_articles: list[SubArticle] = field(default_factory=list)
     views_cnt: int = field(default=0)
     likes_cnt: int = field(default=0)
     dislikes_cnt: int = field(default=0)
-    imgs: list[str] = field(default_factory=list)
-    sub_articles: list[SubArticle] = field(default_factory=list)
-    is_visible: bool = field(default=False)
     id: UUID = field(default_factory=uuid4)
 
     def __post_init__(self):
