@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from domain.articles.constants import ARTICLE_TITLE_LEN
 from domain.common.exceptions import ValueObjectError
 from domain.common.value_object import ValueObject
 
@@ -16,5 +17,5 @@ class TooLongArticleTitleError(ValueObjectError):
 @dataclass(frozen=True, slots=True)
 class ArticleTitle(ValueObject[str]):
     def _validate(self):
-        if len(self.value) > 50:
+        if len(self.value) > ARTICLE_TITLE_LEN:
             raise TooLongArticleTitleError(self.value)

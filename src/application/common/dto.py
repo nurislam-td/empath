@@ -1,9 +1,16 @@
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
+
+from domain.common.constants import Empty
 
 
 @dataclass(frozen=True, slots=True)
 class DTO:
-    pass
+    def to_dict(self, exclude_unset: bool = False):
+        return {
+            attr: value
+            for attr, value in asdict(self).items()
+            if (not exclude_unset or value is not Empty.UNSET)
+        }
 
 
 @dataclass
