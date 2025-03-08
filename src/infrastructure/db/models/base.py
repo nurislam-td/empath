@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import sqlalchemy as sa
 from sqlalchemy.orm import DeclarativeBase, registry
 
@@ -17,7 +19,7 @@ class BaseModel(DeclarativeBase):
     metadata = mapper_registry.metadata
 
     __abstract__ = True
-    id = sa.Column(  # type: ignore
+    id: sa.Column[UUID] = sa.Column(
         sa.types.Uuid,
         primary_key=True,
         server_default=sa.text("gen_random_uuid()"),
