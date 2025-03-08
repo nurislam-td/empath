@@ -30,7 +30,9 @@ class TimedBaseModel(BaseModel):
 
     __abstract__ = True
 
-    created_at = sa.Column(sa.String(), nullable=False, server_default=sa.func.now())
+    created_at = sa.Column(
+        sa.types.DateTime, nullable=False, server_default=sa.func.now()
+    )
     updated_at = sa.Column(
         sa.types.DateTime,
         nullable=False,
