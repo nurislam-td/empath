@@ -37,7 +37,7 @@ class Tag(ArticleBase):
 class RelArticleTag(ArticleBase):
     __tablename__ = "rel_article_tag"
 
-    id = None
+    id = None  # type: ignore
     article_id = Column(  # type: ignore
         ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True
     )
