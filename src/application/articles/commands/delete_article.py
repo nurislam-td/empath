@@ -1,5 +1,4 @@
-from dataclasses import asdict, dataclass
-from datetime import date
+from dataclasses import dataclass
 from uuid import UUID
 
 from application.articles.ports.repo import ArticleRepo
@@ -17,6 +16,6 @@ class UpdateUserHandler(CommandHandler[DeleteArticle, None]):
     _article_repo: ArticleRepo
     _uow: UnitOfWork
 
-    async def __call__(self, command: DeleteArticle):
+    async def __call__(self, command: DeleteArticle) -> None:
         await self._article_repo.delete_article(command.article_id)
         await self._uow.commit()
