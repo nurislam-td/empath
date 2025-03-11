@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -37,24 +39,22 @@ class Tag(ArticleBase):
 class RelArticleTag(ArticleBase):
     __tablename__ = "rel_article_tag"
 
-    id = None  # type: ignore
-    article_id = Column(  # type: ignore
-        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True
-    )
-    tag_id = Column(ForeignKey("article.tag.id", ondelete="CASCADE"), primary_key=True)  # type: ignore
+    id = None  # type: ignore  # noqa: PGH003
+    article_id: Column[UUID] = Column(ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True)
+    tag_id: Column[UUID] = Column(ForeignKey("article.tag.id", ondelete="CASCADE"), primary_key=True)
 
 
 class ArticleImg(ArticleBase):
     __tablename__ = "article_img"
 
     url = Column(Text)
-    article_id = Column(ForeignKey("article.article.id", ondelete="CASCADE"))  # type: ignore
+    article_id: Column[UUID] = Column(ForeignKey("article.article.id", ondelete="CASCADE"))
 
 
 class SubArticle(ArticleBase):
     __tablename__ = "sub_article"
 
-    article_id = Column(ForeignKey("article.article.id", ondelete="CASCADE"))  # type: ignore
+    article_id: Column[UUID] = Column(ForeignKey("article.article.id", ondelete="CASCADE"))
     title = Column(String(ARTICLE_TITLE_LEN))
     text = Column(Text)
 
@@ -63,4 +63,4 @@ class SubArticleImg(ArticleBase):
     __tablename__ = "sub_article_img"
 
     url = Column(Text)
-    sub_article_id = Column(ForeignKey("article.sub_article.id", ondelete="CASCADE"))  # type: ignore
+    sub_article_id: Column[UUID] = Column(ForeignKey("article.sub_article.id", ondelete="CASCADE"))
