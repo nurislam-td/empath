@@ -206,8 +206,11 @@ class AlchemyAuthReader(AlchemyReader, ArticleReader):
         article = await self.fetch_one(qs)
         if not article:
             raise ArticleIdNotExistError(article_id)
-        sub_articles = await self.get_sub_articles({article_id})
-        article_imgs = await self.fetch_sequence(self.get_imgs_qs({article_id}))
-        article_tags = await self.fetch_all(self.get_tags_qs({article_id}))
+
+        sub_articles, article_imgs, article_tags = await asyncio.gather(
+            self.get_sub_articles({article_id}),
+            self.fetch_sequence(self.get_imgs_qs({article_id})),
+            self.fetch_all(self.get_tags_qs({article_id})),
+        )
 
         return convert_db_to_article_dto(article, sub_articles, article_imgs, article_tags)
