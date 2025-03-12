@@ -15,6 +15,8 @@ mapper_registry = registry(metadata=sa.MetaData(naming_convention=convention))
 
 
 class BaseModel(DeclarativeBase):
+    """An abstract base model that save metadata, all models must inherit from this class."""
+
     registry = mapper_registry
     metadata = mapper_registry.metadata
 
@@ -32,9 +34,7 @@ class TimedBaseModel(BaseModel):
 
     __abstract__ = True
 
-    created_at = sa.Column(
-        sa.types.DateTime, nullable=False, server_default=sa.func.now()
-    )
+    created_at = sa.Column(sa.types.DateTime, nullable=False, server_default=sa.func.now())
     updated_at = sa.Column(
         sa.types.DateTime,
         nullable=False,

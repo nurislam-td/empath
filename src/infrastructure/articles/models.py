@@ -24,7 +24,7 @@ class Article(ArticleBase):
     title = Column(String(length=ARTICLE_TITLE_LEN))
     text = Column(Text)
     is_visible = Column(Boolean, default=False)
-    author_id = Column(ForeignKey("auth.user.id", ondelete="CASCADE"))  # type: ignore
+    author_id: Column[UUID] = Column(ForeignKey("auth.user.id", ondelete="CASCADE"))
     views_cnt = Column(BigInteger, default=0)
     likes_cnt = Column(BigInteger, default=0)
     dislikes_cnt = Column(BigInteger, default=0)
