@@ -1,24 +1,26 @@
-import pprint
+from dishka import FromDishka as Depends
+from dishka.integrations.litestar import inject
+from litestar import Controller, Response, post, status_codes
 
-from litestar import Controller, post, status_codes
-
-from api.article.schemas import ArticleCreateSchema, ArticleReadSchema
-from application.articles.dto.article import ArticleDTO
-from application.articles.mapper import convert_dto_to_article
+from api.article.schemas import ArticleCreateSchema
+from application.articles.commands.create_article import (
+    CreateArticle,
+    CreateArticleHandler,
+)
 
 
 class ArticleController(Controller):
     @post(
         "/",
         status_code=status_codes.HTTP_201_CREATED,
-        exclude_from_auth=True,
         dto=ArticleCreateSchema,
-        return_dto=ArticleReadSchema,
+        exclude_from_auth=True,
     )
+    @inject
     async def create_article(
         self,
-        data: ArticleDTO,
-        # create_article_handler: Depends[CreateArticleHandler],
-    ) -> ArticleDTO:
-        pprint.pprint(convert_dto_to_article(data))
-        return data
+        data: CreateArticle,
+        create_article_handler: Depends[CreateArticleHandler],
+    ) -> Response[None]:
+        await create_article_handler(data)
+        return Response(content=None, status_code=status_codes.HTTP_201_CREATED)

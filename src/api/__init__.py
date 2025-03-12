@@ -1,5 +1,6 @@
 from litestar import Router
 
+from api.article import router as article_router
 from api.auth import router as auth_router
 from api.file_storage import router as file_storage_router
 from api.users import router as user_router
@@ -9,5 +10,10 @@ settings = get_settings().app
 
 router = Router(
     path=settings.API_V1_PREFIX,
-    route_handlers=[auth_router, user_router, file_storage_router],
+    route_handlers=[
+        auth_router,
+        user_router,
+        file_storage_router,
+        article_router,
+    ],
 )

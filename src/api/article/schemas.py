@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from litestar.dto import DataclassDTO
 from litestar.dto.config import DTOConfig
 
@@ -16,11 +14,5 @@ class ArticleCreateSchema(DataclassDTO[ArticleDTO]):
             "sub_articles.0.id",
             "tags.0.id",
         },
-        rename_strategy="camel",
-    )
-
-
-class ArticleReadSchema(DataclassDTO[ArticleDTO]):
-    config = DTOConfig(
         rename_strategy="camel",
     )
