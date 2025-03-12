@@ -133,7 +133,7 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
         await asyncio.gather(*tasks, self.execute(query))
 
 
-class AlchemyAuthReader(AlchemyReader, ArticleReader):
+class AlchemyArticleReader(AlchemyReader, ArticleReader):
     """Article Reader implementation."""
 
     article = Article
