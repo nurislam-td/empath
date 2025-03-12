@@ -1,8 +1,14 @@
 from dataclasses import dataclass, field
-from typing import TypeAlias
 from uuid import UUID, uuid4
 
 from application.common.dto import DTO, PaginatedDTO
+
+
+@dataclass(frozen=True, slots=True)
+class UserDTO(DTO):
+    id: UUID
+    nickname: str
+    full_name: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -23,15 +29,15 @@ class TagDTO(DTO):
 class ArticleDTO(DTO):
     title: str
     text: str
-    author_id: UUID
+    author: UserDTO
     tags: list[TagDTO]
     is_visible: bool
     imgs: list[str] = field(default_factory=list)
     sub_articles: list[SubArticleDTO] = field(default_factory=list)
-    views_cnt: int = field(default=0)
-    likes_cnt: int = field(default=0)
-    dislikes_cnt: int = field(default=0)
+    views_cnt: int = 0
+    likes_cnt: int = 0
+    dislikes_cnt: int = 0
     id: UUID = field(default_factory=uuid4)
 
 
-PaginatedArticleDTO: TypeAlias = PaginatedDTO[ArticleDTO]
+type PaginatedArticleDTO = PaginatedDTO[ArticleDTO]
