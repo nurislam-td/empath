@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Callable
 
 from litestar import Request, Response, status_codes
 
@@ -9,13 +9,11 @@ from application.auth.exceptions import (
     InvalidVerificationCodeError,
 )
 from application.users.exceptions import UserEmailNotExistError, UserIdNotExistError
-from domain.common.exceptions import ValueObjectError
+from domain.common.exceptions import AppError, ValueObjectError
 
 
-def error_handler(status_code: int):
-    def handler(
-        _: Request[Any, Any, Any], exc: ValueObjectError
-    ) -> Response[dict[str, Any]]:
+def error_handler(status_code: int) -> Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]]:
+    def handler(_: Request[Any, Any, Any], exc: AppError) -> Response[dict[str, Any]]:
         return Response(
             status_code=status_code,
             content={"message": exc.message, "detail": []},
@@ -24,7 +22,7 @@ def error_handler(status_code: int):
     return handler
 
 
-exception_handler = {
+exception_handler: dict[type[AppError], Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]]] = {
     ValueObjectError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
     UserIdNotExistError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
     UserEmailNotExistError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
