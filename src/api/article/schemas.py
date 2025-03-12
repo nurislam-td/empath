@@ -1,10 +1,10 @@
 from litestar.dto import DataclassDTO
 from litestar.dto.config import DTOConfig
 
-from application.articles.dto.article import ArticleDTO
+from application.articles.commands.create_article import CreateArticle
 
 
-class ArticleCreateSchema(DataclassDTO[ArticleDTO]):
+class ArticleCreateSchema(DataclassDTO[CreateArticle]):
     config = DTOConfig(
         exclude={
             "id",
