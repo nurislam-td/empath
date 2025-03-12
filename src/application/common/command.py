@@ -1,11 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from dataclasses import asdict, dataclass
+from typing import Any, Generic, TypeVar
+
+from domain.common.constants import Empty
 
 CRes = TypeVar("CRes")
 
 
+@dataclass(frozen=True, slots=True)
 class Command(ABC, Generic[CRes]):
-    pass
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    def to_dict_exclude_unset(self) -> dict[str, Any]:
+        return {attr: value for attr, value in asdict(self).items() if value is not Empty.UNSET}
 
 
 C = TypeVar("C", bound=Command)  # type: ignore
