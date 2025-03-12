@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from uuid import UUID, uuid4
 
-from application.articles.dto.article import ArticleDTO, SubArticleDTO, TagDTO
+from application.articles.dto.article import SubArticleDTO, TagDTO
 from application.articles.mapper import (
     convert_strategy,
 )

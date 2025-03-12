@@ -6,7 +6,7 @@ from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class DeleteArticle(Command[None]):
     article_id: UUID
 
