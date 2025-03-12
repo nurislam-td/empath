@@ -1,13 +1,20 @@
 import asyncio
+from collections import defaultdict
 from collections.abc import Iterable
+from typing import Any, Sequence
 from uuid import UUID
 
-from sqlalchemy import delete, update
+from sqlalchemy import RowMapping, Select, delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 
-from application.articles.dto.article import ArticleDTO, EditArticleDTO, SubArticleDTO, TagDTO
+from application.articles.commands.create_article import CreateArticle
+from application.articles.commands.edit_article import EditArticle
+from application.articles.dto.article import ArticleDTO, SubArticleDTO, TagDTO
+from application.articles.exceptions import ArticleIdNotExistError
 from application.articles.ports.repo import ArticleReader, ArticleRepo
+from infrastructure.articles.mapper import convert_db_to_article_dto, convert_db_to_sub_article_dto
 from infrastructure.articles.models import Article, ArticleImg, RelArticleTag, SubArticle, SubArticleImg, Tag
+from infrastructure.auth.models import User
 from infrastructure.db.repositories.base import AlchemyReader, AlchemyRepo
 
 
@@ -47,7 +54,7 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
             insert(self.rel_article_tag).values([{"tag_id": tag_id, "article_id": article_id} for tag_id in tag_ids])
         )
 
-    async def create_article(self, article: ArticleDTO) -> None:
+    async def create_article(self, article: CreateArticle) -> None:
         await self.execute(
             insert(self.article).values(
                 title=article.title,
@@ -103,8 +110,8 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
             self.map_tags_to_article({dto.id for dto in tags}, article_id),
         )
 
-    async def update_article(self, article: EditArticleDTO) -> None:
-        article_dict = article.to_dict(exclude_unset=True)
+    async def update_article(self, article: EditArticle) -> None:
+        article_dict = article.to_dict_exclude_unset()
         article_id = article_dict.pop("id")
         article_dict.pop("author_id")
         sub_articles = article_dict.pop("sub_articles", None)
@@ -128,3 +135,79 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
 
 class AlchemyAuthReader(AlchemyReader, ArticleReader):
     """Article Reader implementation."""
+
+    article = Article
+    sub_article = SubArticle
+    sub_article_img = SubArticleImg
+    article_img = ArticleImg
+    tag = Tag
+    rel_article_tag = RelArticleTag
+    author = User
+
+    async def get_sub_articles(self, article_ids: Iterable[UUID] | None = None) -> list[SubArticleDTO]:
+        query = select(self.sub_article.__table__)
+        if article_ids:
+            query = query.where(self.sub_article.article_id.in_(article_ids))
+
+        sub_articles = await self.fetch_all(query)
+        sub_article_ids = {i.id for i in sub_articles}
+
+        sub_article_imgs = await self.fetch_all(
+            select(self.sub_article_img.__table__).where(
+                self.sub_article_img.sub_article_id.in_(sub_article_ids),
+            ),
+        )
+
+        img_map: dict[UUID, list[str]] = defaultdict(list)
+        for i in sub_article_imgs:
+            img_map[i.sub_article_id].append(i.url)
+
+        return [
+            convert_db_to_sub_article_dto(db_sub_article=sub_article, db_sub_article_imgs=img_map[sub_article.id])
+            for sub_article in sub_articles
+        ]
+
+    def get_imgs_qs(self, article_ids: Iterable[UUID] | None = None) -> Select[Any]:
+        query = select(self.article_img.url)
+        if article_ids:
+            query = query.where(self.article_img.article_id.in_(article_ids))
+        return query
+
+    def get_tags_qs(self, article_ids: Iterable[UUID] | None = None) -> Select[Any]:
+        table = self.tag.__table__
+        selected: list[Any] = [self.tag.__table__]
+
+        if article_ids:
+            selected.append(self.rel_article_tag.article_id)
+            table = table.join(
+                self.rel_article_tag.__table__,
+                self.tag.id == self.rel_article_tag.tag_id & self.rel_article_tag.article_id.in_(article_ids),
+            )
+
+        return select(*selected).select_from(table)
+
+    async def get_article_by_id(self, article_id: UUID) -> ArticleDTO:
+        article_authors_join = self.article.__table__.join(
+            self.author.__table__,
+            self.article.author_id == self.author.id,
+        )
+        qs = (
+            select(
+                self.article,
+                self.author.id,
+                self.author.nickname,
+                self.author.name,
+                self.author.lastname,
+                self.author.patronymic,
+            )
+            .select_from(article_authors_join)
+            .where(self.article.id == article_id)
+        )
+        article = await self.fetch_one(qs)
+        if not article:
+            raise ArticleIdNotExistError(article_id)
+        sub_articles = await self.get_sub_articles({article_id})
+        article_imgs = await self.fetch_sequence(self.get_imgs_qs({article_id}))
+        article_tags = await self.fetch_all(self.get_tags_qs({article_id}))
+
+        return convert_db_to_article_dto(article, sub_articles, article_imgs, article_tags)
