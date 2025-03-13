@@ -9,7 +9,7 @@ from domain.users.enums.gender import Gender
 from domain.users.value_objects.nickname import Nickname
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class UpdateUser(Command[None]):
     user_id: UUID
     nickname: str

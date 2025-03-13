@@ -5,7 +5,7 @@ from application.auth.ports.repo import VerifyCodeRepo
 from application.common.command import Command, CommandHandler
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class VerifyEmail(Command[bool]):
     email: str
     code: str
