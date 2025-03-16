@@ -86,7 +86,7 @@ class Article(ArticleBase):
 class Tag(ArticleBase):
     __tablename__ = "tag"
 
-    name: Mapped[str] = mapped_column(String(TAG_NAME_LEN))
+    name: Mapped[str] = mapped_column(String(TAG_NAME_LEN), unique=True)
 
 
 class RelArticleTag(ArticleBase):
