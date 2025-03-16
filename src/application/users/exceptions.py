@@ -23,7 +23,7 @@ class UserIdNotExistError(ApplicationError):
 
 
 @dataclass(slots=True, eq=False)
-class UserEmailAlreadyExist(ApplicationError):
+class UserEmailAlreadyExistError(ApplicationError):
     email: str
 
     @property

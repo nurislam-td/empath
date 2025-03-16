@@ -33,8 +33,16 @@ def convert_dto_to_article(dto: ArticleDTO) -> Article:
     )
 
 
+def convert_dict_to_subarticle(data: dict[str, Any]) -> SubArticle:
+    return SubArticle(text=data["text"], title=ArticleTitle(data["title"]), imgs=data["imgs"], id=data["id"])
+
+
+def convert_dict_to_tag(data: dict[str, Any]) -> Tag:
+    return Tag(name=TagName(data["name"]), id=data["id"])
+
+
 convert_strategy: dict[str, Callable[[Any], Any]] = {
     "title": lambda value: ArticleTitle(value),
-    "sub_articles": lambda value: [convert_dto_to_subarticle(dto) for dto in value],
-    "tags": lambda value: [convert_dto_to_tag(dto) for dto in value],
+    "sub_articles": lambda value: [convert_dict_to_subarticle(data) for data in value],
+    "tags": lambda value: [convert_dict_to_tag(dto) for dto in value],
 }

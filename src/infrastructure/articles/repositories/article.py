@@ -1,7 +1,7 @@
 import asyncio
 from collections import defaultdict
 from collections.abc import Iterable
-from typing import Any, Sequence
+from typing import Any, Coroutine, Sequence
 from uuid import UUID
 
 from sqlalchemy import RowMapping, Select, delete, select, update
@@ -39,7 +39,10 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
     async def create_sub_articles(self, article_id: UUID, sub_articles: list[SubArticleDTO]) -> None:
         await self.execute(
             insert(self.sub_article).values(
-                [{"title": dto.title, "text": dto.text, "article_id": article_id} for dto in sub_articles],
+                [
+                    {"id": dto.id, "title": dto.title, "text": dto.text, "article_id": article_id}
+                    for dto in sub_articles
+                ],
             ),
         )
         await asyncio.gather(*(self.create_sub_article_imgs(dto.id, dto.imgs) for dto in sub_articles))
@@ -64,9 +67,14 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
                 id=article.id,
             ),
         )
+        tasks: list[Coroutine[Any, Any, Any]] = []
+        if article.sub_articles:
+            tasks.append(self.create_sub_articles(article.id, article.sub_articles))
+        if article.imgs:
+            tasks.append(self.create_article_imgs(article.id, article.imgs))
+
         await asyncio.gather(
-            self.create_sub_articles(article_id=article.id, sub_articles=article.sub_articles),
-            self.create_article_imgs(article.id, article.imgs),
+            *tasks,
             self.create_tags_if_not_exists(article.tags),
             self.map_tags_to_article({dto.id for dto in article.tags}, article.id),
         )
