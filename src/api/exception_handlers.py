@@ -8,7 +8,7 @@ from application.auth.exceptions import (
     InvalidRefreshTokenError,
     InvalidVerificationCodeError,
 )
-from application.users.exceptions import UserEmailNotExistError, UserIdNotExistError
+from application.users.exceptions import UserEmailAlreadyExistError, UserEmailNotExistError, UserIdNotExistError
 from domain.common.exceptions import AppError, ValueObjectError
 
 
@@ -30,4 +30,5 @@ exception_handler: dict[type[AppError], Callable[[Request[Any, Any, Any], AppErr
     InvalidPreviousPasswordError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
     InvalidRefreshTokenError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
     InvalidVerificationCodeError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+    UserEmailAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
 }
