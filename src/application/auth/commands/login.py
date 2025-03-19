@@ -29,10 +29,11 @@ class LoginHandler(CommandHandler[Login, JWTPair]):
     async def __call__(self, command: Login) -> JWTPair:
         user = await self.user_reader.get_user_by_email(email=Email(command.email).to_base())
         if not self.pwd_manager.verify_password(
-            password=Password(command.password).to_base(), hash_password=user.password
+            password=Password(command.password).to_base(),
+            hash_password=user.password,
         ):
             raise InvalidCredentialsError()
-        jwt = self.jwt_manager.create_pair(payload=dict(sub=str(user.id), email=command.email))
+        jwt = self.jwt_manager.create_pair(payload={"sub": str(user.id), "email": command.email})
         await self.auth_repo.refresh_jwt(jwt=jwt, user_id=user.id)
         await self.uow.commit()
         return jwt

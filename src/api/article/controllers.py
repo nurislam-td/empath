@@ -34,6 +34,6 @@ class ArticleController(Controller):
         data: DTOData[CreateArticle],
         create_article_handler: Depends[CreateArticleHandler],
         request: Request[JWTUserPayload, str, State],
-    ) -> Response[None]:
+    ) -> Response[str]:
         await create_article_handler(data.create_instance(author_id=request.user.sub))
-        return Response(content=None, status_code=status_codes.HTTP_201_CREATED)
+        return Response(content="", status_code=status_codes.HTTP_201_CREATED)
