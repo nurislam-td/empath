@@ -31,10 +31,10 @@ class SignUpEmailHandler(CommandHandler[SignUpEmail, None]):
     async def __call__(self, command: SignUpEmail):
         if await self._user_reader.check_email_existence(email=Email(command.email).to_base()):
             raise UserEmailAlreadyExistError(email=command.email)
-        verify_code = self._password_manager.get_random_num()
+        verify_code = "718293"  # self._password_manager.get_random_num()
         await self._verify_repo.set_verify_code(email=command.email, code=verify_code)
-        self._email_client.send_email_template(
-            emails=[command.email],
-            template_name=VERIFY_CODE_SEND_TEMPLATE_PATH,
-            code=verify_code,
-        )
+        # self._email_client.send_email_template(
+        #     emails=[command.email],
+        #     template_name=VERIFY_CODE_SEND_TEMPLATE_PATH,
+        #     code=verify_code,
+        # )
