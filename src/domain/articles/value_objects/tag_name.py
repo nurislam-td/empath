@@ -10,12 +10,12 @@ class TooLongTagNameError(ValueObjectError):
     name: str
 
     @property
-    def message(self):
-        return f"Tag name too long: `{self.name}`"
+    def message(self) -> str:
+        return f"Tag name too long: `{self.name}`, max length is {TAG_NAME_LEN}"
 
 
 @dataclass(frozen=True, slots=True)
 class TagName(ValueObject[str]):
-    def _validate(self):
+    def _validate(self) -> None:
         if len(self.value) > TAG_NAME_LEN:
             raise TooLongTagNameError(self.value)

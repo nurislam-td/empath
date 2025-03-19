@@ -9,7 +9,7 @@ from application.auth.exceptions import (
     InvalidVerificationCodeError,
 )
 from application.users.exceptions import UserEmailAlreadyExistError, UserEmailNotExistError, UserIdNotExistError
-from domain.common.exceptions import AppError, ValueObjectError
+from domain.common.exceptions import AppError, UnexpectedError, ValueObjectError
 
 
 def error_handler(status_code: int) -> Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]]:
@@ -31,4 +31,5 @@ exception_handler: dict[type[AppError], Callable[[Request[Any, Any, Any], AppErr
     InvalidRefreshTokenError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
     InvalidVerificationCodeError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
     UserEmailAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
+    UnexpectedError: error_handler(status_codes.HTTP_500_INTERNAL_SERVER_ERROR),
 }

@@ -12,7 +12,7 @@ class ArticleCreateSchema(DataclassDTO[CreateArticle]):
             "likes_cnt",
             "dislikes_cnt",
             "sub_articles.0.id",
-            "tags.0.id",
+            "author_id",
         },
         rename_strategy="camel",
     )

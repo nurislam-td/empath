@@ -8,6 +8,7 @@ from domain.articles.entities.tags import Tag
 from domain.articles.value_objects import ArticleTitle
 from domain.articles.value_objects.tag_name import TagName
 from domain.common.constants import Empty
+from domain.common.exceptions import UnexpectedError
 
 
 def convert_dto_to_subarticle(dto: SubArticleDTO) -> SubArticle:
@@ -34,11 +35,19 @@ def convert_dto_to_article(dto: ArticleDTO) -> Article:
 
 
 def convert_dict_to_subarticle(data: dict[str, Any]) -> SubArticle:
-    return SubArticle(text=data["text"], title=ArticleTitle(data["title"]), imgs=data["imgs"], id=data["id"])
+    try:
+        return SubArticle(text=data["text"], title=ArticleTitle(data["title"]), imgs=data["imgs"], id=data["id"])
+    except KeyError as e:
+        msg = f"KeyError: {e}"
+        raise UnexpectedError(msg) from e
 
 
 def convert_dict_to_tag(data: dict[str, Any]) -> Tag:
-    return Tag(name=TagName(data["name"]), id=data["id"])
+    try:
+        return Tag(name=TagName(data["name"]), id=data["id"])
+    except KeyError as e:
+        msg = f"KeyError: {e}"
+        raise UnexpectedError(msg) from e
 
 
 convert_strategy: dict[str, Callable[[Any], Any]] = {
