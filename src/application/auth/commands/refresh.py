@@ -8,7 +8,7 @@ from application.common.uow import UnitOfWork
 from domain.auth.value_objects.jwt import JWTPair
 
 
-@dataclass
+@dataclass(frozen=True)
 class Refresh(Command[JWTPair]):
     refresh_token: str
 
@@ -28,9 +28,7 @@ class RefreshHandler(CommandHandler[Refresh, JWTPair]):
 
     async def __call__(self, command: Refresh) -> JWTPair:
         payload = self._jwt_manager.decode_refresh(refresh_token=command.refresh_token)
-        refresh_token = await self._auth_reader.get_refresh_token(
-            user_id=payload["sub"]
-        )
+        refresh_token = await self._auth_reader.get_refresh_token(user_id=payload["sub"])
         if refresh_token != command.refresh_token:
             raise InvalidRefreshTokenError()
         jwt_pair = self._jwt_manager.create_pair(payload=payload)

@@ -8,7 +8,7 @@ from application.common.uow import UnitOfWork
 from application.users.ports.repo import UserRepo
 
 
-@dataclass
+@dataclass(frozen=True)
 class UpdateAvatar(Command[str]):
     user_id: UUID
     file: BytesIO
@@ -25,8 +25,6 @@ class UpdateAvatarHandler(CommandHandler[UpdateAvatar, str]):
         file_name = f"/imgs/users/{command.user_id}/avatar/{uuid4()}_{command.filename}"
 
         await self._file_storage.upload_file(file=command.file, file_name=file_name)
-        await self._user_repo.update_user(
-            values=dict(image=file_name), filters=dict(id=command.user_id)
-        )
+        await self._user_repo.update_user(values=dict(image=file_name), filters=dict(id=command.user_id))
         await self._uow.commit()
         return file_name

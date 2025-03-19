@@ -8,7 +8,7 @@ from domain.users.value_objects.email import Email
 from domain.users.value_objects.password import Password
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class ForgetPassword(Command[None]):
     email: str
     password: str
@@ -22,15 +22,9 @@ class ForgetPasswordHandler(CommandHandler[ForgetPassword, None]):
     _pwd_manager: IPasswordManager
 
     async def __call__(self, command: ForgetPassword) -> None:
-        user = await self._user_reader.get_user_by_email(
-            email=Email(command.email).to_base()
-        )
+        user = await self._user_reader.get_user_by_email(email=Email(command.email).to_base())
         await self._user_repo.update_user(
-            values=dict(
-                password=self._pwd_manager.hash_password(
-                    Password(command.password).to_base()
-                )
-            ),
+            values=dict(password=self._pwd_manager.hash_password(Password(command.password).to_base())),
             filters=dict(id=user.id),
         )
         await self._uow.commit()

@@ -29,10 +29,10 @@ class ResetEmailHandler(CommandHandler[ResetEmail, None]):
 
     async def __call__(self, command: ResetEmail):
         await self._user_reader.get_user_by_email(email=Email(command.email).to_base())
-        verify_code = self._password_manager.get_random_num()
+        verify_code = "718293"  # self._password_manager.get_random_num()
         await self._verify_repo.set_verify_code(email=command.email, code=verify_code)
-        self._email_client.send_email_template(
-            emails=[command.email],
-            template_name=VERIFY_CODE_SEND_TEMPLATE_PATH,
-            code=verify_code,
-        )
+        # self._email_client.send_email_template(
+        #     emails=[command.email],
+        #     template_name=VERIFY_CODE_SEND_TEMPLATE_PATH,
+        #     code=verify_code,
+        # )

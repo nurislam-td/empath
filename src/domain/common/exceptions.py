@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import Any, ClassVar
 
 
 @dataclass(eq=False, slots=True)
@@ -11,6 +11,17 @@ class AppError(Exception):
     @property
     def message(self) -> str:
         return "An app error occurred"
+
+
+@dataclass(eq=False, slots=True)
+class UnexpectedError(AppError):
+    """Unexpected Error."""
+
+    detail: Any = None
+
+    @property
+    def message(self) -> str:
+        return f"An unexpected error occurred because {self.detail}"
 
 
 @dataclass(eq=False, slots=True)

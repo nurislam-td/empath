@@ -26,12 +26,7 @@ class AuthBase(TimedBaseModel):
 
 class User(AuthBase):
     __tablename__ = "user"
-    id = Column(  # type: ignore
-        types.Uuid,
-        primary_key=True,
-        server_default=text("gen_random_uuid()"),  # use what you have on your server
-        index=True,
-    )
+
     password = Column(LargeBinary)
     email = Column(String(length=255), index=True, unique=True)
     nickname = Column(String(length=20))
@@ -45,12 +40,6 @@ class User(AuthBase):
 
 class RefreshToken(AuthBase):
     __tablename__ = "refresh_token"
-    id = Column(  # type: ignore
-        types.Uuid,
-        primary_key=True,
-        server_default=text("gen_random_uuid()"),
-        index=True,
-    )
 
     user_id = Column(ForeignKey("auth.user.id", ondelete="CASCADE"))  # type: ignore
     refresh_token = Column(String, nullable=False)
