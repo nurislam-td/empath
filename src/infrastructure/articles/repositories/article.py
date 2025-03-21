@@ -12,10 +12,18 @@ from application.articles.commands.edit_article import EditArticle
 from application.articles.dto.article import ArticleDTO, SubArticleDTO, TagDTO
 from application.articles.exceptions import ArticleIdNotExistError
 from application.articles.ports.repo import ArticleReader, ArticleRepo
-from infrastructure.articles.mapper import convert_db_to_article_dto, convert_db_to_sub_article_dto
+from application.articles.queries.get_tag_list import GetTagList
+from application.common.dto import PaginatedDTO
+from infrastructure.articles.mapper import (
+    convert_db_to_article_dto,
+    convert_db_to_sub_article_dto,
+    convert_db_to_tag_dto,
+)
 from infrastructure.articles.models import Article, ArticleImg, RelArticleTag, SubArticle, SubArticleImg, Tag
+from infrastructure.articles.repositories.filters import TagFilters
 from infrastructure.auth.models import User
 from infrastructure.db.repositories.base import AlchemyReader, AlchemyRepo
+from infrastructure.db.repositories.paginators import AlchemyPaginator
 
 
 class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
@@ -144,6 +152,7 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
 class AlchemyArticleReader(AlchemyReader, ArticleReader):
     """Article Reader implementation."""
 
+    paginator = AlchemyPaginator
     article = Article
     sub_article = SubArticle
     sub_article_img = SubArticleImg
@@ -222,3 +231,18 @@ class AlchemyArticleReader(AlchemyReader, ArticleReader):
         )
 
         return convert_db_to_article_dto(article, sub_articles, article_imgs, article_tags)
+
+    async def get_tag_list(self, query: GetTagList) -> PaginatedDTO[TagDTO]:
+        qs = self.get_tags_qs()
+        qs = TagFilters(name=query.name).filter_qs(qs).order_by(self.tag.name)
+
+        paginated_query = self.paginator.paginate(
+            query=qs, page=query.pagination.page, per_page=query.pagination.per_page
+        )
+        value_count = await self.count(qs)
+        tags = await self.fetch_all(paginated_query)
+        page_count = self.paginator.get_page_count(value_count, query.pagination.per_page)
+
+        return PaginatedDTO[TagDTO](
+            count=page_count, page=query.pagination.page, results=[convert_db_to_tag_dto(tag) for tag in tags]
+        )

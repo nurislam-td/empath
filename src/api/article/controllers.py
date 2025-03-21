@@ -2,7 +2,7 @@ from typing import ClassVar
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, post, status_codes
+from litestar import Controller, Request, Response, get, post, status_codes
 from litestar.datastructures import State
 from litestar.dto import DTOData
 
@@ -13,6 +13,10 @@ from application.articles.commands.create_article import (
     CreateArticle,
     CreateArticleHandler,
 )
+from application.articles.dto.article import TagDTO
+from application.articles.queries.get_tag_list import GetTagList, GetTagListHandler
+from application.common.dto import PaginatedDTO
+from application.common.query import PaginationParams
 from domain.articles.value_objects.article_title import TooLongArticleTitleError
 from domain.articles.value_objects.tag_name import TooLongTagNameError
 
@@ -37,3 +41,16 @@ class ArticleController(Controller):
     ) -> Response[str]:
         await create_article_handler(data.create_instance(author_id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+
+    @get(
+        "/tags",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def get_tag_list(
+        self,
+        get_tag_list: Depends[GetTagListHandler],
+        pagination_params: PaginationParams,
+        name: str | None = None,
+    ) -> PaginatedDTO[TagDTO]:
+        return await get_tag_list(GetTagList(name=name, pagination=pagination_params))

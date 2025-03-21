@@ -1,12 +1,6 @@
-from dataclasses import dataclass, field
-
 from litestar.params import Parameter
 
-
-@dataclass(frozen=True, slots=True)
-class PaginationParams:
-    page: int
-    per_page: int = field(default=5)
+from application.common.query import PaginationParams
 
 
 async def pagination_query_params(

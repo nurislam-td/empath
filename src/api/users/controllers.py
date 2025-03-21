@@ -13,8 +13,9 @@ from litestar.params import Body
 from litestar.response import Response
 
 from api.auth.schemas import JWTUserPayload
-from api.pagination import PaginationParams, pagination_query_params
+from api.pagination import pagination_query_params
 from api.users.schemas import UserUpdateSchema
+from application.common.query import PaginationParams
 from application.users.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler
 from application.users.commands.update_user import UpdateUser, UpdateUserHandler
 from application.users.dto.user import PaginatedUserDTO, UserDTO
@@ -37,7 +38,6 @@ class UserController(Controller):
     @get(
         path="/",
         status_code=status_codes.HTTP_200_OK,
-        dependencies={"pagination_params": Provide(pagination_query_params)},
     )
     @inject
     async def get_users(
