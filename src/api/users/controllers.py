@@ -43,9 +43,7 @@ class UserController(Controller):
     async def get_users(
         self, pagination_params: PaginationParams, get_users: Depends[GetUsersHandler]
     ) -> PaginatedUserDTO:
-        return await get_users(
-            GetUsers(page=pagination_params.page, per_page=pagination_params.per_page)
-        )
+        return await get_users(GetUsers(page=pagination_params.page, per_page=pagination_params.per_page))
 
     @put(path="/me/avatar", status_code=status_codes.HTTP_200_OK)
     @inject
@@ -56,9 +54,7 @@ class UserController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> Response[str]:
         content = await data.read()
-        command = UpdateAvatar(
-            user_id=request.user.sub, file=BytesIO(content), filename=data.filename
-        )
+        command = UpdateAvatar(user_id=request.user.sub, file=BytesIO(content), filename=data.filename)
         new_url = await update_avatar(command)
         return Response(content=new_url, status_code=status_codes.HTTP_200_OK)
 
