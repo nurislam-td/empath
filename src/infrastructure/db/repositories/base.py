@@ -22,6 +22,9 @@ class AlchemyReader(ABC):
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
+    async def count(self, query: Select[Any]) -> int:
+        return len(await self.fetch_all(query))
+
     async def fetch_one(self, query: Select[Any]) -> RowMapping | None:
         result = await self.session.execute(query)
         return result.mappings().one_or_none()

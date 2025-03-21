@@ -40,16 +40,11 @@ class AlchemyUserReader(AlchemyReader, UserReader):
             query = query.filter_by(**filters)
         return query
 
-    async def count(self, query: Select[Any]) -> int:
-        return len(await self.fetch_all(query))
-
     async def get_paginated_users(
         self, page: int, per_page: int, filters: dict[str, Any] | None = None
     ) -> PaginatedDTO[UserDTO]:
         query = self._get_users_query(filters)
-        paginated_query = self.paginator.paginate(
-            query=query, page=page, per_page=per_page
-        )
+        paginated_query = self.paginator.paginate(query=query, page=page, per_page=per_page)
         value_count = await self.count(query)
         page_count = self.paginator.get_page_count(value_count, per_page)
         users = await self.fetch_all(paginated_query)
@@ -81,8 +76,4 @@ class AlchemyUserReader(AlchemyReader, UserReader):
         return convert_db_model_to_user_entity(user=user_map)
 
     async def check_email_existence(self, email: str) -> bool:
-        return bool(
-            await self.fetch_one(
-                select(self.user.__table__).where(self.user.email == email)
-            )
-        )
+        return bool(await self.fetch_one(select(self.user.__table__).where(self.user.email == email)))
