@@ -1,18 +1,20 @@
 from typing import ClassVar
+from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, get, post, status_codes
+from litestar import Controller, Request, Response, get, patch, post, status_codes
 from litestar.datastructures import State
 from litestar.dto import DTOData
 
-from api.article.schemas import ArticleCreateSchema
+from api.article.schemas import ArticleCreateSchema, EditArticleSchema
 from api.auth.schemas import JWTUserPayload
 from api.exception_handlers import error_handler
 from application.articles.commands.create_article import (
     CreateArticle,
     CreateArticleHandler,
 )
+from application.articles.commands.edit_article import EditArticle, EditArticleHandler
 from application.articles.dto.article import TagDTO
 from application.articles.queries.get_tag_list import GetTagList, GetTagListHandler
 from application.common.dto import PaginatedDTO
@@ -54,3 +56,19 @@ class ArticleController(Controller):
         name: str | None = None,
     ) -> PaginatedDTO[TagDTO]:
         return await get_tag_list(GetTagList(name=name, pagination=pagination_params))
+
+    @patch(
+        "/{article_id:uuid}",
+        status_code=status_codes.HTTP_200_OK,
+        dto=EditArticleSchema,
+    )
+    @inject
+    async def edit_article(
+        self,
+        article_id: UUID,
+        data: DTOData[EditArticle],
+        request: Request[JWTUserPayload, str, State],
+        edit_article: Depends[EditArticleHandler],
+    ) -> Response[str]:
+        await edit_article(data.create_instance(author_id=request.user.sub, id=article_id))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)

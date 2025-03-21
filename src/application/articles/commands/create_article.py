@@ -2,9 +2,7 @@ from dataclasses import dataclass, field
 from uuid import UUID, uuid4
 
 from application.articles.dto.article import SubArticleDTO, TagDTO
-from application.articles.mapper import (
-    convert_strategy,
-)
+from application.articles.mapper import convert_strategy
 from application.articles.ports.repo import ArticleRepo
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
@@ -34,7 +32,7 @@ class CreateArticleHandler(CommandHandler[CreateArticle, None]):
 
     async def __call__(self, command: CreateArticle) -> None:
         converted_data = {
-            attr: convert_strategy.get(attr, lambda x: x)(value) for attr, value in command.to_dict().items()
+            key: convert_strategy.get(key, lambda x: x)(value) for key, value in command.to_dict().items()
         }
         article = Article(**converted_data)
         article.record_event(ArticleCreated(author_id=article.author_id, article_id=article.id))

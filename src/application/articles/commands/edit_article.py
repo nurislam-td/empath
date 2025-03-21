@@ -17,8 +17,8 @@ from domain.common.constants import Empty
 class EditArticle(Command[None]):
     id: UUID
     author_id: UUID
-    title: str | Empty = Empty.UNSET
-    text: str | Empty = Empty.UNSET
+    title: str = Empty.UNSET
+    text: str = Empty.UNSET
     tags: list[TagDTO] | Empty = Empty.UNSET
     is_visible: bool | Empty = Empty.UNSET
     imgs: list[str] | Empty = Empty.UNSET
@@ -26,7 +26,7 @@ class EditArticle(Command[None]):
 
 
 @dataclass
-class UpdateArticleHandler(CommandHandler[EditArticle, None]):
+class EditArticleHandler(CommandHandler[EditArticle, None]):
     _article_repo: ArticleRepo
     _article_reader: ArticleReader
     _uow: UnitOfWork
@@ -36,7 +36,8 @@ class UpdateArticleHandler(CommandHandler[EditArticle, None]):
         article = convert_dto_to_article(article_dto)
         if len(keys := command.to_dict_exclude_unset().keys()) == 2 and {"author_id", "id"} <= keys:
             raise EmptyArticleUpdatesError()
-        for attr, value in command.to_dict().items():
+
+        for attr, value in command.to_dict_exclude_unset().items():
             convert_fun = convert_strategy.get(attr, lambda x: x)
             setattr(article, attr, convert_fun(value))
 

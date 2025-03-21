@@ -198,7 +198,7 @@ class AlchemyArticleReader(AlchemyReader, ArticleReader):
             selected.append(self.rel_article_tag.article_id)
             table = table.join(
                 self.rel_article_tag.__table__,
-                self.tag.id == self.rel_article_tag.tag_id & self.rel_article_tag.article_id.in_(article_ids),
+                (self.tag.id == self.rel_article_tag.tag_id) & (self.rel_article_tag.article_id.in_(article_ids)),
             )
 
         return select(*selected).select_from(table)
@@ -210,12 +210,11 @@ class AlchemyArticleReader(AlchemyReader, ArticleReader):
         )
         qs = (
             select(
-                self.article,
-                self.author.id,
-                self.author.nickname,
-                self.author.name,
-                self.author.lastname,
-                self.author.patronymic,
+                self.article.__table__,
+                self.author.nickname.label("author_nickname"),
+                self.author.name.label("author_name"),
+                self.author.lastname.label("author_lastname"),
+                self.author.patronymic.label("author_patronymic"),
             )
             .select_from(article_authors_join)
             .where(self.article.id == article_id)
