@@ -75,11 +75,9 @@ class ArticleController(Controller):
         edit_article: Depends[EditArticleHandler],
     ) -> Response[str]:
         kwargs = data.to_dict()
-        if tags := kwargs.get("tags"):
-            if not tags:
-                raise ValidationError("tags.len>0")
+        if tags := kwargs.get("tags"):  # .schema.TagSchema
             kwargs["tags"] = [TagDTO(**tag.to_dict()) for tag in tags]
-        if sub_articles := kwargs.get("sub_articles"):
+        if sub_articles := kwargs.get("sub_articles"):  # .schema.SubArticleSchema
             kwargs["sub_articles"] = [SubArticleDTO(**sub_article.to_dict()) for sub_article in sub_articles]
         command = EditArticle(id=article_id, author_id=request.user.sub, **kwargs)
         await edit_article(command)
