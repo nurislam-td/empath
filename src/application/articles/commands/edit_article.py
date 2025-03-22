@@ -10,6 +10,7 @@ from application.articles.mapper import (
 from application.articles.ports.repo import ArticleReader, ArticleRepo
 from application.common.command import Command, CommandHandler
 from application.common.uow import UnitOfWork
+from domain.articles.entities.article import EmptyTagListError
 from domain.common.constants import Empty
 
 
@@ -35,11 +36,13 @@ class EditArticleHandler(CommandHandler[EditArticle, None]):
         article_dto = await self._article_reader.get_article_by_id(command.id)
         article = convert_dto_to_article(article_dto)
         if len(keys := command.to_dict_exclude_unset().keys()) == 2 and {"author_id", "id"} <= keys:
-            raise EmptyArticleUpdatesError()
+            raise EmptyArticleUpdatesError
 
         for attr, value in command.to_dict_exclude_unset().items():
             convert_fun = convert_strategy.get(attr, lambda x: x)
             setattr(article, attr, convert_fun(value))
+        if not article.tags:
+            raise EmptyTagListError
 
         await self._article_repo.update_article(command)
         await self._uow.commit()
