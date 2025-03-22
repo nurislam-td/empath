@@ -7,6 +7,14 @@ from domain.articles.events import ArticleDisliked, ArticleLiked
 from domain.articles.value_objects import ArticleTitle
 from domain.common.constants import Empty
 from domain.common.entities import Aggregate
+from domain.common.exceptions import DomainError
+
+
+@dataclass
+class EmptyTagListError(DomainError):
+    @property
+    def message(self) -> str:
+        return "Tag must be a valid list"
 
 
 @dataclass(slots=True)
