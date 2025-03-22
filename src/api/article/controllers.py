@@ -16,8 +16,9 @@ from application.articles.commands.create_article import (
     CreateArticleHandler,
 )
 from application.articles.commands.edit_article import EditArticle, EditArticleHandler
-from application.articles.dto.article import SubArticleDTO, TagDTO
+from application.articles.dto.article import PaginatedArticleDTO, SubArticleDTO, TagDTO
 from application.articles.exceptions import EmptyArticleUpdatesError
+from application.articles.queries.get_articles import GetArticles, GetArticlesHandler
 from application.articles.queries.get_tag_list import GetTagList, GetTagListHandler
 from application.common.dto import PaginatedDTO
 from application.common.query import PaginationParams
@@ -75,12 +76,17 @@ class ArticleController(Controller):
         edit_article: Depends[EditArticleHandler],
     ) -> Response[str]:
         kwargs = data.to_dict()
-        if tags := kwargs.get("tags"):
-            if not tags:
-                raise ValidationError("tags.len>0")
+        if tags := kwargs.get("tags"):  # .schema.TagSchema
             kwargs["tags"] = [TagDTO(**tag.to_dict()) for tag in tags]
-        if sub_articles := kwargs.get("sub_articles"):
+        if sub_articles := kwargs.get("sub_articles"):  # .schema.SubArticleSchema
             kwargs["sub_articles"] = [SubArticleDTO(**sub_article.to_dict()) for sub_article in sub_articles]
         command = EditArticle(id=article_id, author_id=request.user.sub, **kwargs)
         await edit_article(command)
         return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @get("/", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_articles(
+        self, get_articles: Depends[GetArticlesHandler], pagination_params: PaginationParams
+    ) -> PaginatedArticleDTO:
+        return await get_articles(GetArticles(pagination=pagination_params))

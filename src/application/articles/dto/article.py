@@ -20,6 +20,15 @@ class SubArticleDTO(DTO):
 
 
 @dataclass(frozen=True, slots=True)
+class SubArticleWithArticleIdDTO(DTO):
+    article_id: UUID
+    title: str
+    text: str
+    imgs: list[str] = field(default_factory=list)
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass(frozen=True, slots=True)
 class TagDTO(DTO):
     name: str
     id: UUID = field(default_factory=uuid4)

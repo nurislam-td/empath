@@ -14,8 +14,8 @@ class DTO:
 class PaginatedDTO[T: DTO]:
     count: int
     page: int
-    next: int | None = field(init=False, default=None)
-    prev: int | None = field(init=False, default=None)
+    next: int | None = field(default=None)
+    prev: int | None = field(default=None)
     results: list[T] = field(default_factory=list)
 
     def __post_init__(self) -> None:
