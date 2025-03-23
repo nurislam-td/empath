@@ -8,7 +8,7 @@ from sqlalchemy.orm import (
     mapped_column,
 )
 
-from db.models.base import TimedBaseModel
+from common.infrastructure.db.models.base import TimedBaseModel
 
 
 class Gender(str, enum.Enum):

@@ -6,7 +6,7 @@ from auth.application.exceptions import TokenSubNotFoundError
 from auth.application.ports.jwt import JWTPair
 from auth.application.ports.repo import AuthReader, AuthRepo
 from auth.infrastructure.models import RefreshToken
-from db.repositories.base import AlchemyReader, AlchemyRepo
+from common.infrastructure.db.repositories.base import AlchemyReader, AlchemyRepo
 
 
 class AlchemyAuthRepo(AlchemyRepo, AuthRepo):

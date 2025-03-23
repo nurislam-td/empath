@@ -31,8 +31,8 @@ from articles.infrastructure.repositories.filters import TagFilters
 from auth.infrastructure.models import User
 from common.application.dto import PaginatedDTO
 from common.domain.constants import Empty
-from db.repositories.base import AlchemyReader, AlchemyRepo
-from db.repositories.pagination import AlchemyPaginator
+from common.infrastructure.db.repositories.base import AlchemyReader, AlchemyRepo
+from common.infrastructure.db.repositories.pagination import AlchemyPaginator
 
 
 class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):

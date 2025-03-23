@@ -6,7 +6,7 @@ from file_storage.api.providers import FileStorageProvider
 from articles.api.providers import ArticleProvider
 from auth.api.providers import AuthProvider
 from config import Settings, get_settings
-from di.providers import AppProvider
+from common.infrastructure.di.providers import AppProvider
 from users.api.providers import UsersProvider
 
 
