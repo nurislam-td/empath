@@ -7,13 +7,11 @@ from dishka.integrations.litestar import inject
 from litestar import Request, get, put, status_codes
 from litestar.controller import Controller
 from litestar.datastructures import State, UploadFile
-from litestar.di import Provide
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.response import Response
 
 from api.auth.schemas import JWTUserPayload
-from api.pagination import pagination_query_params
 from api.users.schemas import UserUpdateSchema
 from application.common.query import PaginationParams
 from application.users.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler

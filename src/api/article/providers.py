@@ -1,6 +1,7 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
 from application.articles.commands.create_article import CreateArticleHandler
+from application.articles.commands.delete_article import DeleteArticleHandler
 from application.articles.commands.edit_article import EditArticleHandler
 from application.articles.ports.repo import ArticleReader, ArticleRepo
 from application.articles.queries.get_articles import GetArticlesHandler
@@ -16,6 +17,7 @@ class ArticleProvider(Provider):
 
     create_article = provide(CreateArticleHandler)
     edit_article = provide(EditArticleHandler)
+    delete_article = provide(DeleteArticleHandler)
 
     get_tag_list = provide(GetTagListHandler)
     get_articles = provide(GetArticlesHandler)
