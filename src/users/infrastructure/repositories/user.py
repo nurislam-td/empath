@@ -41,7 +41,10 @@ class AlchemyUserReader(AlchemyReader, UserReader):
         return query
 
     async def get_paginated_users(
-        self, page: int, per_page: int, filters: dict[str, Any] | None = None
+        self,
+        page: int,
+        per_page: int,
+        filters: dict[str, Any] | None = None,
     ) -> PaginatedDTO[UserDTO]:
         query = self._get_users_query(filters)
         paginated_query = self.paginator.paginate(query=query, page=page, per_page=per_page)
