@@ -16,15 +16,9 @@ TRUE_VALUES = {"True", "true", "1", "yes", "Y", "T"}
 @dataclass
 class DBSettings:
     DB_USER: str = field(default_factory=lambda: os.environ.get("DB_USER", "db-user"))
-    DB_PASSWORD: str = field(
-        default_factory=lambda: os.environ.get("DB_PASSWORD", "db-pass")
-    )
-    DB_HOST: str = field(
-        default_factory=lambda: os.environ.get("DB_HOST", default="localhost")
-    )
-    DB_PORT: int = field(
-        default_factory=lambda: int(os.environ.get("DB_PORT", default=5432))
-    )
+    DB_PASSWORD: str = field(default_factory=lambda: os.environ.get("DB_PASSWORD", "db-pass"))
+    DB_HOST: str = field(default_factory=lambda: os.environ.get("DB_HOST", default="localhost"))
+    DB_PORT: int = field(default_factory=lambda: int(os.environ.get("DB_PORT", default=5432)))
     DB_NAME: str = field(default_factory=lambda: os.environ.get("DB_NAME", "db-name"))
 
     @property
@@ -38,23 +32,16 @@ class DBSettings:
 @dataclass
 class AuthSettings:
     JWT_ALG: str = "RS256"
-    ACCESS_PRIVATE_PATH: Path = field(
-        default_factory=lambda: BASE_DIR / Path(os.environ["ACCESS_PRIVATE_PATH"])
-    )
-    ACCESS_PUBLIC_PATH: Path = field(
-        default_factory=lambda: BASE_DIR
-        / Path(os.environ.get("ACCESS_PUBLIC_PATH", ""))
-    )
+    ACCESS_PRIVATE_PATH: Path = field(default_factory=lambda: BASE_DIR / Path(os.environ["ACCESS_PRIVATE_PATH"]))
+    ACCESS_PUBLIC_PATH: Path = field(default_factory=lambda: BASE_DIR / Path(os.environ.get("ACCESS_PUBLIC_PATH", "")))
     ACCESS_TOKEN_EXPIRE: int = 500000  # minutes
 
     REFRESH_PRIVATE_PATH: Path = field(
-        default_factory=lambda: BASE_DIR
-        / Path(os.environ.get("REFRESH_PRIVATE_PATH", ""))
+        default_factory=lambda: BASE_DIR / Path(os.environ.get("REFRESH_PRIVATE_PATH", ""))
     )
 
     REFRESH_PUBLIC_PATH: Path = field(
-        default_factory=lambda: BASE_DIR
-        / Path(os.environ.get("REFRESH_PUBLIC_PATH", ""))
+        default_factory=lambda: BASE_DIR / Path(os.environ.get("REFRESH_PUBLIC_PATH", ""))
     )
 
     REFRESH_TOKEN_EXPIRE: int = 60 * 24 * 21  # minutes (21 days)
@@ -66,29 +53,18 @@ class AuthSettings:
 
 @dataclass
 class RedisSettings:
-    PORT: int = field(
-        default_factory=lambda: int(os.environ.get("REDIS_PORT", default=6379))
-    )
-    HOST: str = field(
-        default_factory=lambda: os.environ.get("REDIS_HOST", default="localhost")
-    )
-    PREFIX: str = field(
-        default_factory=lambda: os.environ.get("REDIS_PREFIX", default="empath-cache")
-    )
+    PORT: int = field(default_factory=lambda: int(os.environ.get("REDIS_PORT", default=6379)))
+    HOST: str = field(default_factory=lambda: os.environ.get("REDIS_HOST", default="localhost"))
+    PREFIX: str = field(default_factory=lambda: os.environ.get("REDIS_PREFIX", default="empath-cache"))
 
     @property
     def URL(self) -> str:
         return f"redis://{self.HOST}:{self.PORT}"
 
-    SOCKET_CONNECT_TIMEOUT: int = field(
-        default_factory=lambda: int(os.getenv("REDIS_CONNECT_TIMEOUT", "5"))
-    )
-    HEALTH_CHECK_INTERVAL: int = field(
-        default_factory=lambda: int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL", "5"))
-    )
+    SOCKET_CONNECT_TIMEOUT: int = field(default_factory=lambda: int(os.getenv("REDIS_CONNECT_TIMEOUT", "5")))
+    HEALTH_CHECK_INTERVAL: int = field(default_factory=lambda: int(os.getenv("REDIS_HEALTH_CHECK_INTERVAL", "5")))
     SOCKET_KEEPALIVE: bool = field(
-        default_factory=lambda: os.getenv("REDIS_SOCKET_KEEPALIVE", "True")
-        in TRUE_VALUES,
+        default_factory=lambda: os.getenv("REDIS_SOCKET_KEEPALIVE", "True") in TRUE_VALUES,
     )
 
 
@@ -96,15 +72,9 @@ class RedisSettings:
 class S3Settings:
     S3_ACCESS_KEY: str = field(default_factory=lambda: os.environ["S3_ACCESS_KEY"])
     S3_SECRET_KEY: str = field(default_factory=lambda: os.environ["S3_SECRET_KEY"])
-    S3_PRIVATE_BUCKET_NAME: str = field(
-        default_factory=lambda: os.environ.get("S3_PRIVATE_BUCKET_NAME", "")
-    )
-    S3_PUBLIC_BUCKET_NAME: str = field(
-        default_factory=lambda: os.environ.get("S3_PUBLIC_BUCKET_NAME", "")
-    )
-    S3_ENDPOINT_URL: str = field(
-        default_factory=lambda: os.environ.get("S3_ENDPOINT_URL", "")
-    )
+    S3_PRIVATE_BUCKET_NAME: str = field(default_factory=lambda: os.environ.get("S3_PRIVATE_BUCKET_NAME", ""))
+    S3_PUBLIC_BUCKET_NAME: str = field(default_factory=lambda: os.environ.get("S3_PUBLIC_BUCKET_NAME", ""))
+    S3_ENDPOINT_URL: str = field(default_factory=lambda: os.environ.get("S3_ENDPOINT_URL", ""))
 
 
 @dataclass(frozen=True, slots=True)
@@ -117,17 +87,11 @@ class EmailSettings:
 
 @dataclass(frozen=True, slots=True)
 class AppSettings:
-    SECRET_KEY: str = field(
-        default_factory=lambda: os.environ.get("SECRET_KEY", "ChangeIfNotDebug")
-    )
-    AUTH_HEADERS: str = field(
-        default_factory=lambda: os.environ.get("AUTH_HEADERS", "Authorization")
-    )
-    API_V1_PREFIX = "/api/v1"
+    SECRET_KEY: str = field(default_factory=lambda: os.environ.get("SECRET_KEY", "ChangeIfNotDebug"))
+    AUTH_HEADERS: str = field(default_factory=lambda: os.environ.get("AUTH_HEADERS", "Authorization"))
+    API_V1_PREFIX: str = "/v1"
     TEMPLATE_PATH = BASE_DIR / "src" / "templates"
-    ENVIRONMENT: str = field(
-        default_factory=lambda: os.environ.get("ENVIRONMENT", "PROD")
-    )
+    ENVIRONMENT: str = field(default_factory=lambda: os.environ.get("ENVIRONMENT", "PROD"))
     auth: AuthSettings = field(default_factory=AuthSettings)
 
 

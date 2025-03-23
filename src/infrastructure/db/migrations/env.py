@@ -1,7 +1,3 @@
-# ruff: noqa
-# pylint: skip-file
-# flake8: noqa
-# pyright: basic
 import asyncio
 from logging.config import fileConfig
 
@@ -11,11 +7,8 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from config import get_settings
+from infrastructure.db import BaseModel
 
-
-from infrastructure.db.models import BaseModel, init_all_models
-
-init_all_models()
 config = context.config
 config.set_main_option("sqlalchemy.url", get_settings().db.ASYNC_DATABASE_URL)
 
@@ -51,9 +44,7 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(
-        connection=connection, target_metadata=target_metadata, include_schemas=True
-    )
+    context.configure(connection=connection, target_metadata=target_metadata, include_schemas=True)
 
     with context.begin_transaction():
         context.run_migrations()
