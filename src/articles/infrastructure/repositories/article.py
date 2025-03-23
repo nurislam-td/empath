@@ -6,6 +6,7 @@ from uuid import UUID
 from sqlalchemy import Select, delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.engine.row import RowMapping
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from articles.application.commands.create_article import CreateArticle
 from articles.application.commands.edit_article import EditArticle
@@ -35,7 +36,7 @@ from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator
 
 
-class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
+class AlchemyArticleRepo(ArticleRepo):
     """Article Repo implementation."""
 
     article = Article
@@ -45,19 +46,24 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
     tag = Tag
     rel_article_tag = RelArticleTag
 
+    def __init__(self, base: AlchemyRepo) -> None:
+        self.base = base
+
     async def create_sub_article_imgs(self, sub_article_id: UUID, imgs: list[str]) -> None:
-        await self.execute(
+        await self.base.execute(
             insert(self.sub_article_img).values([{"sub_article_id": sub_article_id, "url": url} for url in imgs])
         )
 
     async def create_article_imgs(self, article_id: UUID, imgs: list[str]) -> None:
-        await self.execute(insert(self.article_img).values([{"article_id": article_id, "url": url} for url in imgs]))
+        await self.base.execute(
+            insert(self.article_img).values([{"article_id": article_id, "url": url} for url in imgs])
+        )
 
     async def create_sub_articles(self, article_id: UUID, sub_articles: list[SubArticleDTO]) -> None:
         if not sub_articles:
             return
 
-        await self.execute(
+        await self.base.execute(
             insert(self.sub_article).values(
                 [
                     {"id": dto.id, "title": dto.title, "text": dto.text, "article_id": article_id}
@@ -66,22 +72,22 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
             ),
         )
 
-        await asyncio.gather(*(self.create_sub_article_imgs(dto.id, dto.imgs) for dto in sub_articles))
+        await asyncio.gather(*(self.create_sub_article_imgs(dto.id, dto.imgs) for dto in sub_articles if dto.imgs))
 
     async def create_tags_if_not_exists(self, tags: list[TagDTO]) -> None:
-        await self.execute(
+        await self.base.execute(
             insert(self.tag).values([tag.to_dict() for tag in tags]).on_conflict_do_nothing(),
         )
 
     async def map_tags_to_article(self, tag_ids: set[UUID], article_id: UUID) -> None:
         if not tag_ids:
             return
-        await self.execute(
+        await self.base.execute(
             insert(self.rel_article_tag).values([{"tag_id": tag_id, "article_id": article_id} for tag_id in tag_ids])
         )
 
     async def create_article(self, article: CreateArticle) -> None:
-        await self.execute(
+        await self.base.execute(
             insert(self.article).values(
                 title=article.title,
                 text=article.text,
@@ -103,17 +109,17 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
         )
 
     async def delete_article_imgs(self, article_id: UUID) -> None:
-        await self.execute(delete(self.article_img).filter(self.article_img.article_id == article_id))
+        await self.base.execute(delete(self.article_img).filter(self.article_img.article_id == article_id))
 
     async def delete_sub_articles(self, article_id: UUID) -> None:
-        await self.execute(delete(self.sub_article).filter(self.sub_article.article_id == article_id))
+        await self.base.execute(delete(self.sub_article).filter(self.sub_article.article_id == article_id))
 
     async def update_sub_articles(self, article_id: UUID, sub_articles: list[SubArticleDTO]) -> None:
         await self.delete_sub_articles(article_id)
         await self.create_sub_articles(article_id=article_id, sub_articles=sub_articles)
 
     async def unmap_tags_from_article(self, article_id: UUID) -> None:
-        await self.execute(delete(self.rel_article_tag).filter(self.rel_article_tag.article_id == article_id))
+        await self.base.execute(delete(self.rel_article_tag).filter(self.rel_article_tag.article_id == article_id))
 
     async def update_article_imgs(self, article_id: UUID, imgs: list[str]) -> None:
         await asyncio.gather(
@@ -148,10 +154,10 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
         if article.tags is not Empty.UNSET:
             tasks.append(self.update_article_tags(article_id, article.tags))
 
-        await asyncio.gather(*tasks, self.execute(query))
+        await asyncio.gather(*tasks, self.base.execute(query))
 
     async def delete_article(self, article_id: UUID) -> None:
-        await self.execute(delete(self.article).where(self.article.id == article_id))
+        await self.base.execute(delete(self.article).where(self.article.id == article_id))
 
 
 class AlchemyArticleReader(AlchemyReader, ArticleReader):
