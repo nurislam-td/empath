@@ -3,7 +3,7 @@ from typing import Any, Protocol
 from uuid import UUID
 
 from auth.application.ports.jwt import JWTPair
-from domain.users import entities
+from users.domain import entities
 
 
 class AuthRepo(Protocol):

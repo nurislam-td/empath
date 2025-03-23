@@ -1,4 +1,5 @@
-from typing import Annotated
+from collections.abc import Mapping
+from typing import Annotated, ClassVar
 
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
@@ -28,11 +29,29 @@ from auth.application.commands.reset_password import ResetPassword, ResetPasswor
 from auth.application.commands.signup import SignUp, SignUpHandler
 from auth.application.commands.signup_email import SignUpEmail, SignUpEmailHandler
 from auth.application.commands.verify_email import VerifyEmail, VerifyEmailHandler
+from auth.application.exceptions import (
+    InvalidCredentialsError,
+    InvalidPreviousPasswordError,
+    InvalidRefreshTokenError,
+    InvalidVerificationCodeError,
+)
 from auth.domain.value_objects.jwt import JWTPair
+from common.api.exception_handlers import error_handler
 from common.api.schemas import dto_config
+from users.application.exceptions import UserEmailAlreadyExistError, UserEmailNotExistError, UserIdNotExistError
 
 
 class AuthController(Controller):
+    exception_handlers: ClassVar[Mapping] = {  # type: ignore  # noqa: PGH003
+        UserIdNotExistError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+        UserEmailNotExistError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+        UserEmailAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
+        InvalidRefreshTokenError: error_handler(status_codes.HTTP_401_UNAUTHORIZED),
+        InvalidCredentialsError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+        InvalidPreviousPasswordError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+        InvalidVerificationCodeError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+    }
+
     @post(
         "/login",
         status_code=status_codes.HTTP_200_OK,

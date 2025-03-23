@@ -6,8 +6,8 @@ from litestar.middleware import AbstractAuthenticationMiddleware, Authentication
 
 from auth.api.schemas import JWTUserPayload
 from auth.application.ports.jwt import JWTManager
-from common.infrastructure.di.container import get_ioc
 from config import get_settings
+from infrastructure.di.container import get_ioc
 
 settings = get_settings().app
 container = get_ioc()

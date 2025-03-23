@@ -32,7 +32,7 @@ class LoginHandler(CommandHandler[Login, JWTPair]):
             password=Password(command.password).to_base(),
             hash_password=user.password,
         ):
-            raise InvalidCredentialsError()
+            raise InvalidCredentialsError
         jwt = self.jwt_manager.create_pair(payload={"sub": str(user.id), "email": command.email})
         await self.auth_repo.refresh_jwt(jwt=jwt, user_id=user.id)
         await self.uow.commit()

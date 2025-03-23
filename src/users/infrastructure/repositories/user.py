@@ -5,8 +5,8 @@ from sqlalchemy import Select, insert, select, update
 
 from auth.infrastructure.models import User
 from common.application.dto import PaginatedDTO
-from common.infrastructure.db.repositories.base import AlchemyReader, AlchemyRepo
-from common.infrastructure.db.repositories.pagination import AlchemyPaginator
+from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
+from common.infrastructure.repositories.pagination import AlchemyPaginator
 from users.application.dto.user import UserDTO
 from users.application.exceptions import UserEmailNotExistError, UserIdNotExistError
 from users.application.ports.repo import UserReader, UserRepo

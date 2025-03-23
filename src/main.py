@@ -7,11 +7,10 @@ from litestar.middleware.base import DefineMiddleware
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import Components, SecurityScheme
 
-from api import router
-from api.exception_handlers import exception_handler
+from auth.infrastructure.middlewares import JWTAuthMiddleware
 from config import get_settings
-from infrastructure.auth.middlewares import JWTAuthMiddleware
-from infrastructure.di.container import get_ioc
+from infrastructure.api import router
+from infrastructure.di import get_ioc
 
 config = get_settings()
 container = get_ioc()
@@ -35,7 +34,6 @@ def get_litestar_app() -> Litestar:
     litestar_app = Litestar(
         route_handlers=[router],
         debug=True,
-        exception_handlers=exception_handler,  # type: ignore  # noqa: PGH003
         middleware=[auth_mw],
         logging_config=StructLoggingConfig(),
         openapi_config=OpenAPIConfig(

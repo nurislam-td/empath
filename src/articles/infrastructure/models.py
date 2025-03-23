@@ -10,7 +10,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column
 
 from articles.domain.constants import ARTICLE_TITLE_LEN, TAG_NAME_LEN
-from common.infrastructure.db.models.base import TimedBaseModel
+from common.infrastructure.models import TimedBaseModel
 
 
 class ArticleBase(TimedBaseModel):

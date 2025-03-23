@@ -1,5 +1,6 @@
+from collections.abc import Mapping
 from io import BytesIO
-from typing import Annotated
+from typing import Annotated, ClassVar
 from uuid import UUID
 
 from dishka.integrations.litestar import FromDishka as Depends
@@ -12,16 +13,22 @@ from litestar.params import Body
 from litestar.response import Response
 
 from auth.api.schemas import JWTUserPayload
+from common.api.exception_handlers import error_handler
 from common.application.query import PaginationParams
 from users.api.schemas import UserUpdateSchema
 from users.application.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler
 from users.application.commands.update_user import UpdateUser, UpdateUserHandler
 from users.application.dto.user import PaginatedUserDTO, UserDTO
+from users.application.exceptions import UserIdNotExistError
 from users.application.queries.get_users import GetUsers, GetUsersHandler
 from users.application.queries.user_by_id import GetUserById, GetUserByIdHandler
 
 
 class UserController(Controller):
+    exception_handlers: ClassVar[Mapping] = {  # type: ignore  # noqa: PGH003
+        UserIdNotExistError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+    }
+
     @get(path="/me", status_code=status_codes.HTTP_200_OK)
     @inject
     async def get_me(

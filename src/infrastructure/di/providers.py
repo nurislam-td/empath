@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from common.application.uow import UnitOfWork
 from common.infrastructure.adapters.file_storage import S3Client
 from config import Settings
-from common.infrastructure.db.config import async_session_maker
+from infrastructure.db.config import async_session_maker
 
 
 class AppProvider(Provider):
