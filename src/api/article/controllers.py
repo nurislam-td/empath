@@ -1,9 +1,9 @@
 from typing import ClassVar
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, get, patch, post, status_codes
+from litestar import Controller, Request, Response, delete, get, patch, post, status_codes
 from litestar.datastructures import State
 from litestar.dto import DTOData
 from msgspec import UNSET, ValidationError
@@ -15,6 +15,7 @@ from application.articles.commands.create_article import (
     CreateArticle,
     CreateArticleHandler,
 )
+from application.articles.commands.delete_article import DeleteArticle, DeleteArticleHandler
 from application.articles.commands.edit_article import EditArticle, EditArticleHandler
 from application.articles.dto.article import PaginatedArticleDTO, SubArticleDTO, TagDTO
 from application.articles.exceptions import EmptyArticleUpdatesError
@@ -90,3 +91,8 @@ class ArticleController(Controller):
         self, get_articles: Depends[GetArticlesHandler], pagination_params: PaginationParams
     ) -> PaginatedArticleDTO:
         return await get_articles(GetArticles(pagination=pagination_params))
+
+    @delete("/{article_id:uuid}")
+    @inject
+    async def delete_article(self, article_id: UUID, delete_article: Depends[DeleteArticleHandler]) -> None:
+        await delete_article(DeleteArticle(article_id=article_id))

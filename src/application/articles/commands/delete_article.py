@@ -12,7 +12,7 @@ class DeleteArticle(Command[None]):
 
 
 @dataclass(slots=True, frozen=True)
-class UpdateUserHandler(CommandHandler[DeleteArticle, None]):
+class DeleteArticleHandler(CommandHandler[DeleteArticle, None]):
     _article_repo: ArticleRepo
     _uow: UnitOfWork
 

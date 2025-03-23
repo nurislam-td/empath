@@ -5,7 +5,6 @@ from domain.articles.entities.sub_article import SubArticle
 from domain.articles.entities.tags import Tag
 from domain.articles.events import ArticleDisliked, ArticleLiked
 from domain.articles.value_objects import ArticleTitle
-from domain.common.constants import Empty
 from domain.common.entities import Aggregate
 from domain.common.exceptions import DomainError
 

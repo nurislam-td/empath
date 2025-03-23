@@ -151,6 +151,9 @@ class AlchemyArticleRepo(AlchemyRepo, ArticleRepo):
 
         await asyncio.gather(*tasks, self.execute(query))
 
+    async def delete_article(self, article_id: UUID) -> None:
+        await self.execute(delete(self.article).where(self.article.id == article_id))
+
 
 class AlchemyArticleReader(AlchemyReader, ArticleReader):
     """Article Reader implementation."""
