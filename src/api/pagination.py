@@ -1,9 +1,0 @@
-from litestar.params import Parameter
-
-from application.common.query import PaginationParams
-
-
-async def pagination_query_params(
-    page: int = Parameter(query="page"), per_page: int = Parameter(query="perPage")
-) -> PaginationParams:
-    return PaginationParams(page=page, per_page=per_page)
