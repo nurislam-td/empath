@@ -2,7 +2,6 @@ from typing import Any
 
 from jwt import InvalidTokenError
 from litestar.connection import ASGIConnection
-from litestar.exceptions import NotAuthorizedException
 from litestar.middleware import AbstractAuthenticationMiddleware, AuthenticationResult
 
 from auth.api.schemas import JWTUserPayload
