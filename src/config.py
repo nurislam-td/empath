@@ -34,7 +34,6 @@ class AuthSettings:
     JWT_ALG: str = "RS256"
     ACCESS_PRIVATE_PATH: Path = field(default_factory=lambda: BASE_DIR / Path(os.environ["ACCESS_PRIVATE_PATH"]))
     ACCESS_PUBLIC_PATH: Path = field(default_factory=lambda: BASE_DIR / Path(os.environ.get("ACCESS_PUBLIC_PATH", "")))
-    ACCESS_TOKEN_EXPIRE: int = 500000  # minutes
 
     REFRESH_PRIVATE_PATH: Path = field(
         default_factory=lambda: BASE_DIR / Path(os.environ.get("REFRESH_PRIVATE_PATH", ""))
@@ -44,6 +43,7 @@ class AuthSettings:
         default_factory=lambda: BASE_DIR / Path(os.environ.get("REFRESH_PUBLIC_PATH", ""))
     )
 
+    ACCESS_TOKEN_EXPIRE: int = 500_000  # minutes
     REFRESH_TOKEN_EXPIRE: int = 60 * 24 * 21  # minutes (21 days)
 
     SECURE_COOKIES: bool = True

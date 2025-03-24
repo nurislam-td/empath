@@ -39,3 +39,10 @@ class TokenSubNotFoundError(ApplicationError):
     @property
     def message(self) -> str:
         return f"Token not found for this sub: {self.sub}"
+
+
+@dataclass(slots=True)
+class UnAuthorizedError(ApplicationError):
+    @property
+    def message(self) -> str:
+        return "Unauthorized user"
