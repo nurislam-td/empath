@@ -1,15 +1,16 @@
+import structlog
 import uvicorn
 from dishka.integrations import litestar as litestar_integration
 from litestar import Litestar
+from litestar.logging.config import StructLoggingConfig
 from litestar.middleware.base import DefineMiddleware
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import Components, SecurityScheme
 
-from api import router
-from api.exception_handlers import exception_handler
+from auth.infrastructure.middlewares import JWTAuthMiddleware
 from config import get_settings
-from infrastructure.auth.middlewares import JWTAuthMiddleware
-from infrastructure.di.container import get_ioc
+from infrastructure.api import router
+from infrastructure.di import get_ioc
 
 config = get_settings()
 container = get_ioc()
@@ -23,12 +24,18 @@ def get_litestar_app() -> Litestar:
             # "/auth",
         ],
     )
-
+    structlog.configure(
+        processors=[
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.dev.ConsoleRenderer(),  # Красивый вывод в терминал
+        ],
+        wrapper_class=structlog.make_filtering_bound_logger(10),  # 10 = DEBUG
+    )
     litestar_app = Litestar(
         route_handlers=[router],
-        exception_handlers=exception_handler,  # type: ignore
-        # pdb_on_exception=True,
+        debug=True,
         middleware=[auth_mw],
+        logging_config=StructLoggingConfig(),
         openapi_config=OpenAPIConfig(
             title="Empath API",
             version="0.0.1",
@@ -38,7 +45,7 @@ def get_litestar_app() -> Litestar:
                     "BearerToken": SecurityScheme(
                         type="http",
                         scheme="bearer",
-                    )
+                    ),
                 },
             ),
         ),
@@ -48,10 +55,8 @@ def get_litestar_app() -> Litestar:
     return litestar_app
 
 
-def get_app():
-    litestar_app = get_litestar_app()
-
-    return litestar_app
+def get_app() -> Litestar:
+    return get_litestar_app()
 
 
 if __name__ == "__main__":

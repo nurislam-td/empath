@@ -1,13 +1,14 @@
-from typing import AsyncIterable, cast
+from collections.abc import AsyncIterable
+from typing import cast
 
-import aioboto3  # type: ignore
-from dishka import AnyOf, Provider, Scope, from_context, provide  # type: ignore
+import aioboto3  # type: ignore  # noqa: PGH003
+from dishka import AnyOf, Provider, Scope, from_context, provide  # type: ignore  # noqa: PGH003
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from application.common.uow import UnitOfWork
+from common.application.uow import UnitOfWork
+from common.infrastructure.adapters.file_storage import S3Client
 from config import Settings
-from infrastructure.common.adapters.file_storage import S3Client
 from infrastructure.db.config import async_session_maker
 
 
@@ -28,17 +29,17 @@ class AppProvider(Provider):
     @provide(scope=Scope.REQUEST)
     async def provide_s3_client(self, config: Settings) -> AsyncIterable[S3Client]:
         session = aioboto3.Session()
-        async with session.client(  # type: ignore
+        async with session.client(  # type: ignore  # noqa: PGH003
             "s3",
             aws_access_key_id=config.s3.S3_ACCESS_KEY,
             aws_secret_access_key=config.s3.S3_SECRET_KEY,
             endpoint_url=config.s3.S3_ENDPOINT_URL,
-        ) as client:  # type: ignore
-            yield cast(S3Client, client)
+        ) as client:  # type: ignore  # noqa: PGH003
+            yield cast(S3Client, client)  # noqa: TC006
 
     @provide(scope=Scope.APP)
     def provide_redis_client(self, config: Settings) -> Redis:
-        return Redis.from_url(  # type: ignore
+        return Redis.from_url(  # type: ignore  # noqa: PGH003
             url=config.redis.URL,
             encoding="utf-8",
             decode_responses=False,

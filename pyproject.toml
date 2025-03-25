@@ -1,30 +1,34 @@
-[tool.poetry]
+[project]
 name = "empath"
 version = "0.1.0"
-description = ""
-authors = ["nurislam-td <ntasbolatov03@gmail.com>"]
+description = "Add your description here"
 readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aioboto3>=14.0.0",
+    "alembic>=1.14.1",
+    "asyncpg>=0.30.0",
+    "bcrypt>=4.3.0",
+    "cryptography>=44.0.2",
+    "dishka>=1.4.2",
+    "litestar[standard]>=2.15.1",
+    "pyjwt[crypto]>=2.10.1",
+    "redis>=5.2.1",
+    "sqlalchemy>=2.0.38",
+    "structlog>=25.2.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-pyjwt = {extras = ["crypto"], version = "^2.10.0"}
-sqlalchemy = "^2.0.36"
-alembic = "^1.14.0"
-starlette = "^0.45.1"
-asyncpg = "^0.30.0"
-cryptography = {extras = ["bcrypt"], version = "^44.0.0"}
-bcrypt = "^4.2.1"
-jinja2 = "^3.1.5"
-redis = "^5.2.1"
-dishka = "^1.4.2"
-litestar = {extras = ["standard"], version = "^2.14.0"}
-aioboto3 = "^13.4.0"
+[dependency-groups]
+dev = ["ipython>=9.0.0"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 119
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["B024", "D102", "D107", "D100", "D"]
 
 
-[tool.poetry.group.dev.dependencies]
-ipython = "^8.31.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+[tool.ruff.lint.pydocstyle]
+convention = "google"
