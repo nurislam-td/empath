@@ -3,6 +3,7 @@ from typing import Any
 
 from litestar import Request, Response, status_codes
 
+from auth.application.exceptions import UnAuthorizedError
 from common.domain.exceptions import AppError, UnexpectedError, ValueObjectError
 
 
@@ -19,4 +20,5 @@ def error_handler(status_code: int) -> Callable[[Request[Any, Any, Any], AppErro
 exception_handler: dict[type[AppError], Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]]] = {
     ValueObjectError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
     UnexpectedError: error_handler(status_codes.HTTP_500_INTERNAL_SERVER_ERROR),
+    UnAuthorizedError: error_handler(status_codes.HTTP_401_UNAUTHORIZED),
 }

@@ -4,6 +4,7 @@ from dishka import AsyncContainer, make_async_container
 
 from articles.api.providers import ArticleProvider
 from auth.api.providers import AuthProvider
+from common.infrastructure.di.providers import CommonProvider
 from config import Settings, get_settings
 from file_storage.api.providers import FileStorageProvider
 from infrastructure.di.providers import AppProvider
@@ -14,9 +15,10 @@ from users.api.providers import UsersProvider
 def get_ioc() -> AsyncContainer:
     return make_async_container(
         AppProvider(),
+        CommonProvider(),
+        FileStorageProvider(),
+        UsersProvider(),
         AuthProvider(),
         ArticleProvider(),
-        UsersProvider(),
-        FileStorageProvider(),
         context={Settings: get_settings()},
     )

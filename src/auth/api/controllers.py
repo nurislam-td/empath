@@ -34,6 +34,7 @@ from auth.application.exceptions import (
     InvalidPreviousPasswordError,
     InvalidRefreshTokenError,
     InvalidVerificationCodeError,
+    UnAuthorizedError,
 )
 from auth.domain.value_objects.jwt import JWTPair
 from common.api.exception_handlers import error_handler
@@ -50,6 +51,7 @@ class AuthController(Controller):
         InvalidCredentialsError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         InvalidPreviousPasswordError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         InvalidVerificationCodeError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+        UnAuthorizedError: error_handler(status_codes.HTTP_401_UNAUTHORIZED),
     }
 
     @post(

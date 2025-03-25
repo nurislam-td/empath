@@ -16,7 +16,7 @@ from articles.application.commands.delete_article import DeleteArticle, DeleteAr
 from articles.application.commands.edit_article import EditArticle, EditArticleHandler
 from articles.application.dto.article import PaginatedArticleDTO, SubArticleDTO, TagDTO
 from articles.application.exceptions import EmptyArticleUpdatesError
-from articles.application.queries.get_articles import GetArticles, GetArticlesHandler
+from articles.application.queries.get_articles import ArticleFilter, GetArticles, GetArticlesHandler
 from articles.application.queries.get_tag_list import GetTagList, GetTagListHandler
 from articles.domain.entities.article import EmptyTagListError
 from articles.domain.value_objects.article_title import TooLongArticleTitleError
@@ -87,9 +87,14 @@ class ArticleController(Controller):
     @get("/", status_code=status_codes.HTTP_200_OK)
     @inject
     async def get_articles(
-        self, get_articles: Depends[GetArticlesHandler], pagination_params: PaginationParams
+        self,
+        get_articles: Depends[GetArticlesHandler],
+        pagination_params: PaginationParams,
+        search: str | None = None,
     ) -> PaginatedArticleDTO:
-        return await get_articles(GetArticles(pagination=pagination_params))
+        return await get_articles(
+            GetArticles(pagination=pagination_params, articles_filter=ArticleFilter(search=search)),
+        )
 
     @delete("/{article_id:uuid}")
     @inject
