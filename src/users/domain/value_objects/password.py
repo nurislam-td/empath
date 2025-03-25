@@ -13,7 +13,12 @@ class MismatchPasswordError(ValueObjectError):
 
     @property
     def message(self) -> str:
-        return f"Mismatch pattern: password must contain at least one lower character, one upper character, digit and special symbol: `{self.password}` ."  # noqa: E501
+        return "".join(
+            (
+                "Mismatch pattern: password must contain at least one lower character,",
+                f"one upper character, digit and special symbol: `{self.password}` .",
+            ),
+        )
 
 
 @dataclass(frozen=True, slots=True)
