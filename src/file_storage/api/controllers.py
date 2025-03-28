@@ -30,6 +30,7 @@ class FileStorageController(Controller):
     @get(
         path="/{filepath:path}",
         status_code=status_codes.HTTP_200_OK,
+        exclude_from_auth=True,
     )
     @inject
     async def download_file(self, filepath: str, download_file: Depends[DownloadFileHandler]) -> Stream:
