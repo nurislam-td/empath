@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from io import BytesIO
 from typing import Protocol
 
@@ -8,6 +9,7 @@ from config import Settings
 class S3Client(Protocol):
     async def upload_fileobj(self, Fileobj: BytesIO, Bucket: str, Key: str) -> None: ...  # noqa: N803
     async def download_fileobj(self, Bucket: str, Key: str, Fileobj: BytesIO) -> None: ...  # noqa: N803
+    async def delete_object(self, Bucket: str, Key: str) -> None: ...  # noqa: N803
 
 
 class S3FileStorage(FileStorage):
@@ -31,3 +33,10 @@ class S3FileStorage(FileStorage):
             Bucket=self._config.S3_PRIVATE_BUCKET_NAME,
             Key=file_name,
         )
+
+    async def delete_files(self, files: Iterable[str]) -> None:
+        for file in files:
+            await self._client.delete_object(
+                Bucket=self._config.S3_PRIVATE_BUCKET_NAME,
+                Key=file,
+            )
