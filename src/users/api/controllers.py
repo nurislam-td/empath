@@ -15,7 +15,7 @@ from litestar.response import Response
 from auth.api.schemas import JWTUserPayload
 from common.api.exception_handlers import error_handler
 from common.application.query import PaginationParams
-from users.api.schemas import UserUpdateSchema
+from users.api.schemas import UpdateAvatarResponse, UserUpdateSchema
 from users.application.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler
 from users.application.commands.update_user import UpdateUser, UpdateUserHandler
 from users.application.dto.user import PaginatedUserDTO, UserDTO
@@ -57,11 +57,11 @@ class UserController(Controller):
         data: Annotated[UploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
         update_avatar: Depends[UpdateAvatarHandler],
         request: Request[JWTUserPayload, str, State],
-    ) -> Response[str]:
+    ) -> UpdateAvatarResponse:
         content = await data.read()
         command = UpdateAvatar(user_id=request.user.sub, file=BytesIO(content), filename=data.filename)
         new_url = await update_avatar(command)
-        return Response(content=new_url, status_code=status_codes.HTTP_200_OK)
+        return UpdateAvatarResponse(url=new_url)
 
     @put(path="/{user_id:uuid}", status_code=status_codes.HTTP_200_OK)
     @inject

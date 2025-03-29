@@ -5,13 +5,14 @@ from typing import Annotated
 
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Response, get, post, status_codes
+from litestar import MediaType, Response, get, post, status_codes
 from litestar.controller import Controller
 from litestar.datastructures import UploadFile as LitestarUploadFile
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.response import Stream
 
+from file_storage.api.schema import FileStorageResponse
 from file_storage.application.commands.upload_file import FileType, StorageNames, UploadFile, UploadFileHandler
 from file_storage.application.queries.download_file import (
     DownloadFile,
@@ -49,7 +50,7 @@ class FileStorageController(Controller):
         storage_name: StorageNames,
         data: Annotated[LitestarUploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
         upload_file: Depends[UploadFileHandler],
-    ) -> Response[str]:
+    ) -> FileStorageResponse:
         content = await data.read()
         command = UploadFile(
             file_type=file_type,
@@ -58,4 +59,4 @@ class FileStorageController(Controller):
             filename=data.filename,
         )
         new_url = await upload_file(command)
-        return Response(content=new_url, status_code=status_codes.HTTP_200_OK)
+        return FileStorageResponse(url=new_url)
