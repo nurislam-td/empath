@@ -18,3 +18,19 @@ class ArticleIdNotExistError(ApplicationError):
     @property
     def message(self) -> str:
         return f"Article with that id not exist: {self.article_id}"
+
+
+@dataclass(slots=True, eq=False)
+class CommentIdNotExistError(ApplicationError):
+    comment_id: UUID
+
+    @property
+    def message(self) -> str:
+        return f"Comment with that id not exist: {self.comment_id}"
+
+
+@dataclass(slots=True, eq=False)
+class ContentAuthorMismatchError(ApplicationError):
+    @property
+    def message(self) -> str:
+        return "You are not the author of this content"

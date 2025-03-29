@@ -1,5 +1,6 @@
 import asyncio
-from typing import TYPE_CHECKING, Any
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import UUID
 
 from sqlalchemy import Select, delete, select, update
@@ -19,6 +20,7 @@ from articles.infrastructure.mapper import (
     convert_db_to_article_dto_list,
 )
 from articles.infrastructure.models import Article, ArticleImg
+from articles.infrastructure.repositories.comment import AlchemyCommentRepo
 from articles.infrastructure.repositories.filters import ArticleQueryBuilder
 from articles.infrastructure.repositories.sub_article import AlchemySubArticleReader, AlchemySubArticleRepo
 from articles.infrastructure.repositories.tag import AlchemyTagReader, AlchemyTagRepo
@@ -32,16 +34,16 @@ if TYPE_CHECKING:
     from collections.abc import Coroutine
 
 
+@dataclass(slots=True)
 class AlchemyArticleRepo(ArticleRepo):
     """Article Repo implementation."""
 
-    _article = Article
-    _article_img = ArticleImg
+    _article: ClassVar[type[Article]] = Article
+    _article_img: ClassVar[type[ArticleImg]] = ArticleImg
 
-    def __init__(self, base: AlchemyRepo, sub_article: AlchemySubArticleRepo, tag: AlchemyTagRepo) -> None:
-        self._base = base
-        self._sub_article = sub_article
-        self._tag = tag
+    _base: AlchemyRepo
+    _sub_article: AlchemySubArticleRepo
+    _tag: AlchemyTagRepo
 
     async def _create_article_imgs(self, article_id: UUID, imgs: list[str]) -> None:
         if not imgs:

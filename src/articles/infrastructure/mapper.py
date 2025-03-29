@@ -4,7 +4,14 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import RowMapping
 
-from articles.application.dto.article import ArticleDTO, SubArticleDTO, SubArticleWithArticleIdDTO, TagDTO, UserDTO
+from articles.application.dto.article import (
+    ArticleDTO,
+    CommentDTO,
+    SubArticleDTO,
+    SubArticleWithArticleIdDTO,
+    TagDTO,
+    UserDTO,
+)
 
 if TYPE_CHECKING:
     from uuid import UUID
@@ -87,3 +94,22 @@ def convert_db_to_article_dto_list(
         )
         for article in articles
     ]
+
+
+def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
+    author_fullname = " ".join(
+        [
+            comment.author_lastname or "",
+            comment.author_name or "",
+            comment.author_patronymic or "",
+        ],
+    ).strip()
+    return CommentDTO(
+        text=comment.text,
+        article_id=comment.article_id,
+        author=UserDTO(
+            id=comment.author_id,
+            nickname=comment.author_nickname,
+            full_name=author_fullname,
+        ),
+    )
