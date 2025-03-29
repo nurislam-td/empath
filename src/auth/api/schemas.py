@@ -4,12 +4,12 @@ from common.api.schemas import BaseStruct, CamelizedBaseStruct
 
 
 class LoginSchema(CamelizedBaseStruct):
-    email: str
-    password: str
+    email: str = "string@email.com"
+    password: str = "String03@"  # noqa: S105
 
 
 class SignUpSchema(LoginSchema):
-    nickname: str
+    nickname: str = "string"
 
 
 class JWTUserPayload(BaseStruct):
