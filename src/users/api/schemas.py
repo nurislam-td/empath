@@ -1,10 +1,10 @@
 from datetime import date
 
-from common.api.schemas import CamelizedBaseStruct
+from common.api.schemas import BaseStruct
 from users.domain.enums.gender import Gender
 
 
-class UserUpdateSchema(CamelizedBaseStruct):
+class UserUpdateSchema(BaseStruct):
     nickname: str
     gender: Gender
     name: str | None = None
