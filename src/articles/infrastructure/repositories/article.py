@@ -44,6 +44,8 @@ class AlchemyArticleRepo(ArticleRepo):
         self._tag = tag
 
     async def _create_article_imgs(self, article_id: UUID, imgs: list[str]) -> None:
+        if not imgs:
+            return
         await self._base.execute(
             insert(self._article_img).values([{"article_id": article_id, "url": url} for url in imgs])
         )

@@ -22,7 +22,7 @@ def convert_db_to_sub_article_dto_list(
             text=sub_article.text,
             imgs=list(img_map[sub_article.id]),
             id=sub_article.id,
-            article_id=sub_article.id,
+            article_id=sub_article.article_id,
         )
         for sub_article in sub_articles
     ]
