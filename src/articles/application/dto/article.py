@@ -12,6 +12,14 @@ class UserDTO(DTO):
 
 
 @dataclass(frozen=True, slots=True)
+class CommentDTO(DTO):
+    text: str
+    article_id: UUID
+    author: UserDTO
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass(frozen=True, slots=True)
 class SubArticleDTO(DTO):
     title: str
     text: str

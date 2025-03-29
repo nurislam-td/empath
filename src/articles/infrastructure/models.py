@@ -71,5 +71,6 @@ class Comment(ArticleBase):
 
     text: Mapped[str] = mapped_column(Text)
     article_id: Mapped[UUID] = mapped_column(ForeignKey("article.article.id", ondelete="CASCADE"))
+    author_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
     like_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     dislikes_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
