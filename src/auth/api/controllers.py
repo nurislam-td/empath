@@ -88,10 +88,10 @@ class AuthController(Controller):
     @inject
     async def send_signup_email(self, email: str, send_signup_email: Depends[SignUpEmailHandler]) -> Response[str]:
         command = SignUpEmail(email=email)
+        await send_signup_email(command)
         return Response(
             status_code=status_codes.HTTP_202_ACCEPTED,
             content="",
-            background=BackgroundTask(send_signup_email, command),
         )
 
     @post(
@@ -102,11 +102,8 @@ class AuthController(Controller):
     @inject
     async def send_reset_email(self, email: str, send_reset_email: Depends[ResetEmailHandler]) -> Response[str]:
         command = ResetEmail(email=email)
-        return Response(
-            status_code=status_codes.HTTP_202_ACCEPTED,
-            content="",
-            background=BackgroundTask(send_reset_email, command),
-        )
+        await send_reset_email(command)
+        return Response(status_code=status_codes.HTTP_202_ACCEPTED, content="")
 
     @post(
         "/verify-code",
