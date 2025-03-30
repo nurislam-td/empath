@@ -17,8 +17,9 @@ from articles.application.commands.delete_article import DeleteArticle, DeleteAr
 from articles.application.commands.delete_comment import DeleteComment, DeleteCommentHandler
 from articles.application.commands.edit_article import EditArticle, EditArticleHandler
 from articles.application.commands.edit_comment import EditComment, EditCommentHandler
-from articles.application.dto.article import CommentDTO, PaginatedArticleDTO, SubArticleDTO, TagDTO
+from articles.application.dto.article import ArticleDTO, CommentDTO, PaginatedArticleDTO, SubArticleDTO, TagDTO
 from articles.application.exceptions import ContentAuthorMismatchError, EmptyArticleUpdatesError
+from articles.application.queries.get_article_by_id import GetArticleById, GetArticleByIdHandler
 from articles.application.queries.get_articles import ArticleFilter, GetArticles, GetArticlesHandler
 from articles.application.queries.get_comments import GetComments, GetCommentsHandler
 from articles.application.queries.get_tag_list import GetTagList, GetTagListHandler
@@ -99,6 +100,17 @@ class ArticleController(Controller):
     ) -> PaginatedArticleDTO:
         return await get_articles(
             GetArticles(pagination=pagination_params, articles_filter=ArticleFilter(search=search)),
+        )
+
+    @get("/{article_id:uuid}", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_article_by_id(
+        self,
+        get_article: Depends[GetArticleByIdHandler],
+        article_id: UUID,
+    ) -> ArticleDTO:
+        return await get_article(
+            GetArticleById(article_id=article_id),
         )
 
     @delete("/{article_id:uuid}")

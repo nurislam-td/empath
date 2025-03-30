@@ -7,6 +7,7 @@ from articles.application.commands.delete_comment import DeleteCommentHandler
 from articles.application.commands.edit_article import EditArticleHandler
 from articles.application.commands.edit_comment import EditCommentHandler
 from articles.application.ports.repo import ArticleReader, ArticleRepo, CommentReader, CommentRepo
+from articles.application.queries.get_article_by_id import GetArticleByIdHandler
 from articles.application.queries.get_articles import GetArticlesHandler
 from articles.application.queries.get_comments import GetCommentsHandler
 from articles.application.queries.get_tag_list import GetTagListHandler
@@ -38,3 +39,4 @@ class ArticleProvider(Provider):
     get_tag_list = provide(GetTagListHandler)
     get_articles = provide(GetArticlesHandler)
     get_comments = provide(GetCommentsHandler)
+    get_article_by_id = provide(GetArticleByIdHandler)
