@@ -45,13 +45,21 @@ def convert_db_to_article_dto(
     imgs: Sequence[str],
     tags: Sequence[RowMapping],
 ) -> ArticleDTO:
+    author_fullname = " ".join(
+        [
+            article.author_lastname or "",
+            article.author_name or "",
+            article.author_patronymic or "",
+        ],
+    ).strip()
     return ArticleDTO(
         title=article.title,
         text=article.text,
         author=UserDTO(
             id=article.author_id,
             nickname=article.author_nickname,
-            full_name=f"{article.author_name} {article.author_lastname} {article.author_patronymic}",
+            full_name=author_fullname,
+            img=article.author_img,
         ),
         tags=[convert_db_to_tag_dto(db_tag) for db_tag in tags],
         is_visible=article.is_visible,
@@ -111,5 +119,6 @@ def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
             id=comment.author_id,
             nickname=comment.author_nickname,
             full_name=author_fullname,
+            img=comment.author_img,
         ),
     )

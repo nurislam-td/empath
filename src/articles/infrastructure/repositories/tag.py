@@ -10,7 +10,7 @@ from articles.application.ports.repo import ArticleReader, ArticleRepo
 from articles.application.queries.get_tag_list import GetTagList
 from articles.infrastructure.mapper import convert_db_to_tag_dto
 from articles.infrastructure.models import RelArticleTag, Tag
-from articles.infrastructure.repositories.filters import TagFilters
+from articles.infrastructure.repositories.qb import TagFilters
 from common.application.dto import PaginatedDTO
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator

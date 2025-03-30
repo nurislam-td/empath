@@ -48,6 +48,7 @@ class ArticleQueryBuilder:
             cls._author.name.label("author_name"),
             cls._author.lastname.label("author_lastname"),
             cls._author.patronymic.label("author_patronymic"),
+            cls._author.image.label("author_img"),
         ).select_from(article_authors_join)
 
         if article_filter:

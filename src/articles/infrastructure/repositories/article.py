@@ -21,7 +21,7 @@ from articles.infrastructure.mapper import (
 )
 from articles.infrastructure.models import Article, ArticleImg
 from articles.infrastructure.repositories.comment import AlchemyCommentRepo
-from articles.infrastructure.repositories.filters import ArticleQueryBuilder
+from articles.infrastructure.repositories.qb import ArticleQueryBuilder
 from articles.infrastructure.repositories.sub_article import AlchemySubArticleReader, AlchemySubArticleRepo
 from articles.infrastructure.repositories.tag import AlchemyTagReader, AlchemyTagRepo
 from auth.infrastructure.models import User

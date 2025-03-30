@@ -8,6 +8,7 @@ from common.application.dto import DTO, PaginatedDTO
 class UserDTO(DTO):
     id: UUID
     nickname: str
+    img: str | None = None
     full_name: str | None = None
 
 

@@ -65,6 +65,7 @@ class AlchemyCommentReader(CommentReader):
             self._author.name.label("author_name"),
             self._author.lastname.label("author_lastname"),
             self._author.patronymic.label("author_patronymic"),
+            self._author.image.label("author_img"),
         ).select_from(comment_authors_join)
 
     async def get_article_comments(self, article_id: UUID, pagination: PaginationParams) -> PaginatedDTO[CommentDTO]:

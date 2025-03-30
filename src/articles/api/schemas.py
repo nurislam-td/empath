@@ -7,8 +7,9 @@ from msgspec import UNSET, UnsetType, field
 from articles.application.commands.create_article import CreateArticle
 from articles.application.commands.create_comment import CreateComment
 from articles.application.commands.edit_comment import EditComment
-from articles.application.dto.article import SubArticleDTO, TagDTO
-from common.api.schemas import CamelizedBaseStruct
+from articles.application.dto.article import ArticleDTO, SubArticleDTO, TagDTO
+from common.api.schemas import BaseStruct
+from common.application.dto import PaginatedDTO
 
 
 class ArticleCreateSchema(DataclassDTO[CreateArticle]):
@@ -21,13 +22,12 @@ class ArticleCreateSchema(DataclassDTO[CreateArticle]):
             "sub_articles.0.id",
             "author_id",
         },
-        rename_strategy="camel",
     )
 
 
 TagSchema = type(
     "TagSchema",
-    (CamelizedBaseStruct,),
+    (BaseStruct,),
     {
         "__annotations__": TagDTO.__annotations__ | {"id": UUID | UnsetType},
         "id": field(default_factory=uuid4),
@@ -36,7 +36,7 @@ TagSchema = type(
 
 SubArticleSchema = type(
     "SubArticleSchema",
-    (CamelizedBaseStruct,),
+    (BaseStruct,),
     {
         "__annotations__": SubArticleDTO.__annotations__ | {"id": UUID | UnsetType},
         "id": field(default_factory=uuid4),
@@ -44,7 +44,7 @@ SubArticleSchema = type(
 )
 
 
-class EditArticleSchema(CamelizedBaseStruct):
+class EditArticleSchema(BaseStruct):
     title: str | UnsetType = UNSET
     text: str | UnsetType = UNSET
     tags: list[TagSchema] | UnsetType = UNSET
@@ -60,7 +60,6 @@ class CreateCommentSchema(DataclassDTO[CreateComment]):
             "article_id",
             "author_id",
         },
-        rename_strategy="camel",
     )
 
 
@@ -71,5 +70,4 @@ class EditCommentSchema(DataclassDTO[EditComment]):
             "article_id",
             "author_id",
         },
-        rename_strategy="camel",
     )
