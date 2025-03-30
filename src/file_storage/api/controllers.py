@@ -1,19 +1,21 @@
 import mimetypes
-from collections.abc import AsyncIterable
+from collections.abc import AsyncIterable, Mapping
 from io import BytesIO
-from typing import Annotated
+from typing import Annotated, ClassVar
 
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import MediaType, Response, get, post, status_codes
+from litestar import get, post, status_codes
 from litestar.controller import Controller
 from litestar.datastructures import UploadFile as LitestarUploadFile
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.response import Stream
 
+from common.api.exception_handlers import error_handler
 from file_storage.api.schema import FileStorageResponse
 from file_storage.application.commands.upload_file import FileType, StorageNames, UploadFile, UploadFileHandler
+from file_storage.application.exceptions import FileNotExistError
 from file_storage.application.queries.download_file import (
     DownloadFile,
     DownloadFileHandler,
@@ -28,6 +30,10 @@ async def bytes_io_generator(bytes_io: BytesIO, chunk_size: int = 1024) -> Async
 
 
 class FileStorageController(Controller):
+    exception_handlers: ClassVar[Mapping] = {  # type: ignore  # noqa: PGH003
+        FileNotExistError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+    }
+
     @get(
         path="/{filepath:path}",
         status_code=status_codes.HTTP_200_OK,
