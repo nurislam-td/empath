@@ -20,6 +20,11 @@ from job.common.infrastructure.models import (
     Skill,
     Vacancy,
 )
+from job.common.infrastructure.repositories.employment_type import EmploymentTypeDAO
+from job.common.infrastructure.repositories.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
+from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
+from job.common.infrastructure.repositories.skill import SkillDAO
+from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
 from job.recruitment.api.schemas import CreateVacancySchema, UpdateVacancySchema
 from job.recruitment.api.schemas import Skill as SkillSchema
 
@@ -29,49 +34,14 @@ class AlchemyVacancyRepo:
     """Vacancy Repo implementation."""
 
     _vacancy: ClassVar[type[Vacancy]] = Vacancy
-    _skill: ClassVar[type[Skill]] = Skill
-
-    _rel_skill_vacancy: ClassVar[type[RelVacancySkill]] = RelVacancySkill
-    _rel_additional_skill_vacancy: ClassVar[type[RelVacancyAdditionalSkill]] = RelVacancyAdditionalSkill
-    _rel_employment_type_vacancy: ClassVar[type[RelVacancyEmploymentType]] = RelVacancyEmploymentType
-    _rel_work_schedule_vacancy: ClassVar[type[RelVacancyWorkSchedule]] = RelVacancyWorkSchedule
 
     _repo: AlchemyRepo
     _reader: AlchemyReader
-
-    async def create_skills(self, skills: list[SkillSchema]) -> None:
-        insert_stmt = insert(self._skill).values([skill.to_dict() for skill in skills]).on_conflict_do_nothing()
-        await self._repo.execute(insert_stmt)
-
-    async def map_skills_to_vacancy(self, vacancy_id: UUID, skills_id: list[UUID]) -> None:
-        existing_skills_id = await self._reader.fetch_sequence(
-            select(self._skill.id).where(self._skill.id.in_(skills_id)),
-        )
-        insert_stmt = insert(self._rel_skill_vacancy).values(
-            [{"vacancy_id": vacancy_id, "skill_id": skill_id} for skill_id in existing_skills_id]
-        )
-        await self._repo.execute(insert_stmt)
-
-    async def map_additional_skills_to_vacancy(self, vacancy_id: UUID, skills_id: list[UUID]) -> None:
-        existing_skills_id = await self._reader.fetch_sequence(
-            select(self._skill.id).where(self._skill.id.in_(skills_id)),
-        )
-        insert_stmt = insert(self._rel_additional_skill_vacancy).values(
-            [{"vacancy_id": vacancy_id, "skill_id": skill_id} for skill_id in existing_skills_id]
-        )
-        await self._repo.execute(insert_stmt)
-
-    async def map_employment_types_to_vacancy(self, vacancy_id: UUID, employment_type_ids: list[UUID]) -> None:
-        insert_stmt = insert(self._rel_employment_type_vacancy).values(
-            [{"vacancy_id": vacancy_id, "employment_type_id": _id} for _id in employment_type_ids]
-        )
-        await self._repo.execute(insert_stmt)
-
-    async def map_work_schedules_to_vacancy(self, vacancy_id: UUID, work_schedule_ids: list[UUID]) -> None:
-        insert_stmt = insert(self._rel_work_schedule_vacancy).values(
-            [{"vacancy_id": vacancy_id, "work_schedule_id": _id} for _id in work_schedule_ids]
-        )
-        await self._repo.execute(insert_stmt)
+    _skill: SkillDAO
+    _rel_additional_skill_vacancy: RelVacancyAdditionalSkillDAO
+    _rel_skill_vacancy: RelVacancySkillDAO
+    _work_schedule: WorkScheduleDAO
+    _employment_type: EmploymentTypeDAO
 
     async def create_vacancy(self, vacancy: CreateVacancySchema) -> None:
         values = vacancy.to_dict()
@@ -84,73 +54,17 @@ class AlchemyVacancyRepo:
         values["salary_to"] = vacancy.salary.to
         await self._repo.execute(insert(self._vacancy).values(values))
 
-        first_tasks: list[Coroutine[Any, Any, None]] = []
-        second_task: list[Coroutine[Any, Any, None]] = []
+        tasks: list[Coroutine[Any, Any, None]] = [
+            self._skill.create_skills_for_vacancy(vacancy.skills, vacancy.id),
+            self._employment_type.map_employment_types_to_vacancy(vacancy.id, vacancy.employment_type_ids),
+            self._work_schedule.map_work_schedules_to_vacancy(vacancy.id, vacancy.work_schedule_ids),
+        ]
 
-        first_tasks.append(self.create_skills(vacancy.skills))
-        second_task.append(self.map_skills_to_vacancy(vacancy.id, [skill.id for skill in vacancy.skills]))
         if vacancy.additional_skills is not UNSET and vacancy.additional_skills:
             s = [SkillSchema(id=skill.id, name=skill.name) for skill in vacancy.additional_skills]
-            first_tasks.append(self.create_skills(s))
-            second_task.append(
-                self.map_additional_skills_to_vacancy(vacancy.id, [skill.id for skill in vacancy.additional_skills])
-            )
+            tasks.append(self._skill.create_additional_skills_for_vacancy(s, vacancy.id))
 
-        first_tasks.append(self.map_employment_types_to_vacancy(vacancy.id, vacancy.employment_type_ids))
-        first_tasks.append(self.map_work_schedules_to_vacancy(vacancy.id, vacancy.work_schedule_ids))
-
-        await asyncio.gather(*first_tasks)
-        await asyncio.gather(*second_task)
-
-    async def unmap_skills_from_vacancy(self, vacancy_id: UUID) -> None:
-        await self._repo.execute(
-            delete(self._rel_skill_vacancy).where(self._rel_skill_vacancy.vacancy_id == vacancy_id)
-        )
-
-    async def update_skills(self, skills: list[SkillSchema], vacancy_id: UUID) -> None:
-        await self.unmap_skills_from_vacancy(vacancy_id)
-        if not skills:
-            return
-        await self.create_skills(skills)
-        await self.map_skills_to_vacancy(vacancy_id, [skill.id for skill in skills])
-
-    async def unmap_additional_skills(self, vacancy_id: UUID) -> None:
-        await self._repo.execute(
-            delete(self._rel_skill_vacancy).where(self._rel_skill_vacancy.vacancy_id == vacancy_id)
-        )
-
-    async def update_additional_skills(self, skills: list[SkillSchema], vacancy_id: UUID) -> None:
-        await self.unmap_additional_skills(vacancy_id)
-        if not skills:
-            return
-        await self.create_skills(skills)
-        await self.map_additional_skills_to_vacancy(vacancy_id, [skill.id for skill in skills])
-
-    async def unmap_employment_types(self, vacancy_id: UUID) -> None:
-        await self._repo.execute(
-            delete(self._rel_employment_type_vacancy).where(self._rel_employment_type_vacancy.vacancy_id == vacancy_id)
-        )
-
-    async def update_employment_types(self, vacancy_id: UUID, employment_type_ids: list[UUID]) -> None:
-        await self._repo.execute(
-            delete(self._rel_employment_type_vacancy).where(self._rel_employment_type_vacancy.vacancy_id == vacancy_id)
-        )
-        if not employment_type_ids:
-            return
-        await self.map_employment_types_to_vacancy(vacancy_id, employment_type_ids)
-
-    async def unmap_work_schedules(self, vacancy_id: UUID) -> None:
-        await self._repo.execute(
-            delete(self._rel_work_schedule_vacancy).where(self._rel_work_schedule_vacancy.vacancy_id == vacancy_id)
-        )
-
-    async def update_work_schedules(self, vacancy_id: UUID, work_schedule_ids: list[UUID]) -> None:
-        await self._repo.execute(
-            delete(self._rel_work_schedule_vacancy).where(self._rel_work_schedule_vacancy.vacancy_id == vacancy_id)
-        )
-        if not work_schedule_ids:
-            return
-        await self.map_work_schedules_to_vacancy(vacancy_id, work_schedule_ids)
+        await asyncio.gather(*tasks)
 
     async def update_vacancy(self, vacancy_id: UUID, vacancy: UpdateVacancySchema) -> None:
         values = vacancy.to_dict()
@@ -168,15 +82,14 @@ class AlchemyVacancyRepo:
 
         tasks: list[Coroutine[Any, Any, None]] = []
         if vacancy.skills is not UNSET:
-            tasks.append(self.update_skills(vacancy.skills, vacancy_id))
+            tasks.append(self._skill.update_skills(vacancy.skills, vacancy_id))
         if vacancy.additional_skills is not UNSET:
             s = [SkillSchema(id=skill.id, name=skill.name) for skill in vacancy.additional_skills]
-            tasks.append(self.update_additional_skills(s, vacancy_id))
+            tasks.append(self._skill.update_additional_skills(s, vacancy_id))
         if vacancy.employment_type_ids is not UNSET:
-            tasks.append(self.update_employment_types(vacancy_id, vacancy.employment_type_ids))
+            tasks.append(self._employment_type.update_employment_types(vacancy_id, vacancy.employment_type_ids))
         if vacancy.work_schedule_ids is not UNSET:
-            tasks.append(self.update_work_schedules(vacancy_id, vacancy.work_schedule_ids))
-
+            tasks.append(self._work_schedule.update_work_schedules(vacancy_id, vacancy.work_schedule_ids))
         await asyncio.gather(*tasks)
 
     async def delete_vacancy(self, vacancy_id: UUID) -> None:
