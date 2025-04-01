@@ -1,20 +1,17 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from msgspec import UNSET
 
 from common.application.uow import UnitOfWork
+from job.common.infrastructure.repositories.vacancy import AlchemyVacancyRepo
 from job.recruitment.api.schemas import UpdateVacancySchema
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
-
-if TYPE_CHECKING:
-    from job.common.infrastructure.repositories.vacancy import AlchemyVacancyRepo
 
 
 @dataclass(slots=True)
 class UpdateVacancyHandler:
-    _repo: "AlchemyVacancyRepo"
+    _repo: AlchemyVacancyRepo
     _uow: UnitOfWork
 
     async def __call__(self, command: UpdateVacancySchema, vacancy_id: UUID) -> None:

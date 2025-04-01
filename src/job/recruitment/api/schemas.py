@@ -27,7 +27,7 @@ class CreateVacancySchema(BaseStruct):
     work_format: WorkFormatEnum
     skills: list[Skill]
     responsibility: str
-    requirement: str
+    requirements: str
     education: EducationEnum
     email: str
     author_id: UUID
@@ -46,7 +46,7 @@ class UpdateVacancySchema(BaseStruct):
     work_format: WorkFormatEnum | UnsetType = UNSET
     skills: list[Skill] | UnsetType = UNSET
     responsibility: str | UnsetType = UNSET
-    requirement: str | UnsetType = UNSET
+    requirements: str | UnsetType = UNSET
     education: EducationEnum | UnsetType = UNSET
     email: str | UnsetType = UNSET
     additional_description: str | UnsetType = UNSET
@@ -54,4 +54,6 @@ class UpdateVacancySchema(BaseStruct):
     address: str | UnsetType = UNSET
 
 
-create_vacancy_dto = MsgspecDTO[Annotated[CreateVacancySchema, DTOConfig(exclude={"id", "author_id"})]]
+create_vacancy_dto = MsgspecDTO[
+    Annotated[CreateVacancySchema, DTOConfig(exclude={"id", "author_id"}, rename_fields={"salary.from_": "from"})]
+]

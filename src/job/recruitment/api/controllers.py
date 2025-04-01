@@ -23,6 +23,7 @@ class VacancyController(Controller):
         EmptyEmploymentTypesError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         EmptyWorkSchedulesError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
     }
+    prefix = "/vacancies"
 
     @post(
         "/vacancies",

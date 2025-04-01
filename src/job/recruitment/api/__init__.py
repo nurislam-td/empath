@@ -1,5 +1,5 @@
 from litestar import Router
 
-from .controllers import ArticleController
+from .controllers import VacancyController
 
-router = Router(path="/articles", route_handlers=[ArticleController], tags=["Article"])
+router = Router(path="/recruitment", route_handlers=[VacancyController], tags=["recruitment"])

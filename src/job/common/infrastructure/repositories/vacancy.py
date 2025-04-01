@@ -78,6 +78,8 @@ class AlchemyVacancyRepo:
         values.pop("salary")
         values.pop("skills", None)
         values.pop("additional_skills", None)
+        values.pop("employment_type_ids", None)
+        values.pop("work_schedule_ids", None)
         values["salary_from"] = vacancy.salary.from_
         values["salary_to"] = vacancy.salary.to
         await self._repo.execute(insert(self._vacancy).values(values))

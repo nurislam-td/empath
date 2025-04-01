@@ -16,6 +16,9 @@ class JobBase(TimedBaseModel):
 class Vacancy(JobBase):
     __tablename__ = "vacancy"
 
+    responsibility: Mapped[str]
+    requirements: Mapped[str]
+
     title: Mapped[str]
     is_visible: Mapped[bool]
     salary_from: Mapped[int]
