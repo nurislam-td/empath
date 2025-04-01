@@ -20,6 +20,7 @@ class Skill(BaseStruct):
 
 class CreateVacancySchema(BaseStruct):
     title: str
+    is_visible: bool
     salary: Salary
     employment_type_ids: list[UUID]
     work_schedule_ids: list[UUID]
@@ -39,6 +40,7 @@ class CreateVacancySchema(BaseStruct):
 
 class UpdateVacancySchema(BaseStruct):
     title: str | UnsetType = UNSET
+    is_visible: bool | UnsetType = UNSET
     salary: Salary | UnsetType = UNSET
     employment_type_ids: list[UUID] | UnsetType = UNSET
     work_schedule_ids: list[UUID] | UnsetType = UNSET
