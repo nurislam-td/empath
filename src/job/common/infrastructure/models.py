@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import BigInteger, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -21,8 +21,8 @@ class Vacancy(JobBase):
 
     title: Mapped[str]
     is_visible: Mapped[bool]
-    salary_from: Mapped[int]
-    salary_to: Mapped[int | None]
+    salary_from: Mapped[int] = mapped_column(BigInteger)
+    salary_to: Mapped[int | None] = mapped_column(BigInteger)
 
     work_exp: Mapped[WorkExpEnum]
     work_format: Mapped[WorkFormatEnum]
@@ -40,8 +40,6 @@ class Skill(JobBase):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String, nullable=False)
-    responsibility: Mapped[str] = mapped_column(String, nullable=False)
-    requirement: Mapped[str] = mapped_column(String, nullable=False)
 
 
 class EmploymentType(JobBase):

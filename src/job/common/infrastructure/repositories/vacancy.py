@@ -90,7 +90,8 @@ class AlchemyVacancyRepo:
         first_tasks.append(self.create_skills(vacancy.skills))
         second_task.append(self.map_skills_to_vacancy(vacancy.id, [skill.id for skill in vacancy.skills]))
         if vacancy.additional_skills is not UNSET and vacancy.additional_skills:
-            first_tasks.append(self.create_skills(vacancy.additional_skills))
+            s = [SkillSchema(id=skill.id, name=skill.name) for skill in vacancy.additional_skills]
+            first_tasks.append(self.create_skills(s))
             second_task.append(
                 self.map_additional_skills_to_vacancy(vacancy.id, [skill.id for skill in vacancy.additional_skills])
             )
@@ -153,9 +154,11 @@ class AlchemyVacancyRepo:
 
     async def update_vacancy(self, vacancy_id: UUID, vacancy: UpdateVacancySchema) -> None:
         values = vacancy.to_dict()
-        values.pop("salary")
+        values.pop("salary", None)
         values.pop("skills", None)
         values.pop("additional_skills", None)
+        values.pop("employment_type_ids", None)
+        values.pop("work_schedule_ids", None)
         if vacancy.salary is not UNSET:
             values["salary_from"] = vacancy.salary.from_
             values["salary_to"] = vacancy.salary.to
@@ -167,11 +170,14 @@ class AlchemyVacancyRepo:
         if vacancy.skills is not UNSET:
             tasks.append(self.update_skills(vacancy.skills, vacancy_id))
         if vacancy.additional_skills is not UNSET:
-            tasks.append(self.update_additional_skills(vacancy.additional_skills, vacancy_id))
+            s = [SkillSchema(id=skill.id, name=skill.name) for skill in vacancy.additional_skills]
+            tasks.append(self.update_additional_skills(s, vacancy_id))
         if vacancy.employment_type_ids is not UNSET:
             tasks.append(self.update_employment_types(vacancy_id, vacancy.employment_type_ids))
         if vacancy.work_schedule_ids is not UNSET:
             tasks.append(self.update_work_schedules(vacancy_id, vacancy.work_schedule_ids))
+
+        await asyncio.gather(*tasks)
 
     async def delete_vacancy(self, vacancy_id: UUID) -> None:
         await self._repo.execute(delete(self._vacancy).where(self._vacancy.id == vacancy_id))

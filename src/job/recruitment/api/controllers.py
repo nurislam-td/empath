@@ -50,7 +50,7 @@ class VacancyController(Controller):
         vacancy_id: UUID,
         data: UpdateVacancySchema,
         update_vacancy: Depends[UpdateVacancyHandler],
-        _: Request[JWTUserPayload, str, State],
+        request: Request[JWTUserPayload, str, State],
     ) -> Response[str]:
         # TODO check author
         await update_vacancy(vacancy_id=vacancy_id, command=data)
