@@ -55,29 +55,34 @@ class RelVacancyEmploymentType(JobBase):
     __tablename__ = "rel_vacancy_employment_type"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    employment_type_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.employment_type.id", ondelete="CASCADE"))
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"))
+    employment_type_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.employment_type.id", ondelete="CASCADE"), primary_key=True
+    )
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
 
 
 class RelVacancyWorkSchedule(JobBase):
     __tablename__ = "rel_vacancy_work_schedule"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    work_schedule_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.work_schedule.id", ondelete="CASCADE"))
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"))
+    work_schedule_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.work_schedule.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
 
 
 class RelVacancySkill(JobBase):
     __tablename__ = "rel_vacancy_skill"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"))
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"))
+    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
 
 
 class RelVacancyAdditionalSkill(JobBase):
     __tablename__ = "rel_vacancy_additional_skill"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"))
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"))
+    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
