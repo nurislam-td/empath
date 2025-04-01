@@ -27,10 +27,7 @@ class ArticleQueryBuilder:
     @classmethod
     def _filter_article(cls, qs: Select[Any], article_filter: ArticleFilter) -> Select[Any]:
         if search := article_filter.search:
-            qs = qs.where(
-                (func.similarity(cls._article.title, search) > 0.5)
-                | (func.similarity(cls._article.text, search) > 0.5)
-            ).order_by(
+            qs = qs.order_by(
                 ((func.similarity(cls._article.title, search)) + (func.similarity(cls._article.text, search))).desc(),
             )
         return qs
