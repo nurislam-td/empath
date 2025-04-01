@@ -146,6 +146,9 @@ class AlchemyArticleReader(ArticleReader):
         page_count = self._paginator.get_page_count(value_count, query.pagination.per_page)
 
         articles = await self._base.fetch_all(qs)
+        if not articles:
+            return PaginatedDTO[ArticleDTO](count=page_count, page=query.pagination.page, results=[])
+
         article_ids = {article.id for article in articles}
         sub_articles, article_imgs, article_tags = await asyncio.gather(
             self._sub_article.get_sub_articles(article_ids),
