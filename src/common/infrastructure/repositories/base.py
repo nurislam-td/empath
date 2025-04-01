@@ -33,6 +33,6 @@ class AlchemyReader(ABC):
         result = await self.session.execute(query)
         return result.mappings().all()
 
-    async def fetch_sequence(self, query: Select[Any]) -> Sequence[Any]:
+    async def fetch_sequence[T](self, query: Select[tuple[T]]) -> Sequence[T]:
         result = await self.session.execute(query)
         return result.scalars().all()

@@ -1,4 +1,4 @@
-from .get_articles import GetArticles
+from .get_vacancies import GetArticles
 from .get_tag_list import GetTagList
 
 __all__ = (
