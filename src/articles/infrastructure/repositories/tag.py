@@ -83,7 +83,7 @@ class AlchemyTagReader(ArticleReader):
         page_count = self.paginator.get_page_count(value_count, query.pagination.per_page)
 
         return PaginatedDTO[TagDTO](
-            count=page_count,
+            count=value_count,
             page=query.pagination.page,
             results=[convert_db_to_tag_dto(tag) for tag in tags],
         )

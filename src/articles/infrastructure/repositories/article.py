@@ -159,4 +159,4 @@ class AlchemyArticleReader(ArticleReader):
             articles=articles, sub_articles=sub_articles, imgs=article_imgs, tags=article_tags
         )
 
-        return PaginatedDTO[ArticleDTO](count=page_count, page=query.pagination.page, results=article_dto_list)
+        return PaginatedDTO[ArticleDTO](count=value_count, page=query.pagination.page, results=article_dto_list)

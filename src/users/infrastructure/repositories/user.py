@@ -53,7 +53,7 @@ class AlchemyUserReader(AlchemyReader, UserReader):
         users = await self.fetch_all(paginated_query)
         if users:
             return PaginatedDTO[UserDTO](
-                count=page_count,
+                count=value_count,
                 page=page,
                 results=[convert_db_model_to_dto(user) for user in users],
             )

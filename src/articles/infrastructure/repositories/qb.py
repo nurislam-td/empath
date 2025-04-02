@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy import Select, func, select
 
 from articles.application.queries.get_articles import ArticleFilter
-from articles.infrastructure.models import Article, ArticleImg, Tag
+from articles.infrastructure.models import Article, ArticleImg, SubArticle, Tag
 from auth.infrastructure.models import User
 
 
@@ -15,7 +15,9 @@ class TagFilters:
 
     def filter_qs(self, qs: Select[Any]) -> Select[Any]:
         if self.name:
-            qs = qs.order_by(func.similarity(Tag.name, self.name).desc())
+            qs = qs.where(func.similarity(Tag.name, self.name) > 0.5).order_by(
+                func.similarity(Tag.name, self.name).desc(),
+            )
         return qs
 
 
@@ -23,13 +25,21 @@ class ArticleQueryBuilder:
     _article = Article
     _article_img = ArticleImg
     _author = User
+    _sub_article = SubArticle
 
     @classmethod
     def _filter_article(cls, qs: Select[Any], article_filter: ArticleFilter) -> Select[Any]:
         if search := article_filter.search:
-            qs = qs.order_by(
-                ((func.similarity(cls._article.title, search)) + (func.similarity(cls._article.text, search))).desc(),
+            search_qs = select(cls._sub_article.article_id).where(
+                cls._sub_article.title.ilike(f"%{search}%") | cls._sub_article.text.ilike(f"%{search}%")
             )
+            search_filter = (
+                cls._article.title.ilike(f"%{search}%")
+                | cls._article.text.ilike(f"%{search}%")
+                | cls._article.id.in_(search_qs)
+            )
+            qs = qs.where(search_filter)
+            qs = qs.order_by(cls._article.created_at.desc())
         return qs
 
     @classmethod
