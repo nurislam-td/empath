@@ -16,7 +16,7 @@ from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator
 
 
-class AlchemyTagRepo(ArticleRepo):
+class AlchemyTagRepo:
     """Tag Repo implementation."""
 
     tag = Tag
@@ -48,7 +48,7 @@ class AlchemyTagRepo(ArticleRepo):
         await self.map_tags_to_article({dto.id for dto in tags}, article_id)
 
 
-class AlchemyTagReader(ArticleReader):
+class AlchemyTagReader:
     """Tag Reader implementation."""
 
     paginator = AlchemyPaginator
@@ -80,7 +80,8 @@ class AlchemyTagReader(ArticleReader):
         )
         value_count = await self.base.count(qs)
         tags = await self.base.fetch_all(paginated_query)
-        page_count = self.paginator.get_page_count(value_count, query.pagination.per_page)
+        if not tags:
+            return PaginatedDTO[TagDTO](count=value_count, page=query.pagination.page, results=[])
 
         return PaginatedDTO[TagDTO](
             count=value_count,

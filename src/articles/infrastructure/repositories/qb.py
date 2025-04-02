@@ -15,7 +15,7 @@ class TagFilters:
 
     def filter_qs(self, qs: Select[Any]) -> Select[Any]:
         if self.name:
-            qs = qs.where(func.similarity(Tag.name, self.name) > 0.5).order_by(
+            qs = qs.where(Tag.name.ilike(f"%{self.name}%")).order_by(
                 func.similarity(Tag.name, self.name).desc(),
             )
         return qs

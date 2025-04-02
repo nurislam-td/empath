@@ -11,10 +11,12 @@ from articles.application.commands.edit_article import EditArticle
 from articles.application.dto.article import (
     ArticleDTO,
     PaginatedArticleDTO,
+    TagDTO,
 )
 from articles.application.exceptions import ArticleIdNotExistError
 from articles.application.ports.repo import ArticleReader, ArticleRepo
 from articles.application.queries.get_articles import GetArticles
+from articles.application.queries.get_tag_list import GetTagList
 from articles.infrastructure.mapper import (
     convert_db_to_article_dto,
     convert_db_to_article_dto_list,
@@ -124,6 +126,9 @@ class AlchemyArticleReader(ArticleReader):
         self._base = base
         self._sub_article = sub_article
         self._tag = tag
+
+    async def get_tag_list(self, query: GetTagList) -> PaginatedDTO[TagDTO]:
+        return await self._tag.get_tag_list(query)
 
     async def get_article_by_id(self, article_id: UUID) -> ArticleDTO:
         qs = self._qb.get_articles_qs()
