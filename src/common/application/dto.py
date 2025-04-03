@@ -9,6 +9,9 @@ class DTO:
     def to_dict(self, exclude_unset: bool = False) -> dict[str, Any]:
         return {attr: value for attr, value in asdict(self).items() if (not exclude_unset or value is not Empty.UNSET)}
 
+    def to_dict_exclude_none(self) -> dict[str, Any]:
+        return {attr: value for attr, value in asdict(self).items() if value is not None}
+
 
 @dataclass
 class PaginatedDTO[T: DTO]:

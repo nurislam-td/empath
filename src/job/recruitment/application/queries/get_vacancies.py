@@ -1,25 +1,16 @@
 from dataclasses import dataclass
 
 from articles.application.dto.article import PaginatedArticleDTO
-from articles.application.ports.repo import ArticleReader
-from common.application.dto import DTO
-from common.application.query import PaginationParams, Query, QueryHandler
+from common.application.dto import PaginatedDTO
+from common.application.query import PaginationParams
+from job.common.infrastructure.repositories.vacancy import AlchemyVacancyReader
+from job.recruitment.api.schemas import GetVacanciesQuery
+from job.recruitment.application.dto import VacancyDTO
 
 
 @dataclass(frozen=True, slots=True)
-class ArticleFilter(DTO):
-    search: str | None = None
+class GetVacanciesHandler:
+    _reader: AlchemyVacancyReader
 
-
-@dataclass(frozen=True, slots=True)
-class GetArticles(Query[PaginatedArticleDTO]):
-    pagination: PaginationParams
-    articles_filter: ArticleFilter | None = None
-
-
-@dataclass(frozen=True, slots=True)
-class GetArticlesHandler(QueryHandler[GetArticles, PaginatedArticleDTO]):
-    _reader: ArticleReader
-
-    async def __call__(self, query: GetArticles) -> PaginatedArticleDTO:
-        return await self._reader.get_articles(query)
+    async def __call__(self, query: GetVacanciesQuery, pagination: PaginationParams) -> PaginatedDTO[VacancyDTO]:
+        return await self._reader.get_vacancies(query, pagination=pagination)

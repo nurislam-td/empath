@@ -4,17 +4,22 @@ from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, delete, patch, post, status_codes
+from litestar import Controller, Request, Response, delete, get, patch, post, status_codes
 from litestar.datastructures import State
+from litestar.di import Provide
 from litestar.dto import DTOData
 
 from auth.api.schemas import JWTUserPayload
 from common.api.exception_handlers import error_handler
-from job.recruitment.api.schemas import CreateVacancySchema, UpdateVacancySchema, create_vacancy_dto
+from common.application.dto import PaginatedDTO
+from common.application.query import PaginationParams
+from job.recruitment.api.schemas import CreateVacancySchema, GetVacanciesQuery, UpdateVacancySchema, create_vacancy_dto
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
+from job.recruitment.application.dto import VacancyDTO
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
 
 
 class VacancyController(Controller):
@@ -63,3 +68,13 @@ class VacancyController(Controller):
     @inject
     async def delete_vacancy(self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler]) -> None:
         await delete_vacancy(vacancy_id)
+
+    @get("/", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesQuery)})
+    @inject
+    async def get_vacancies(
+        self,
+        filters: GetVacanciesQuery,
+        pagination_params: PaginationParams,
+        get_vacancies: Depends[GetVacanciesHandler],
+    ) -> PaginatedDTO[VacancyDTO]:
+        return await get_vacancies(query=filters, pagination=pagination_params)

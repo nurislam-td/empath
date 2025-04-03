@@ -1,6 +1,5 @@
 import asyncio
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any, ClassVar, Coroutine
 from uuid import UUID
 
@@ -9,24 +8,24 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 
 from common.api.schemas import BaseStruct
+from common.application.dto import PaginatedDTO
+from common.application.query import PaginationParams
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator
-from job.common.infrastructure.mapper import convert_db_to_skill
+from job.common.infrastructure.mapper import convert_db_to_skill, convert_db_to_vacancy_list
 from job.common.infrastructure.models import (
-    RelVacancyAdditionalSkill,
-    RelVacancyEmploymentType,
-    RelVacancySkill,
-    RelVacancyWorkSchedule,
     Skill,
     Vacancy,
 )
+from job.common.infrastructure.repositories import query_builder as qb
 from job.common.infrastructure.repositories.employment_type import EmploymentTypeDAO
 from job.common.infrastructure.repositories.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
 from job.common.infrastructure.repositories.skill import SkillDAO
 from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
-from job.recruitment.api.schemas import CreateVacancySchema, UpdateVacancySchema
+from job.recruitment.api.schemas import CreateVacancySchema, GetVacanciesQuery, UpdateVacancySchema
 from job.recruitment.api.schemas import Skill as SkillSchema
+from job.recruitment.application.dto import VacancyDTO
 
 
 @dataclass(slots=True)
@@ -105,3 +104,31 @@ class AlchemyVacancyReader:
     _skill: ClassVar[type[Skill]] = Skill
 
     _base: AlchemyReader
+
+    async def get_vacancies(
+        self,
+        query: GetVacanciesQuery,
+        pagination: PaginationParams,
+    ) -> PaginatedDTO[VacancyDTO]:
+        qs = qb.get_vacancy_qs(
+            filters=query,
+            search=query.search,
+        )
+
+        value_count = await self._base.count(qs)
+        qs = self._paginator.paginate(qs, pagination.page, pagination.per_page)
+
+        vacancies = await self._base.fetch_all(qs)
+        if not vacancies:
+            return PaginatedDTO[VacancyDTO](count=value_count, page=pagination.page, results=[])
+        vacancies_id = [vacancy.id for vacancy in vacancies]
+        skills = await self._base.fetch_all(qb.get_vacancy_skill_qs(vacancies_id))
+        additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs(vacancies_id))
+        work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs(vacancies_id))
+        employment_types = await self._base.fetch_all(qb.get_employment_type_qs(vacancies_id))
+
+        return PaginatedDTO[VacancyDTO](
+            count=value_count,
+            page=pagination.page,
+            results=convert_db_to_vacancy_list(vacancies, skills, additional_skills, work_schedules, employment_types),
+        )
