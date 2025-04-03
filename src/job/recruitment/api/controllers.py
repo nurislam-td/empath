@@ -13,13 +13,15 @@ from auth.api.schemas import JWTUserPayload
 from common.api.exception_handlers import error_handler
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
+from job.common.application.exceptions import VacancyIdNotExistError
 from job.recruitment.api.schemas import CreateVacancySchema, GetVacanciesQuery, UpdateVacancySchema, create_vacancy_dto
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
-from job.recruitment.application.dto import VacancyDTO
+from job.recruitment.application.dto import DetailedVacancyDTO, VacancyDTO
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
 from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
+from job.recruitment.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
 
 
 class VacancyController(Controller):
@@ -27,6 +29,7 @@ class VacancyController(Controller):
         EmptySkillsError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         EmptyEmploymentTypesError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         EmptyWorkSchedulesError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
+        VacancyIdNotExistError: error_handler(status_codes.HTTP_404_NOT_FOUND),
     }
     prefix = "/vacancies"
 
@@ -69,7 +72,7 @@ class VacancyController(Controller):
     async def delete_vacancy(self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler]) -> None:
         await delete_vacancy(vacancy_id)
 
-    @get("/", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesQuery)})
+    @get("/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesQuery)})
     @inject
     async def get_vacancies(
         self,
@@ -78,3 +81,12 @@ class VacancyController(Controller):
         get_vacancies: Depends[GetVacanciesHandler],
     ) -> PaginatedDTO[VacancyDTO]:
         return await get_vacancies(query=filters, pagination=pagination_params)
+
+    @get("/vacancies/{vacancy_id:uuid}", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_vacancy_by_id(
+        self,
+        vacancy_id: UUID,
+        get_vacancy_by_id: Depends[GetVacancyByIdHandler],
+    ) -> DetailedVacancyDTO:
+        return await get_vacancy_by_id(vacancy_id)

@@ -4,7 +4,7 @@ from uuid import UUID
 
 from common.application.dto import DTO
 from job.common.infrastructure.repositories import work_schedule
-from job.recruitment.domain.enums import EducationEnum, WorkExpEnum
+from job.recruitment.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,7 +22,7 @@ class AuthorDTO(DTO):
 class VacancyDTO(DTO):
     title: str
     salary: SalaryDTO
-    address: str
+    address: str | None
     author: AuthorDTO
     work_exp: WorkExpEnum
     work_schedules: list[str]
@@ -32,3 +32,25 @@ class VacancyDTO(DTO):
     created_at: datetime
     email: str
     id: UUID
+
+
+@dataclass(frozen=True, slots=True)
+class DetailedVacancyDTO(DTO):
+    title: str
+    salary: SalaryDTO
+    author: AuthorDTO
+    work_exp: WorkExpEnum
+    work_schedules: list[str]
+    employment_types: list[str]
+    skills: list[str]
+    additional_skills: list[str]
+    created_at: datetime
+    email: str
+    id: UUID
+    is_visible: bool
+    work_format: WorkFormatEnum
+    responsibility: str
+    requirements: str
+    education: EducationEnum
+    additional_description: str | None
+    address: str | None

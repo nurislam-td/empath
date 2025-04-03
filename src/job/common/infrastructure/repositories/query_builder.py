@@ -125,14 +125,14 @@ def get_work_schedules_qs(vacancies_id: list[UUID]) -> Select[Any]:
     )
 
 
-def get_employment_type_qs(vacancy_id: list[UUID]) -> Select[Any]:
+def get_employment_type_qs(vacancies_id: list[UUID]) -> Select[Any]:
     return (
         select(_employment_type.__table__)
         .add_columns(_rel_employment_vacancy.vacancy_id)
         .join(
             _rel_employment_vacancy.__table__,
             (_rel_employment_vacancy.employment_type_id == _employment_type.id)
-            & _rel_employment_vacancy.vacancy_id.in_(vacancy_id),
+            & _rel_employment_vacancy.vacancy_id.in_(vacancies_id),
         )
     )
 

@@ -10,6 +10,7 @@ from job.recruitment.application.commands.create_vacancy import CreateVacancyHan
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
 from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
+from job.recruitment.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
 
 
 class RecruitmentProvider(Provider):
@@ -29,3 +30,4 @@ class RecruitmentProvider(Provider):
     delete_vacancy = provide(DeleteVacancyHandler)
 
     get_vacancies = provide(GetVacanciesHandler)
+    get_vacancy_by_id = provide(GetVacancyByIdHandler)

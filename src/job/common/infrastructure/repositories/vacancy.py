@@ -12,7 +12,12 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator
-from job.common.infrastructure.mapper import convert_db_to_skill, convert_db_to_vacancy_list
+from job.common.application.exceptions import VacancyIdNotExistError
+from job.common.infrastructure.mapper import (
+    convert_db_detailed_vacancy,
+    convert_db_to_skill,
+    convert_db_to_vacancy_list,
+)
 from job.common.infrastructure.models import (
     Skill,
     Vacancy,
@@ -25,7 +30,7 @@ from job.common.infrastructure.repositories.skill import SkillDAO
 from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
 from job.recruitment.api.schemas import CreateVacancySchema, GetVacanciesQuery, UpdateVacancySchema
 from job.recruitment.api.schemas import Skill as SkillSchema
-from job.recruitment.application.dto import VacancyDTO
+from job.recruitment.application.dto import DetailedVacancyDTO, VacancyDTO
 
 
 @dataclass(slots=True)
@@ -131,4 +136,24 @@ class AlchemyVacancyReader:
             count=value_count,
             page=pagination.page,
             results=convert_db_to_vacancy_list(vacancies, skills, additional_skills, work_schedules, employment_types),
+        )
+
+    async def get_vacancy_by_id(self, vacancy_id: UUID) -> DetailedVacancyDTO:
+        qs = qb.get_vacancy_qs().where(self._vacancy.id == vacancy_id)
+
+        vacancy = await self._base.fetch_one(qs)
+        if vacancy is None:
+            raise VacancyIdNotExistError(vacancy_id)
+
+        skills = await self._base.fetch_all(qb.get_vacancy_skill_qs([vacancy.id]))
+        additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs([vacancy.id]))
+        work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs([vacancy.id]))
+        employment_types = await self._base.fetch_all(qb.get_employment_type_qs([vacancy_id]))
+
+        return convert_db_detailed_vacancy(
+            vacancy=vacancy,
+            skills=skills,
+            additional_skills=additional_skills,
+            work_schedules=work_schedules,
+            employment_types=employment_types,
         )
