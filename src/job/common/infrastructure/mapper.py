@@ -5,11 +5,15 @@ from uuid import UUID
 from sqlalchemy import RowMapping
 
 from job.recruitment.api.schemas import Skill
-from job.recruitment.application.dto import AuthorDTO, DetailedVacancyDTO, SalaryDTO, VacancyDTO
+from job.recruitment.application.dto import AuthorDTO, DetailedVacancyDTO, SalaryDTO, SkillDTO, VacancyDTO
 
 
 def convert_db_to_skill(skill: RowMapping) -> Skill:
     return Skill(name=skill.name, id=skill.id)
+
+
+def convert_db_to_skill_dto(skill: RowMapping) -> SkillDTO:
+    return SkillDTO(name=skill.name, id=skill.id)
 
 
 def convert_db_detailed_vacancy(

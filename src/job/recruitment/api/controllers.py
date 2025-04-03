@@ -14,12 +14,19 @@ from common.api.exception_handlers import error_handler
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
-from job.recruitment.api.schemas import CreateVacancySchema, GetVacanciesQuery, UpdateVacancySchema, create_vacancy_dto
+from job.recruitment.api.schemas import (
+    CreateVacancySchema,
+    GetVacanciesQuery,
+    Skill,
+    UpdateVacancySchema,
+    create_vacancy_dto,
+)
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
-from job.recruitment.application.dto import DetailedVacancyDTO, VacancyDTO
+from job.recruitment.application.dto import DetailedVacancyDTO, SkillDTO, VacancyDTO
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.application.queries.get_skills import GetSkillsHandler
 from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
 from job.recruitment.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
 
@@ -90,3 +97,10 @@ class VacancyController(Controller):
         get_vacancy_by_id: Depends[GetVacancyByIdHandler],
     ) -> DetailedVacancyDTO:
         return await get_vacancy_by_id(vacancy_id)
+
+    @get("/skills", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_skills(
+        self, search: str, pagination_params: PaginationParams, get_skills: Depends[GetSkillsHandler]
+    ) -> PaginatedDTO[SkillDTO]:
+        return await get_skills(search=search, pagination=pagination_params)

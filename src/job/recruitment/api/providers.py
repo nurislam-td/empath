@@ -9,6 +9,7 @@ from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
+from job.recruitment.application.queries.get_skills import GetSkillsHandler
 from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
 from job.recruitment.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
 
@@ -31,3 +32,4 @@ class RecruitmentProvider(Provider):
 
     get_vacancies = provide(GetVacanciesHandler)
     get_vacancy_by_id = provide(GetVacancyByIdHandler)
+    get_skills = provide(GetSkillsHandler)

@@ -19,6 +19,12 @@ class AuthorDTO(DTO):
 
 
 @dataclass(frozen=True, slots=True)
+class SkillDTO(DTO):
+    name: str
+    id: UUID
+
+
+@dataclass(frozen=True, slots=True)
 class VacancyDTO(DTO):
     title: str
     salary: SalaryDTO

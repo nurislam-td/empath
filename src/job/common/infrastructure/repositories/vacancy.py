@@ -1,13 +1,13 @@
 import asyncio
+from collections.abc import Coroutine
 from dataclasses import dataclass
-from typing import Any, ClassVar, Coroutine
+from typing import Any, ClassVar
 from uuid import UUID
 
 from msgspec import UNSET
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, update
 from sqlalchemy.dialects.postgresql import insert
 
-from common.api.schemas import BaseStruct
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
@@ -15,7 +15,7 @@ from common.infrastructure.repositories.pagination import AlchemyPaginator
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.infrastructure.mapper import (
     convert_db_detailed_vacancy,
-    convert_db_to_skill,
+    convert_db_to_skill_dto,
     convert_db_to_vacancy_list,
 )
 from job.common.infrastructure.models import (
@@ -30,7 +30,7 @@ from job.common.infrastructure.repositories.skill import SkillDAO
 from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
 from job.recruitment.api.schemas import CreateVacancySchema, GetVacanciesQuery, UpdateVacancySchema
 from job.recruitment.api.schemas import Skill as SkillSchema
-from job.recruitment.application.dto import DetailedVacancyDTO, VacancyDTO
+from job.recruitment.application.dto import DetailedVacancyDTO, SkillDTO, VacancyDTO
 
 
 @dataclass(slots=True)
@@ -156,4 +156,21 @@ class AlchemyVacancyReader:
             additional_skills=additional_skills,
             work_schedules=work_schedules,
             employment_types=employment_types,
+        )
+
+    async def get_skills(self, search: str, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
+        qs = qb.get_skill_qs(search=search)
+
+        value_count = await self._base.count(qs)
+        qs = self._paginator.paginate(qs, pagination.page, pagination.per_page)
+
+        skills = await self._base.fetch_all(qs)
+
+        if not skills:
+            return PaginatedDTO[SkillDTO](count=value_count, page=pagination.page, results=[])
+
+        return PaginatedDTO[SkillDTO](
+            count=value_count,
+            page=pagination.page,
+            results=[convert_db_to_skill_dto(skill) for skill in skills],
         )

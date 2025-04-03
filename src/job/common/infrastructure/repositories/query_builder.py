@@ -72,7 +72,10 @@ def filter_skill(qs: Select[Any], filters: SkillFilters) -> Select[Any]:
 
 
 def search_skill(qs: Select[Any], search: str) -> Select[Any]:
-    return qs.order_by(func.similarity(func.lower(_skill.name), func.lower(search)).desc())
+    qs = qs.where(_skill.name.ilike(f"%{search}%"))
+    return qs.order_by(
+        func.similarity(func.lower(_skill.name), func.lower(search)).desc(),
+    )
 
 
 def get_skill_qs(filters: SkillFilters | None = None, search: str | None = None) -> Select[Any]:
