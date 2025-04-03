@@ -4,9 +4,9 @@ from uuid import UUID
 
 from sqlalchemy import Select, func, or_, select
 
-from auth.infrastructure.models import User
 from job.common.infrastructure.models import (
     EmploymentType,
+    Recruiter,
     RelVacancyAdditionalSkill,
     RelVacancyEmploymentType,
     RelVacancySkill,
@@ -18,7 +18,7 @@ from job.common.infrastructure.models import (
 from job.recruitment.api.schemas import GetVacanciesQuery
 
 _vacancy = Vacancy
-_author = User
+_recruiter = Recruiter
 _skill = Skill
 _schedule = WorkSchedule
 _employment_type = EmploymentType
@@ -172,12 +172,11 @@ def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:
 
 
 def get_vacancy_qs(filters: GetVacanciesQuery | None = None, search: str | None = None) -> Select[Any]:
-    table = _vacancy.__table__.join(_author.__table__, _vacancy.author_id == _author.id)
+    table = _vacancy.__table__.outerjoin(_recruiter.__table__, _vacancy.author_id == _recruiter.id)
     qs = select(
         _vacancy.__table__,
-        _author.name.label("author_name"),
-        _author.lastname.label("author_lastname"),
-        _author.patronymic.label("author_patronymic"),
+        _recruiter.company_name.label("company_name"),
+        _recruiter.about_us.label("about_company"),
     ).select_from(table)
     if filters:
         qs = filter_vacancy(qs, filters)

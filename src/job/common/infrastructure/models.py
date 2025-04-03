@@ -86,3 +86,13 @@ class RelVacancyAdditionalSkill(JobBase):
     id: None = None  # type: ignore  # noqa: PGH003
     skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
     vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+
+
+class Recruiter(JobBase):
+    __tablename__ = "recruiter"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)
+
+    company_name: Mapped[str]
+    about_us: Mapped[str]
+    email: Mapped[str]

@@ -5,7 +5,14 @@ from uuid import UUID
 from sqlalchemy import RowMapping
 
 from job.recruitment.api.schemas import Skill
-from job.recruitment.application.dto import AuthorDTO, DetailedVacancyDTO, SalaryDTO, SkillDTO, VacancyDTO
+from job.recruitment.application.dto import (
+    AuthorDTO,
+    DetailedAuthorDTO,
+    DetailedVacancyDTO,
+    SalaryDTO,
+    SkillDTO,
+    VacancyDTO,
+)
 
 
 def convert_db_to_skill(skill: RowMapping) -> Skill:
@@ -23,18 +30,14 @@ def convert_db_detailed_vacancy(
     work_schedules: Sequence[RowMapping],
     employment_types: Sequence[RowMapping],
 ) -> DetailedVacancyDTO:
-    author_fullname = " ".join(
-        [
-            vacancy.author_lastname or "",
-            vacancy.author_name or "",
-            vacancy.author_patronymic or "",
-        ],
-    ).strip()
     return DetailedVacancyDTO(
         title=vacancy.title,
         salary=SalaryDTO(from_=vacancy.salary_from, to=vacancy.salary_to),
         address=vacancy.address,
-        author=AuthorDTO(name=author_fullname),
+        author=DetailedAuthorDTO(
+            name=vacancy.company_name if vacancy.company_name else "",
+            about_us=vacancy.about_company if vacancy.about_company else "",
+        ),
         work_exp=vacancy.work_exp,
         work_schedules=[s.name for s in work_schedules],
         employment_types=[t.name for t in employment_types],
@@ -59,18 +62,11 @@ def convert_db_to_vacancy(
     work_schedules: Sequence[RowMapping],
     employment_types: Sequence[RowMapping],
 ) -> VacancyDTO:
-    author_fullname = " ".join(
-        [
-            vacancy.author_lastname or "",
-            vacancy.author_name or "",
-            vacancy.author_patronymic or "",
-        ],
-    ).strip()
     return VacancyDTO(
         title=vacancy.title,
         salary=SalaryDTO(from_=vacancy.salary_from, to=vacancy.salary_to),
         address=vacancy.address,
-        author=AuthorDTO(name=author_fullname),
+        author=AuthorDTO(name=vacancy.company_name if vacancy.company_name else ""),
         work_exp=vacancy.work_exp,
         work_schedules=[s.name for s in work_schedules],
         employment_types=[t.name for t in employment_types],
