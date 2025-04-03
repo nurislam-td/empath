@@ -177,6 +177,7 @@ def get_vacancy_qs(filters: GetVacanciesQuery | None = None, search: str | None 
         _vacancy.__table__,
         _recruiter.company_name.label("company_name"),
         _recruiter.about_us.label("about_company"),
+        _recruiter.email.label("company_email"),
     ).select_from(table)
     if filters:
         qs = filter_vacancy(qs, filters)

@@ -22,6 +22,7 @@ class AuthorDTO(DTO):
 class DetailedAuthorDTO(DTO):
     name: str
     about_us: str
+    email: str
 
 
 @dataclass(frozen=True, slots=True)

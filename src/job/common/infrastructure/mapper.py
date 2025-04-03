@@ -37,6 +37,7 @@ def convert_db_detailed_vacancy(
         author=DetailedAuthorDTO(
             name=vacancy.company_name if vacancy.company_name else "",
             about_us=vacancy.about_company if vacancy.about_company else "",
+            email=vacancy.company_email if vacancy.company_email else "",
         ),
         work_exp=vacancy.work_exp,
         work_schedules=[s.name for s in work_schedules],

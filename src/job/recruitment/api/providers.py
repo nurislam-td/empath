@@ -6,6 +6,7 @@ from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancyS
 from job.common.infrastructure.repositories.skill import SkillDAO
 from job.common.infrastructure.repositories.vacancy import AlchemyVacancyReader, AlchemyVacancyRepo
 from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
+from job.recruitment.application.commands.create_recruiter import CreateRecruiterHandler
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
@@ -29,6 +30,7 @@ class RecruitmentProvider(Provider):
     create_vacancy = provide(CreateVacancyHandler)
     update_vacancy = provide(UpdateVacancyHandler)
     delete_vacancy = provide(DeleteVacancyHandler)
+    create_recruiter = provide(CreateRecruiterHandler)
 
     get_vacancies = provide(GetVacanciesHandler)
     get_vacancy_by_id = provide(GetVacancyByIdHandler)

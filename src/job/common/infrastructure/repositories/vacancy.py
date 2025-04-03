@@ -19,6 +19,7 @@ from job.common.infrastructure.mapper import (
     convert_db_to_vacancy_list,
 )
 from job.common.infrastructure.models import (
+    Recruiter,
     Skill,
     Vacancy,
 )
@@ -28,7 +29,12 @@ from job.common.infrastructure.repositories.rel_additional_skill_vacancy import 
 from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
 from job.common.infrastructure.repositories.skill import SkillDAO
 from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
-from job.recruitment.api.schemas import CreateVacancySchema, GetVacanciesQuery, UpdateVacancySchema
+from job.recruitment.api.schemas import (
+    CreateRecruiterSchema,
+    CreateVacancySchema,
+    GetVacanciesQuery,
+    UpdateVacancySchema,
+)
 from job.recruitment.api.schemas import Skill as SkillSchema
 from job.recruitment.application.dto import DetailedVacancyDTO, SkillDTO, VacancyDTO
 
@@ -38,6 +44,7 @@ class AlchemyVacancyRepo:
     """Vacancy Repo implementation."""
 
     _vacancy: ClassVar[type[Vacancy]] = Vacancy
+    _recruiter: ClassVar[type[Recruiter]] = Recruiter
 
     _repo: AlchemyRepo
     _reader: AlchemyReader
@@ -98,6 +105,10 @@ class AlchemyVacancyRepo:
 
     async def delete_vacancy(self, vacancy_id: UUID) -> None:
         await self._repo.execute(delete(self._vacancy).where(self._vacancy.id == vacancy_id))
+
+    async def create_recruiter(self, command: CreateRecruiterSchema) -> None:
+        insert_stmt = insert(self._recruiter).values(command.to_dict())
+        await self._repo.execute(insert_stmt)
 
 
 @dataclass(slots=True)

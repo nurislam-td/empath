@@ -15,12 +15,14 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.recruitment.api.schemas import (
+    CreateRecruiterSchema,
     CreateVacancySchema,
     GetVacanciesQuery,
-    Skill,
     UpdateVacancySchema,
+    create_recruiter_dto,
     create_vacancy_dto,
 )
+from job.recruitment.application.commands.create_recruiter import CreateRecruiterHandler
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
@@ -107,3 +109,14 @@ class VacancyController(Controller):
         search: str | None = None,
     ) -> PaginatedDTO[SkillDTO]:
         return await get_skills(search=search, pagination=pagination_params)
+
+    @post("/vacancies/author", status_code=status_codes.HTTP_201_CREATED, dto=create_recruiter_dto)
+    @inject
+    async def create_recruiter(
+        self,
+        data: DTOData[CreateRecruiterSchema],
+        create_recruiter: Depends[CreateRecruiterHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> Response[str]:
+        await create_recruiter(command=data.create_instance(id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_201_CREATED)

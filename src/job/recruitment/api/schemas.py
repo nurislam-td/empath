@@ -74,3 +74,15 @@ class GetVacanciesQuery(DTO):
     exclude_word: list[str] | None = None
     include_word: list[str] | None = None
     search: str | None = None
+
+
+class CreateRecruiterSchema(BaseStruct):
+    company_name: str
+    about_us: str
+    email: str
+    id: UUID
+
+
+create_recruiter_dto = MsgspecDTO[
+    Annotated[CreateRecruiterSchema, DTOConfig(exclude={"id"}, rename_fields={"salary.from_": "from"})]
+]
