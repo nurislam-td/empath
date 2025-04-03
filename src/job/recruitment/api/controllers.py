@@ -101,6 +101,9 @@ class VacancyController(Controller):
     @get("/skills", status_code=status_codes.HTTP_200_OK)
     @inject
     async def get_skills(
-        self, search: str, pagination_params: PaginationParams, get_skills: Depends[GetSkillsHandler]
+        self,
+        pagination_params: PaginationParams,
+        get_skills: Depends[GetSkillsHandler],
+        search: str | None = None,
     ) -> PaginatedDTO[SkillDTO]:
         return await get_skills(search=search, pagination=pagination_params)

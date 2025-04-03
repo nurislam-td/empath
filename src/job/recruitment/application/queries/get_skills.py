@@ -10,5 +10,5 @@ from job.recruitment.application.dto import SkillDTO
 class GetSkillsHandler:
     _reader: AlchemyVacancyReader
 
-    async def __call__(self, search: str, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
+    async def __call__(self, search: str | None, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
         return await self._reader.get_skills(search, pagination=pagination)

@@ -158,7 +158,7 @@ class AlchemyVacancyReader:
             employment_types=employment_types,
         )
 
-    async def get_skills(self, search: str, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
+    async def get_skills(self, search: str | None, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
         qs = qb.get_skill_qs(search=search)
 
         value_count = await self._base.count(qs)
