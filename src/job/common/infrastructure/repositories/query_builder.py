@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 from sqlalchemy import Select, func, or_, select
@@ -15,7 +15,9 @@ from job.common.infrastructure.models import (
     Vacancy,
     WorkSchedule,
 )
-from job.recruitment.api.schemas import GetVacanciesQuery
+
+if TYPE_CHECKING:
+    from job.common.application.queries.get_vacancies import GetVacanciesQuery
 
 _vacancy = Vacancy
 _recruiter = Recruiter
@@ -34,7 +36,7 @@ class SkillFilters:
     exclude: list[str] | None = None
 
 
-def filter_vacancy(qs: Select[Any], filters: GetVacanciesQuery) -> Select[Any]:
+def filter_vacancy(qs: Select[Any], filters: "GetVacanciesQuery") -> Select[Any]:
     if filters.salary_from:
         qs = qs.where(_vacancy.salary_from >= filters.salary_from)
     if filters.salary_to:
@@ -169,7 +171,7 @@ def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:
     )
 
 
-def get_vacancy_qs(filters: GetVacanciesQuery | None = None, search: str | None = None) -> Select[Any]:
+def get_vacancy_qs(filters: "GetVacanciesQuery | None" = None, search: str | None = None) -> Select[Any]:
     table = _vacancy.__table__.outerjoin(_recruiter.__table__, _vacancy.author_id == _recruiter.id)
     qs = select(
         _vacancy.__table__,

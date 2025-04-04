@@ -1,5 +1,10 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
+from job.common.application.queries.get_employment_types import GetEmploymentTypesHandler
+from job.common.application.queries.get_skills import GetSkillsHandler
+from job.common.application.queries.get_vacancies import GetVacanciesHandler
+from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
+from job.common.application.queries.get_work_schudules import GetWorkSchedulesHandler
 from job.common.infrastructure.repositories.employment_type import EmploymentTypeDAO
 from job.common.infrastructure.repositories.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
@@ -10,11 +15,6 @@ from job.recruitment.application.commands.create_recruiter import CreateRecruite
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
-from job.recruitment.application.queries.get_employment_types import GetEmploymentTypesHandler
-from job.recruitment.application.queries.get_skills import GetSkillsHandler
-from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
-from job.recruitment.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
-from job.recruitment.application.queries.get_work_schudules import GetWorkSchedulesHandler
 
 
 class RecruitmentProvider(Provider):

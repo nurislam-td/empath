@@ -14,10 +14,14 @@ from common.api.exception_handlers import error_handler
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
+from job.common.application.queries.get_employment_types import GetEmploymentTypesHandler
+from job.common.application.queries.get_skills import GetSkillsHandler
+from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
+from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
+from job.common.application.queries.get_work_schudules import GetWorkSchedulesHandler
 from job.recruitment.api.schemas import (
     CreateRecruiterSchema,
     CreateVacancySchema,
-    GetVacanciesQuery,
     UpdateVacancySchema,
     create_recruiter_dto,
     create_vacancy_dto,
@@ -34,11 +38,6 @@ from job.recruitment.application.dto import (
     WorkScheduleDTO,
 )
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
-from job.recruitment.application.queries.get_employment_types import GetEmploymentTypesHandler
-from job.recruitment.application.queries.get_skills import GetSkillsHandler
-from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
-from job.recruitment.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
-from job.recruitment.application.queries.get_work_schudules import GetWorkSchedulesHandler
 
 
 class VacancyController(Controller):
@@ -91,7 +90,7 @@ class VacancyController(Controller):
 
     @get(
         "/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesQuery)}
-    )  # TODO move to employment
+    )  # TODO use my vacancies
     @inject
     async def get_vacancies(
         self,

@@ -3,7 +3,6 @@ from typing import Annotated
 from uuid import UUID, uuid4
 
 from litestar.dto import DTOConfig, MsgspecDTO
-from litestar.params import Parameter
 from msgspec import UNSET, UnsetType, field
 
 from common.api.schemas import BaseStruct
@@ -62,18 +61,6 @@ class UpdateVacancySchema(BaseStruct):
 create_vacancy_dto = MsgspecDTO[
     Annotated[CreateVacancySchema, DTOConfig(exclude={"id", "author_id"}, rename_fields={"salary.from_": "from"})]
 ]
-
-
-@dataclass(frozen=True, slots=True)
-class GetVacanciesQuery(DTO):
-    salary_from: int | None = None
-    salary_to: int | None = None
-    work_exp: list[WorkExpEnum] | None = None
-    education: list[EducationEnum] | None = None
-    work_format: list[WorkFormatEnum] | None = None
-    exclude_word: list[str] | None = None
-    include_word: list[str] | None = None
-    search: str | None = None
 
 
 class CreateRecruiterSchema(BaseStruct):

@@ -1,7 +1,7 @@
 import asyncio
 from collections.abc import Coroutine
 from dataclasses import dataclass
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import UUID
 
 from msgspec import UNSET
@@ -32,7 +32,6 @@ from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
 from job.recruitment.api.schemas import (
     CreateRecruiterSchema,
     CreateVacancySchema,
-    GetVacanciesQuery,
     UpdateVacancySchema,
 )
 from job.recruitment.api.schemas import Skill as SkillSchema
@@ -43,6 +42,9 @@ from job.recruitment.application.dto import (
     VacancyDTO,
     WorkScheduleDTO,
 )
+
+if TYPE_CHECKING:
+    from job.common.application.queries.get_vacancies import GetVacanciesQuery
 
 
 @dataclass(slots=True)
@@ -129,7 +131,7 @@ class AlchemyVacancyReader:
 
     async def get_vacancies(
         self,
-        query: GetVacanciesQuery,
+        query: "GetVacanciesQuery",
         pagination: PaginationParams,
     ) -> PaginatedDTO[VacancyDTO]:
         qs = qb.get_vacancy_qs(
