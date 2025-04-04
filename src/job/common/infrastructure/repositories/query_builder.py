@@ -60,6 +60,8 @@ def filter_vacancy(qs: Select[Any], filters: "GetVacanciesQuery") -> Select[Any]
             for word in filters.include_word
         ]
         qs = qs.where(or_(*conditions))
+    if filters.author_id:
+        qs = qs.where(_vacancy.author_id == filters.author_id)
 
     return qs
 
@@ -144,18 +146,14 @@ def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:
     if search == "":
         return qs
     search_table = _rel_skill_vacancy.__table__.join(_skill.__table__, _rel_skill_vacancy.skill_id == _skill.id)
-    skill = (
-        select(_rel_skill_vacancy.vacancy_id)
-        .select_from(search_table)
-        .where(func.similarity(func.lower(search), func.lower(_skill.name)) > 0.5)
-    )
+    skill = select(_rel_skill_vacancy.vacancy_id).select_from(search_table).where(_skill.name.ilike(f"%{search}%"))
     additional_skill = select(_rel_additional_skill_vacancy.vacancy_id)
     additional_skill = additional_skill.select_from(
         _rel_additional_skill_vacancy.__table__.join(
             _skill.__table__,
             (_rel_additional_skill_vacancy.skill_id == _skill.id),
         ),
-    )
+    ).where(_skill.name.ilike(f"%{search}%"))
 
     qs = qs.where(
         _vacancy.id.in_(skill)
