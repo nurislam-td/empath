@@ -13,6 +13,7 @@ from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
 from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
+from job.employment.api.schemas import GetVacanciesFilters
 from job.recruitment.application.dto import (
     DetailedVacancyDTO,
     VacancyDTO,
@@ -28,15 +29,15 @@ class ResponseController(Controller):
         VacancyIdNotExistError: error_handler(status_codes.HTTP_404_NOT_FOUND),
     }
 
-    @get("/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesQuery)})
+    @get("/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesFilters)})
     @inject
     async def get_vacancies(
         self,
-        filters: GetVacanciesQuery,
+        filters: GetVacanciesFilters,
         pagination_params: PaginationParams,
         get_vacancies: Depends[GetVacanciesHandler],
     ) -> PaginatedDTO[VacancyDTO]:
-        return await get_vacancies(query=filters, pagination=pagination_params)
+        return await get_vacancies(query=GetVacanciesQuery(**filters.to_dict()), pagination=pagination_params)
 
     @get("/vacancies/{vacancy_id:uuid}", status_code=status_codes.HTTP_200_OK)
     @inject

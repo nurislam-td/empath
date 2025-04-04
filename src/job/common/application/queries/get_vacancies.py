@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 from common.application.dto import DTO, PaginatedDTO
 from common.application.query import PaginationParams
@@ -17,6 +18,7 @@ class GetVacanciesQuery(DTO):
     exclude_word: list[str] | None = None
     include_word: list[str] | None = None
     search: str | None = None
+    author_id: UUID | None = None
 
 
 @dataclass(frozen=True, slots=True)

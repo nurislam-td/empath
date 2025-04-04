@@ -19,6 +19,7 @@ from job.common.application.queries.get_skills import GetSkillsHandler
 from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
 from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
 from job.common.application.queries.get_work_schudules import GetWorkSchedulesHandler
+from job.employment.api.schemas import GetVacanciesFilters
 from job.recruitment.api.schemas import (
     CreateRecruiterSchema,
     CreateVacancySchema,
@@ -88,17 +89,18 @@ class VacancyController(Controller):
     async def delete_vacancy(self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler]) -> None:
         await delete_vacancy(vacancy_id)
 
-    @get(
-        "/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesQuery)}
-    )  # TODO use my vacancies
+    @get("/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesFilters)})
     @inject
     async def get_vacancies(
         self,
-        filters: GetVacanciesQuery,
+        filters: GetVacanciesFilters,
         pagination_params: PaginationParams,
         get_vacancies: Depends[GetVacanciesHandler],
+        request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[VacancyDTO]:
-        return await get_vacancies(query=filters, pagination=pagination_params)
+        return await get_vacancies(
+            query=GetVacanciesQuery(**filters.to_dict(), author_id=request.user.sub), pagination=pagination_params
+        )
 
     @get("/vacancies/{vacancy_id:uuid}", status_code=status_codes.HTTP_200_OK)
     @inject
