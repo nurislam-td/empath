@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from common.infrastructure.models import TimedBaseModel
-from job.recruitment.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
+from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
 
 
 class JobBase(TimedBaseModel):

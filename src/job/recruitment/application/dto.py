@@ -3,7 +3,7 @@ from datetime import datetime
 from uuid import UUID
 
 from common.application.dto import DTO
-from job.recruitment.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
+from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
 
 
 @dataclass(frozen=True, slots=True)

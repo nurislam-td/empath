@@ -8,7 +8,7 @@ from msgspec import UNSET, UnsetType, field
 
 from common.api.schemas import BaseStruct
 from common.application.dto import DTO
-from job.recruitment.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
+from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
 
 
 class Salary(BaseStruct):
