@@ -26,11 +26,19 @@ from job.recruitment.application.commands.create_recruiter import CreateRecruite
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
-from job.recruitment.application.dto import DetailedVacancyDTO, SkillDTO, VacancyDTO
+from job.recruitment.application.dto import (
+    DetailedVacancyDTO,
+    EmploymentTypeDTO,
+    SkillDTO,
+    VacancyDTO,
+    WorkScheduleDTO,
+)
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.application.queries.get_employment_types import GetEmploymentTypesHandler
 from job.recruitment.application.queries.get_skills import GetSkillsHandler
 from job.recruitment.application.queries.get_vacancies import GetVacanciesHandler
 from job.recruitment.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
+from job.recruitment.application.queries.get_work_schudules import GetWorkSchedulesHandler
 
 
 class VacancyController(Controller):
@@ -122,3 +130,16 @@ class VacancyController(Controller):
     ) -> Response[str]:
         await create_recruiter(command=data.create_instance(id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+
+    @get("/work-schedules", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_work_schedules(self, get_schedules: Depends[GetWorkSchedulesHandler]) -> list[WorkScheduleDTO]:
+        return await get_schedules()
+
+    @get("employment-types", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_employment_types(
+        self,
+        get_employment_types: Depends[GetEmploymentTypesHandler],
+    ) -> list[EmploymentTypeDTO]:
+        return await get_employment_types()

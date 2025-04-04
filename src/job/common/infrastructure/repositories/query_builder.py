@@ -114,30 +114,28 @@ def get_vacancy_skill_qs(
     )
 
 
-def get_work_schedules_qs(vacancies_id: list[UUID]) -> Select[Any]:
-    return (
-        select(_schedule.__table__)
-        .add_columns(
+def get_work_schedules_qs(vacancies_id: list[UUID] | None = None) -> Select[Any]:
+    qs = select(_schedule.__table__)
+    if vacancies_id:
+        qs = qs.add_columns(
             _rel_schedule_vacancy.vacancy_id,
-        )
-        .join(
+        ).join(
             _rel_schedule_vacancy.__table__,
             (_rel_schedule_vacancy.work_schedule_id == _schedule.id)
             & _rel_schedule_vacancy.vacancy_id.in_(vacancies_id),
         )
-    )
+    return qs
 
 
-def get_employment_type_qs(vacancies_id: list[UUID]) -> Select[Any]:
-    return (
-        select(_employment_type.__table__)
-        .add_columns(_rel_employment_vacancy.vacancy_id)
-        .join(
+def get_employment_type_qs(vacancies_id: list[UUID] | None = None) -> Select[Any]:
+    qs = select(_employment_type.__table__)
+    if vacancies_id:
+        qs = qs.add_columns(_rel_employment_vacancy.vacancy_id).join(
             _rel_employment_vacancy.__table__,
             (_rel_employment_vacancy.employment_type_id == _employment_type.id)
             & _rel_employment_vacancy.vacancy_id.in_(vacancies_id),
         )
-    )
+    return qs
 
 
 def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:

@@ -36,7 +36,13 @@ from job.recruitment.api.schemas import (
     UpdateVacancySchema,
 )
 from job.recruitment.api.schemas import Skill as SkillSchema
-from job.recruitment.application.dto import DetailedVacancyDTO, SkillDTO, VacancyDTO
+from job.recruitment.application.dto import (
+    DetailedVacancyDTO,
+    EmploymentTypeDTO,
+    SkillDTO,
+    VacancyDTO,
+    WorkScheduleDTO,
+)
 
 
 @dataclass(slots=True)
@@ -185,3 +191,15 @@ class AlchemyVacancyReader:
             page=pagination.page,
             results=[convert_db_to_skill_dto(skill) for skill in skills],
         )
+
+    async def get_work_schedules(self) -> list[WorkScheduleDTO]:
+        qs = qb.get_work_schedules_qs()
+        work_schedules = await self._base.fetch_all(qs)
+        return [WorkScheduleDTO(id=work_schedule.id, name=work_schedule.name) for work_schedule in work_schedules]
+
+    async def get_employment_types(self) -> list[EmploymentTypeDTO]:
+        qs = qb.get_employment_type_qs()
+        employment_types = await self._base.fetch_all(qs)
+        return [
+            EmploymentTypeDTO(id=employment_type.id, name=employment_type.name) for employment_type in employment_types
+        ]

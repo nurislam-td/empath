@@ -3,8 +3,19 @@ from datetime import datetime
 from uuid import UUID
 
 from common.application.dto import DTO
-from job.common.infrastructure.repositories import work_schedule
 from job.recruitment.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
+
+
+@dataclass(frozen=True, slots=True)
+class WorkScheduleDTO(DTO):
+    name: str
+    id: UUID
+
+
+@dataclass(frozen=True, slots=True)
+class EmploymentTypeDTO(DTO):
+    name: str
+    id: UUID
 
 
 @dataclass(frozen=True, slots=True)
