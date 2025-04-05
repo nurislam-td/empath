@@ -18,6 +18,7 @@ from job.common.infrastructure.models import (
     RelVacancyWorkSchedule,
     Skill,
     Vacancy,
+    WorkFormat,
     WorkSchedule,
 )
 
@@ -41,5 +42,6 @@ __all__ = (
     "TimedBaseModel",
     "User",
     "Vacancy",
+    "WorkFormat",
     "WorkSchedule",
 )
