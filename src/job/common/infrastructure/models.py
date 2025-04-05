@@ -142,6 +142,7 @@ class WorkExp(JobBase):
     description: Mapped[str]
     start_date: Mapped[date]
     end_date: Mapped[date | None]
+    is_relevant: Mapped[bool]
     cv_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
 
 
