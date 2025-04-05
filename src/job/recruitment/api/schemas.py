@@ -27,7 +27,7 @@ class CreateVacancySchema(BaseStruct):
     employment_type_ids: list[UUID]
     work_schedule_ids: list[UUID]
     work_exp: WorkExpEnum
-    work_format: WorkFormatEnum
+    work_formats_id: list[UUID]
     skills: list[Skill]
     responsibility: str
     requirements: str
@@ -46,6 +46,7 @@ class UpdateVacancySchema(BaseStruct):
     salary: Salary | UnsetType = UNSET
     employment_type_ids: list[UUID] | UnsetType = UNSET
     work_schedule_ids: list[UUID] | UnsetType = UNSET
+    work_formats_id: list[UUID] | UnsetType = UNSET
     work_exp: WorkExpEnum | UnsetType = UNSET
     work_format: WorkFormatEnum | UnsetType = UNSET
     skills: list[Skill] | UnsetType = UNSET

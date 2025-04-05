@@ -19,6 +19,12 @@ class EmploymentTypeDTO(DTO):
 
 
 @dataclass(frozen=True, slots=True)
+class WorkFormatDTO(DTO):
+    name: str
+    id: UUID
+
+
+@dataclass(frozen=True, slots=True)
 class SalaryDTO(DTO):
     from_: int
     to: int
@@ -51,6 +57,7 @@ class VacancyDTO(DTO):
     work_exp: WorkExpEnum
     work_schedules: list[str]
     employment_types: list[str]
+    work_formats: list[str]
     skills: list[str]
     additional_skills: list[str]
     created_at: datetime
@@ -66,6 +73,7 @@ class DetailedVacancyDTO(DTO):
     work_exp: WorkExpEnum
     work_schedules: list[str]
     employment_types: list[str]
+    work_formats: list[str]
     skills: list[str]
     additional_skills: list[str]
     created_at: datetime

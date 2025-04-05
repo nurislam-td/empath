@@ -10,9 +10,11 @@ from job.common.infrastructure.models import (
     RelVacancyAdditionalSkill,
     RelVacancyEmploymentType,
     RelVacancySkill,
+    RelVacancyWorkFormat,
     RelVacancyWorkSchedule,
     Skill,
     Vacancy,
+    WorkFormat,
     WorkSchedule,
 )
 
@@ -24,10 +26,12 @@ _recruiter = Recruiter
 _skill = Skill
 _schedule = WorkSchedule
 _employment_type = EmploymentType
+_work_format = WorkFormat
 _rel_schedule_vacancy = RelVacancyWorkSchedule
 _rel_employment_vacancy = RelVacancyEmploymentType
 _rel_skill_vacancy = RelVacancySkill
 _rel_additional_skill_vacancy = RelVacancyAdditionalSkill
+_rel_work_format_vacancy = RelVacancyWorkFormat
 
 
 @dataclass
@@ -46,7 +50,11 @@ def filter_vacancy(qs: Select[Any], filters: "GetVacanciesQuery") -> Select[Any]
     if filters.education:
         qs = qs.where(_vacancy.education.in_(filters.education))
     if filters.work_format:
-        qs = qs.where(_vacancy.work_format.in_(filters.work_format))
+        format_filter = select(_rel_work_format_vacancy.vacancy_id).join(
+            _work_format.__table__,
+            (_work_format.name.in_(filters.work_format) & _work_format.id == _rel_work_format_vacancy.work_format_id),
+        )
+        qs = qs.where(_vacancy.id.in_(format_filter))
     if filters.exclude_word:
         for word in filters.exclude_word:
             qs = qs.where(_vacancy.title.not_ilike(f"%{word}%"))
@@ -138,6 +146,17 @@ def get_employment_type_qs(vacancies_id: list[UUID] | None = None) -> Select[Any
             _rel_employment_vacancy.__table__,
             (_rel_employment_vacancy.employment_type_id == _employment_type.id)
             & _rel_employment_vacancy.vacancy_id.in_(vacancies_id),
+        )
+    return qs
+
+
+def get_work_format_qs(vacancies_id: list[UUID] | None = None) -> Select[Any]:
+    qs = select(_work_format.__table__)
+    if vacancies_id:
+        qs = qs.add_columns(_rel_work_format_vacancy.vacancy_id).join(
+            _rel_work_format_vacancy.__table__,
+            (_rel_work_format_vacancy.work_format_id == _work_format.id)
+            & _rel_work_format_vacancy.vacancy_id.in_(vacancies_id),
         )
     return qs
 

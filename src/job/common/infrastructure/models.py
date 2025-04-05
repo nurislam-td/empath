@@ -25,7 +25,6 @@ class Vacancy(JobBase):
     salary_to: Mapped[int | None] = mapped_column(BigInteger)
 
     work_exp: Mapped[WorkExpEnum]
-    work_format: Mapped[WorkFormatEnum]
     education: Mapped[EducationEnum]
     email: Mapped[str]
 
@@ -49,6 +48,22 @@ class EmploymentType(JobBase):
 class WorkSchedule(JobBase):
     __tablename__ = "work_schedule"
     name: Mapped[str]
+
+
+class WorkFormat(JobBase):
+    __tablename__ = "work_format"
+    name: Mapped[str]  # IT WOULD be WorkFormatEnum from domain
+
+
+class RelVacancyWorkFormat(JobBase):
+    __tablename__ = "rel_vacancy_work_format"
+
+    id: None = None  # type: ignore  # noqa: PGH003
+    work_format_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.work_format.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
 
 
 class RelVacancyEmploymentType(JobBase):
@@ -96,3 +111,18 @@ class Recruiter(JobBase):
     company_name: Mapped[str]
     about_us: Mapped[str]
     email: Mapped[str]
+
+
+# class CV(JobBase):
+#     __tablename__ = "cv"
+
+#     user_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("auth.user.id", ondelete="CASCADE"))
+
+
+# class WorkExp(JobBase):
+#     __tablename__ = "work_exp"
+
+#     company_name: Mapped[str]
+#     title: Mapped[str]
+#     description: Mapped[str]
+#     cv_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)

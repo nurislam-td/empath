@@ -28,6 +28,7 @@ from job.common.infrastructure.repositories.employment_type import EmploymentTyp
 from job.common.infrastructure.repositories.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
 from job.common.infrastructure.repositories.skill import SkillDAO
+from job.common.infrastructure.repositories.work_format import WorkFormatDAO
 from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
 from job.recruitment.api.schemas import (
     CreateRecruiterSchema,
@@ -40,6 +41,7 @@ from job.recruitment.application.dto import (
     EmploymentTypeDTO,
     SkillDTO,
     VacancyDTO,
+    WorkFormatDTO,
     WorkScheduleDTO,
 )
 
@@ -60,6 +62,7 @@ class AlchemyVacancyRepo:
     _rel_additional_skill_vacancy: RelVacancyAdditionalSkillDAO
     _rel_skill_vacancy: RelVacancySkillDAO
     _work_schedule: WorkScheduleDAO
+    _work_format: WorkFormatDAO
     _employment_type: EmploymentTypeDAO
 
     async def create_vacancy(self, vacancy: CreateVacancySchema) -> None:
@@ -69,6 +72,7 @@ class AlchemyVacancyRepo:
         values.pop("additional_skills", None)
         values.pop("employment_type_ids", None)
         values.pop("work_schedule_ids", None)
+        values.pop("work_formats_id", None)
         values["salary_from"] = vacancy.salary.from_
         values["salary_to"] = vacancy.salary.to
         await self._repo.execute(insert(self._vacancy).values(values))
@@ -77,6 +81,7 @@ class AlchemyVacancyRepo:
             self._skill.create_skills_for_vacancy(vacancy.skills, vacancy.id),
             self._employment_type.map_employment_types_to_vacancy(vacancy.id, vacancy.employment_type_ids),
             self._work_schedule.map_work_schedules_to_vacancy(vacancy.id, vacancy.work_schedule_ids),
+            self._work_format.map_work_format_to_vacancy(vacancy.id, vacancy.work_formats_id),
         ]
 
         if vacancy.additional_skills is not UNSET and vacancy.additional_skills:
@@ -92,6 +97,7 @@ class AlchemyVacancyRepo:
         values.pop("additional_skills", None)
         values.pop("employment_type_ids", None)
         values.pop("work_schedule_ids", None)
+        values.pop("work_formats_id", None)
         if vacancy.salary is not UNSET:
             values["salary_from"] = vacancy.salary.from_
             values["salary_to"] = vacancy.salary.to
@@ -109,6 +115,9 @@ class AlchemyVacancyRepo:
             tasks.append(self._employment_type.update_employment_types(vacancy_id, vacancy.employment_type_ids))
         if vacancy.work_schedule_ids is not UNSET:
             tasks.append(self._work_schedule.update_work_schedules(vacancy_id, vacancy.work_schedule_ids))
+        if vacancy.work_formats_id is not UNSET:
+            tasks.append(self._work_format.update_work_format(vacancy_id, vacancy.work_formats_id))
+
         await asyncio.gather(*tasks)
 
     async def delete_vacancy(self, vacancy_id: UUID) -> None:
@@ -150,11 +159,14 @@ class AlchemyVacancyReader:
         additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs(vacancies_id))
         work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs(vacancies_id))
         employment_types = await self._base.fetch_all(qb.get_employment_type_qs(vacancies_id))
+        work_formats = await self._base.fetch_all(qb.get_work_format_qs(vacancies_id))
 
         return PaginatedDTO[VacancyDTO](
             count=value_count,
             page=pagination.page,
-            results=convert_db_to_vacancy_list(vacancies, skills, additional_skills, work_schedules, employment_types),
+            results=convert_db_to_vacancy_list(
+                vacancies, skills, additional_skills, work_schedules, employment_types, work_formats
+            ),
         )
 
     async def get_vacancy_by_id(self, vacancy_id: UUID) -> DetailedVacancyDTO:
@@ -168,6 +180,7 @@ class AlchemyVacancyReader:
         additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs([vacancy.id]))
         work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs([vacancy.id]))
         employment_types = await self._base.fetch_all(qb.get_employment_type_qs([vacancy_id]))
+        work_formats = await self._base.fetch_all(qb.get_work_format_qs([vacancy.id]))
 
         return convert_db_detailed_vacancy(
             vacancy=vacancy,
@@ -175,6 +188,7 @@ class AlchemyVacancyReader:
             additional_skills=additional_skills,
             work_schedules=work_schedules,
             employment_types=employment_types,
+            work_formats=work_formats,
         )
 
     async def get_skills(self, search: str | None, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
@@ -205,3 +219,8 @@ class AlchemyVacancyReader:
         return [
             EmploymentTypeDTO(id=employment_type.id, name=employment_type.name) for employment_type in employment_types
         ]
+
+    async def get_work_formats(self) -> list[WorkFormatDTO]:
+        qs = qb.get_work_format_qs()
+        work_formats = await self._base.fetch_all(qs)
+        return [WorkFormatDTO(id=work_format.id, name=work_format.name) for work_format in work_formats]

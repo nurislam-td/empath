@@ -18,6 +18,7 @@ from job.common.application.queries.get_employment_types import GetEmploymentTyp
 from job.common.application.queries.get_skills import GetSkillsHandler
 from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
 from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
+from job.common.application.queries.get_work_formats import GetWorkFormatsHandler
 from job.common.application.queries.get_work_schudules import GetWorkSchedulesHandler
 from job.employment.api.schemas import GetVacanciesFilters
 from job.recruitment.api.schemas import (
@@ -36,6 +37,7 @@ from job.recruitment.application.dto import (
     EmploymentTypeDTO,
     SkillDTO,
     VacancyDTO,
+    WorkFormatDTO,
     WorkScheduleDTO,
 )
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
@@ -137,10 +139,18 @@ class VacancyController(Controller):
     async def get_work_schedules(self, get_schedules: Depends[GetWorkSchedulesHandler]) -> list[WorkScheduleDTO]:
         return await get_schedules()
 
-    @get("employment-types", status_code=status_codes.HTTP_200_OK)
+    @get("/employment-types", status_code=status_codes.HTTP_200_OK)
     @inject
     async def get_employment_types(
         self,
         get_employment_types: Depends[GetEmploymentTypesHandler],
     ) -> list[EmploymentTypeDTO]:
         return await get_employment_types()
+
+    @get("/work-formats", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_work_formats(
+        self,
+        get_work_formats: Depends[GetWorkFormatsHandler],
+    ) -> list[WorkFormatDTO]:
+        return await get_work_formats()
