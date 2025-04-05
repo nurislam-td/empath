@@ -53,7 +53,7 @@ class WorkSchedule(JobBase):
 
 class WorkFormat(JobBase):
     __tablename__ = "work_format"
-    name: Mapped[WorkFormatEnum] = mapped_column(Enum(WorkFormatEnum, native_enum=False, length=50))
+    name: Mapped[WorkFormatEnum] = mapped_column(String(length=50))
 
 
 class RelVacancyWorkFormat(JobBase):

@@ -3,8 +3,8 @@ from uuid import UUID
 
 from common.application.dto import DTO, PaginatedDTO
 from common.application.query import PaginationParams
+from job.common.application.ports.repo import VacancyReader
 from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
-from job.common.infrastructure.repositories.vacancy import AlchemyVacancyReader
 from job.recruitment.application.dto import VacancyDTO
 
 
@@ -23,7 +23,7 @@ class GetVacanciesQuery(DTO):
 
 @dataclass(frozen=True, slots=True)
 class GetVacanciesHandler:
-    _reader: AlchemyVacancyReader
+    _reader: VacancyReader
 
     async def __call__(self, query: GetVacanciesQuery, pagination: PaginationParams) -> PaginatedDTO[VacancyDTO]:
         return await self._reader.get_vacancies(query, pagination=pagination)

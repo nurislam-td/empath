@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
+from job.common.application.ports.repo import VacancyReader
 from job.common.application.queries.get_employment_types import GetEmploymentTypesHandler
 from job.common.application.queries.get_skills import GetSkillsHandler
 from job.common.application.queries.get_vacancies import GetVacanciesHandler
@@ -23,7 +24,7 @@ class RecruitmentProvider(Provider):
     scope = Scope.REQUEST
 
     vacancy_repo = provide(AlchemyVacancyRepo)
-    vacancy_reader = provide(AlchemyVacancyReader)
+    vacancy_reader = provide(AlchemyVacancyReader, provides=VacancyReader)
 
     rel_additional_skill_vacancy = provide(RelVacancyAdditionalSkillDAO)  # TODO split this
     rel_skill_vacancy = provide(RelVacancySkillDAO)

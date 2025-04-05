@@ -1,28 +1,15 @@
-import asyncio
 from dataclasses import dataclass
-from enum import Enum
-from typing import Any, ClassVar, Coroutine
+from typing import ClassVar
 from uuid import UUID
 
-from msgspec import UNSET
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
 
-from common.api.schemas import BaseStruct
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
-from common.infrastructure.repositories.pagination import AlchemyPaginator
-from job.common.infrastructure.mapper import convert_db_to_skill
 from job.common.infrastructure.models import (
     RelVacancyAdditionalSkill,
-    RelVacancyEmploymentType,
-    RelVacancySkill,
-    RelVacancyWorkSchedule,
     Skill,
-    Vacancy,
 )
-from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
-from job.recruitment.api.schemas import CreateVacancySchema, UpdateVacancySchema
-from job.recruitment.api.schemas import Skill as SkillSchema
 
 
 @dataclass(slots=True)

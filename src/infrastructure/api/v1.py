@@ -7,7 +7,7 @@ from common.api.exception_handlers import exception_handler
 from common.api.pagination import pagination_query_params
 from config import get_settings
 from file_storage.api import router as file_storage_router
-from job.common.api import router as job_router
+from job import router as job_router
 from users.api import router as users_router
 
 settings = get_settings().app

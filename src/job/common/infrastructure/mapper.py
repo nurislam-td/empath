@@ -1,10 +1,9 @@
 from collections import defaultdict
 from collections.abc import Sequence
-from uuid import UUID
+from typing import TYPE_CHECKING
 
 from sqlalchemy import RowMapping
 
-from job.recruitment.api.schemas import Skill
 from job.recruitment.application.dto import (
     AuthorDTO,
     DetailedAuthorDTO,
@@ -14,9 +13,8 @@ from job.recruitment.application.dto import (
     VacancyDTO,
 )
 
-
-def convert_db_to_skill(skill: RowMapping) -> Skill:
-    return Skill(name=skill.name, id=skill.id)
+if TYPE_CHECKING:
+    from uuid import UUID
 
 
 def convert_db_to_skill_dto(skill: RowMapping) -> SkillDTO:

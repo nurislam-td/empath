@@ -71,6 +71,6 @@ networks:
     driver: bridge
 
 volumes:
-  empath-db-data-local:
-  empath-s3-data-local:
+  empath-db-data-local: {}
+  empath-s3-data-local: {}
 

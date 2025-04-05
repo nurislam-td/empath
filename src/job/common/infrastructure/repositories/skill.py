@@ -10,7 +10,7 @@ from job.common.infrastructure.models import (
 )
 from job.common.infrastructure.repositories.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
-from job.recruitment.api.schemas import Skill as SkillSchema
+from job.common.api.schemas import SkillSchema as SkillSchema
 
 
 @dataclass(slots=True)
@@ -54,3 +54,7 @@ class SkillDAO:
         await self._rel_additional_skill_vacancy.map_additional_skills_to_vacancy(
             vacancy_id, [skill.id for skill in skills]
         )
+
+    async def create_skills_for_cv(self, skills: list[SkillSchema], cv_id: UUID) -> None:
+        await self.create_skills(skills)
+        await self._rel

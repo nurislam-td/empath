@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Annotated
 from uuid import UUID, uuid4
 
@@ -6,36 +5,26 @@ from litestar.dto import DTOConfig, MsgspecDTO
 from msgspec import UNSET, UnsetType, field
 
 from common.api.schemas import BaseStruct
-from common.application.dto import DTO
+from job.common.api.schemas import SalarySchema, SkillSchema
 from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
-
-
-class Salary(BaseStruct):
-    from_: int = field(name="from")
-    to: int = field(name="to")
-
-
-class Skill(BaseStruct):
-    name: str
-    id: UUID = field(default_factory=uuid4)
 
 
 class CreateVacancySchema(BaseStruct):
     title: str
     is_visible: bool
-    salary: Salary
+    salary: SalarySchema
     employment_type_ids: list[UUID]
     work_schedule_ids: list[UUID]
     work_exp: WorkExpEnum
     work_formats_id: list[UUID]
-    skills: list[Skill]
+    skills: list[SkillSchema]
     responsibility: str
     requirements: str
     education: EducationEnum
     email: str
     author_id: UUID
     additional_description: str | UnsetType = UNSET
-    additional_skills: list[Skill] | UnsetType = UNSET
+    additional_skills: list[SkillSchema] | UnsetType = UNSET
     address: str | UnsetType = UNSET
     id: UUID = field(default_factory=uuid4)
 
@@ -43,19 +32,19 @@ class CreateVacancySchema(BaseStruct):
 class UpdateVacancySchema(BaseStruct):
     title: str | UnsetType = UNSET
     is_visible: bool | UnsetType = UNSET
-    salary: Salary | UnsetType = UNSET
+    salary: SalarySchema | UnsetType = UNSET
     employment_type_ids: list[UUID] | UnsetType = UNSET
     work_schedule_ids: list[UUID] | UnsetType = UNSET
     work_formats_id: list[UUID] | UnsetType = UNSET
     work_exp: WorkExpEnum | UnsetType = UNSET
     work_format: WorkFormatEnum | UnsetType = UNSET
-    skills: list[Skill] | UnsetType = UNSET
+    skills: list[SkillSchema] | UnsetType = UNSET
     responsibility: str | UnsetType = UNSET
     requirements: str | UnsetType = UNSET
     education: EducationEnum | UnsetType = UNSET
     email: str | UnsetType = UNSET
     additional_description: str | UnsetType = UNSET
-    additional_skills: list[Skill] | UnsetType = UNSET
+    additional_skills: list[SkillSchema] | UnsetType = UNSET
     address: str | UnsetType = UNSET
 
 
