@@ -6,13 +6,9 @@ from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert
 
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
-from common.infrastructure.repositories.pagination import AlchemyPaginator
 from job.common.infrastructure.models import (
-    CV,
     RelCVWorkSchedule,
     RelVacancyWorkSchedule,
-    Skill,
-    Vacancy,
 )
 
 

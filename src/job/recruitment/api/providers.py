@@ -6,7 +6,7 @@ from job.common.application.queries.get_skills import GetSkillsHandler
 from job.common.application.queries.get_vacancies import GetVacanciesHandler
 from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
 from job.common.application.queries.get_work_formats import GetWorkFormatsHandler
-from job.common.application.queries.get_work_schudules import GetWorkSchedulesHandler
+from job.common.application.queries.get_work_schedules import GetWorkSchedulesHandler
 from job.common.infrastructure.repositories.employment_type import EmploymentTypeDAO
 from job.common.infrastructure.repositories.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO

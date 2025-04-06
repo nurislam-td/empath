@@ -37,7 +37,6 @@ class UpdateVacancySchema(BaseStruct):
     work_schedule_ids: list[UUID] | UnsetType = UNSET
     work_formats_id: list[UUID] | UnsetType = UNSET
     work_exp: WorkExpEnum | UnsetType = UNSET
-    work_format: WorkFormatEnum | UnsetType = UNSET
     skills: list[SkillSchema] | UnsetType = UNSET
     responsibility: str | UnsetType = UNSET
     requirements: str | UnsetType = UNSET
