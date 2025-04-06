@@ -5,6 +5,7 @@ from job.common.infrastructure.repositories.rel_additional_skill_cv import RelCV
 from job.common.infrastructure.repositories.rel_skill_cv import RelCVSkillDAO
 from job.common.infrastructure.repositories.work_exp import WorkExpDAO
 from job.employment.application.commands.create_cv import CreateCVHandler
+from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.employment.application.queries.get_cv_by_id import GetCVByIdHandler  # type: ignore  # noqa: PGH003
 
 
@@ -19,6 +20,7 @@ class EmploymentProvider(Provider):
     rel_additional_skill_vacancy = provide(RelCVAdditionalSkillDAO)  # TODO split this
     rel_skill_vacancy = provide(RelCVSkillDAO)
 
-    create_vacancy = provide(CreateCVHandler)
+    create_cv = provide(CreateCVHandler)
+    update_cv = provide(UpdateCVHandler)
 
     get_cv_by_id = provide(GetCVByIdHandler)

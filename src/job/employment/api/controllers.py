@@ -4,7 +4,7 @@ from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, get, post, status_codes
+from litestar import Controller, Request, Response, get, patch, post, status_codes
 from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.dto import DTOData
@@ -16,8 +16,9 @@ from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
 from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
-from job.employment.api.schemas import CreateCVSchema, GetVacanciesFilters
+from job.employment.api.schemas import CreateCVSchema, GetVacanciesFilters, UpdateCVSchema, create_cv_dto
 from job.employment.application.commands.create_cv import CreateCVHandler
+from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.employment.application.dto import DetailedCVDTO
 from job.employment.application.queries.get_cv_by_id import GetCVByIdHandler
 from job.recruitment.application.dto import (
@@ -25,8 +26,6 @@ from job.recruitment.application.dto import (
     VacancyDTO,
 )
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
-
-from .schemas import create_cv_dto
 
 
 class ResponseController(Controller):
@@ -66,6 +65,19 @@ class ResponseController(Controller):
     ) -> Response[str]:
         await create_cv(data.create_instance(author_id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+
+    @patch("cv/{cv_id:uuid}", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def update_cv(
+        self,
+        cv_id: UUID,
+        data: UpdateCVSchema,
+        update_cv: Depends[UpdateCVHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> Response[str]:
+        # TODO check request user
+        await update_cv(data, cv_id)
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
 
     @get("/cv/{cv_id:uuid}", status_code=status_codes.HTTP_200_OK)
     @inject

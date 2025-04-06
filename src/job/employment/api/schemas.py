@@ -66,7 +66,6 @@ class UpdateCVSchema(BaseStruct):
     skills: list[SkillSchema] | UnsetType = UNSET
     education: EducationEnum | UnsetType = UNSET
     email: str | UnsetType = UNSET
-    author_id: UUID | UnsetType = UNSET
 
     additional_skills: list[SkillSchema] | UnsetType = UNSET
     address: str | UnsetType = UNSET
