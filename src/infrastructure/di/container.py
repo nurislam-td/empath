@@ -8,6 +8,7 @@ from common.infrastructure.di.providers import CommonProvider
 from config import Settings, get_settings
 from file_storage.api.providers import FileStorageProvider
 from infrastructure.di.providers import AppProvider
+from job.common.api.providers import JobProvider
 from job.employment.api.providers import EmploymentProvider
 from job.recruitment.api.providers import RecruitmentProvider
 from users.api.providers import UsersProvider
@@ -24,5 +25,6 @@ def get_ioc() -> AsyncContainer:
         ArticleProvider(),
         RecruitmentProvider(),
         EmploymentProvider(),
+        JobProvider(),
         context={Settings: get_settings()},
     )

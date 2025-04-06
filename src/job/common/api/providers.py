@@ -1,6 +1,7 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
 from job.common.application.ports.repo import VacancyReader
+from job.common.application.queries.get_cv_by_id import GetCVByIdHandler
 from job.common.application.queries.get_employment_types import GetEmploymentTypesHandler
 from job.common.application.queries.get_skills import GetSkillsHandler
 from job.common.application.queries.get_vacancies import GetVacanciesHandler
@@ -23,3 +24,4 @@ class JobProvider(Provider):
     get_work_schedules = provide(GetWorkSchedulesHandler)
     get_employment_types = provide(GetEmploymentTypesHandler)
     get_work_formats = provide(GetWorkFormatsHandler)
+    get_cv_by_id = provide(GetCVByIdHandler)

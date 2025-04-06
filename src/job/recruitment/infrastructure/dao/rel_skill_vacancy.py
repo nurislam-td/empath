@@ -15,8 +15,6 @@ from job.common.infrastructure.models import (
 
 @dataclass(slots=True)
 class RelVacancySkillDAO:
-    """Vacancy Repo implementation."""
-
     _rel_skill_vacancy: ClassVar[type[RelVacancySkill]] = RelVacancySkill
     _rel_additional_skill_vacancy: ClassVar[type[RelVacancyAdditionalSkill]] = RelVacancyAdditionalSkill
     _skill: ClassVar[type[Skill]] = Skill

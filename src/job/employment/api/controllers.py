@@ -19,8 +19,6 @@ from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandl
 from job.employment.api.schemas import CreateCVSchema, GetVacanciesFilters, UpdateCVSchema, create_cv_dto
 from job.employment.application.commands.create_cv import CreateCVHandler
 from job.employment.application.commands.update_cv import UpdateCVHandler
-from job.employment.application.dto import DetailedCVDTO
-from job.employment.application.queries.get_cv_by_id import GetCVByIdHandler
 from job.recruitment.application.dto import (
     DetailedVacancyDTO,
     VacancyDTO,
@@ -46,15 +44,6 @@ class ResponseController(Controller):
     ) -> PaginatedDTO[VacancyDTO]:
         return await get_vacancies(query=GetVacanciesQuery(**filters.to_dict()), pagination=pagination_params)
 
-    @get("/vacancies/{vacancy_id:uuid}", status_code=status_codes.HTTP_200_OK)
-    @inject
-    async def get_vacancy_by_id(
-        self,
-        vacancy_id: UUID,
-        get_vacancy_by_id: Depends[GetVacancyByIdHandler],
-    ) -> DetailedVacancyDTO:
-        return await get_vacancy_by_id(vacancy_id)
-
     @post("/cv", status_code=status_codes.HTTP_201_CREATED, dto=create_cv_dto)
     @inject
     async def create_cv(
@@ -78,12 +67,3 @@ class ResponseController(Controller):
         # TODO check request user
         await update_cv(data, cv_id)
         return Response(content="", status_code=status_codes.HTTP_200_OK)
-
-    @get("/cv/{cv_id:uuid}", status_code=status_codes.HTTP_200_OK)
-    @inject
-    async def get_cv_by_id(
-        self,
-        cv_id: UUID,
-        get_cv: Depends[GetCVByIdHandler],
-    ) -> DetailedCVDTO:
-        return await get_cv(cv_id)

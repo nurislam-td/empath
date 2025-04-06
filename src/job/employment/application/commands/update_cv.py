@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from common.application.uow import UnitOfWork
-from job.common.infrastructure.repositories.cv import AlchemyCVRepo
 from job.employment.api.schemas import UpdateCVSchema
+from job.employment.infrastructure.repositories.cv import AlchemyCVRepo
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
 
 

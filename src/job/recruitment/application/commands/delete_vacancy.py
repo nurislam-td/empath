@@ -2,9 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from common.application.uow import UnitOfWork
-
-
-from job.common.infrastructure.repositories.vacancy import AlchemyVacancyRepo
+from job.recruitment.infrastructure.repositories.vacancy import AlchemyVacancyRepo
 
 
 @dataclass(slots=True, frozen=True)

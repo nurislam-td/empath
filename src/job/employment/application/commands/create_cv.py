@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from common.application.uow import UnitOfWork
-from job.common.infrastructure.repositories.cv import AlchemyCVRepo
 from job.employment.api.schemas import CreateCVSchema
+from job.employment.infrastructure.repositories.cv import AlchemyCVRepo
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
 
 

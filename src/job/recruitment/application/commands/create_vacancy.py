@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 
 from common.application.uow import UnitOfWork
-from job.common.infrastructure.repositories.vacancy import AlchemyVacancyRepo
 from job.recruitment.api.schemas import CreateVacancySchema
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.infrastructure.repositories.vacancy import AlchemyVacancyRepo
 
 
 @dataclass(slots=True)
