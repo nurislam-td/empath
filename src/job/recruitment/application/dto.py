@@ -3,31 +3,8 @@ from datetime import datetime
 from uuid import UUID
 
 from common.application.dto import DTO
+from job.common.application.dto import SalaryDTO
 from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
-
-
-@dataclass(frozen=True, slots=True)
-class WorkScheduleDTO(DTO):
-    name: str
-    id: UUID
-
-
-@dataclass(frozen=True, slots=True)
-class EmploymentTypeDTO(DTO):
-    name: str
-    id: UUID
-
-
-@dataclass(frozen=True, slots=True)
-class WorkFormatDTO(DTO):
-    name: str
-    id: UUID
-
-
-@dataclass(frozen=True, slots=True)
-class SalaryDTO(DTO):
-    from_: int
-    to: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,12 +17,6 @@ class DetailedAuthorDTO(DTO):
     name: str
     about_us: str
     email: str
-
-
-@dataclass(frozen=True, slots=True)
-class SkillDTO(DTO):
-    name: str
-    id: UUID
 
 
 @dataclass(frozen=True, slots=True)

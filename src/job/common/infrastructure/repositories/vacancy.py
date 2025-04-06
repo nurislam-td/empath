@@ -12,6 +12,7 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator
+from job.common.application.dto import EmploymentTypeDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.infrastructure.mapper import (
     convert_db_detailed_vacancy,
@@ -37,11 +38,7 @@ from job.recruitment.api.schemas import (
 )
 from job.recruitment.application.dto import (
     DetailedVacancyDTO,
-    EmploymentTypeDTO,
-    SkillDTO,
     VacancyDTO,
-    WorkFormatDTO,
-    WorkScheduleDTO,
 )
 
 if TYPE_CHECKING:

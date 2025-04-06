@@ -3,13 +3,10 @@ from uuid import UUID
 
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
+from job.common.application.dto import EmploymentTypeDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
 from job.recruitment.application.dto import (
     DetailedVacancyDTO,
-    EmploymentTypeDTO,
-    SkillDTO,
     VacancyDTO,
-    WorkFormatDTO,
-    WorkScheduleDTO,
 )
 
 if TYPE_CHECKING:

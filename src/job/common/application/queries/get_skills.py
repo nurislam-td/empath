@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
+from job.common.application.dto import SkillDTO
 from job.common.application.ports.repo import VacancyReader
-from job.recruitment.application.dto import SkillDTO
 
 
 @dataclass(frozen=True, slots=True)

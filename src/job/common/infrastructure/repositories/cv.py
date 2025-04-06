@@ -1,7 +1,7 @@
 import asyncio
 from collections.abc import Coroutine
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import Any, ClassVar
 from uuid import UUID
 
 from msgspec import UNSET
@@ -13,39 +13,34 @@ from common.application.query import PaginationParams
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator
 from job.common.api.schemas import SkillSchema
+from job.common.application.exceptions import CVIdNotExistError
+from job.common.infrastructure.mapper import convert_db_to_detailed_cv
 from job.common.infrastructure.models import (
-    Recruiter,
-    Skill,
-    Vacancy,
+    CV,
 )
 from job.common.infrastructure.repositories import query_builder as qb
 from job.common.infrastructure.repositories.employment_type import EmploymentTypeDAO
 from job.common.infrastructure.repositories.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.common.infrastructure.repositories.rel_skill_vacancy import RelVacancySkillDAO
 from job.common.infrastructure.repositories.skill import SkillDAO
+from job.common.infrastructure.repositories.work_exp import WorkExpDAO
 from job.common.infrastructure.repositories.work_format import WorkFormatDAO
 from job.common.infrastructure.repositories.work_schedule import WorkScheduleDAO
-from job.employment.api.schemas import CreateCVSchema
-
-if TYPE_CHECKING:
-    from job.common.application.queries.get_vacancies import GetVacanciesQuery
+from job.employment.api.schemas import CreateCVSchema, UpdateCVSchema
+from job.employment.application.dto import DetailedCVDTO
 
 
 @dataclass(slots=True)
-class AlchemyVacancyRepo:
-    """Vacancy Repo implementation."""
-
-    _vacancy: ClassVar[type[Vacancy]] = Vacancy
-    _recruiter: ClassVar[type[Recruiter]] = Recruiter
+class AlchemyCVRepo:
+    _cv: ClassVar[type[CV]] = CV
 
     _repo: AlchemyRepo
     _reader: AlchemyReader
     _skill: SkillDAO
-    _rel_additional_skill_vacancy: RelVacancyAdditionalSkillDAO
-    _rel_skill_vacancy: RelVacancySkillDAO
     _work_schedule: WorkScheduleDAO
     _work_format: WorkFormatDAO
     _employment_type: EmploymentTypeDAO
+    _work_exp: WorkExpDAO
 
     async def create_cv(self, cv: CreateCVSchema) -> None:
         values = cv.to_dict()
@@ -55,15 +50,17 @@ class AlchemyVacancyRepo:
         values.pop("employment_type_ids", None)
         values.pop("work_schedule_ids", None)
         values.pop("work_formats_id", None)
+        values.pop("work_exp", None)
         values["salary_from"] = cv.salary.from_
         values["salary_to"] = cv.salary.to
-        await self._repo.execute(insert(self._vacancy).values(values))
+        await self._repo.execute(insert(self._cv).values(values))
 
         tasks: list[Coroutine[Any, Any, None]] = [
             self._skill.create_skills_for_cv(cv.skills, cv.id),
             self._employment_type.map_employment_types_to_cv(cv.id, cv.employment_type_ids),
             self._work_schedule.map_work_schedules_to_cv(cv.id, cv.work_schedule_ids),
-            self._work_format.map_work_format_to_cv(cv.id, cv.work_formats_id),
+            self._work_format.map_work_formats_to_cv(cv.id, cv.work_formats_id),
+            self._work_exp.create_work_exp(cv_id=cv.id, work_exp=cv.work_exp),
         ]
 
         if cv.additional_skills is not UNSET and cv.additional_skills:
@@ -72,137 +69,70 @@ class AlchemyVacancyRepo:
 
         await asyncio.gather(*tasks)
 
-    async def update_vacancy(self, vacancy_id: UUID, vacancy: UpdateVacancySchema) -> None:
-        values = vacancy.to_dict()
+    async def update_cv(self, cv_id: UUID, cv: UpdateCVSchema) -> None:
+        values = cv.to_dict()
         values.pop("salary", None)
         values.pop("skills", None)
         values.pop("additional_skills", None)
         values.pop("employment_type_ids", None)
         values.pop("work_schedule_ids", None)
         values.pop("work_formats_id", None)
-        if vacancy.salary is not UNSET:
-            values["salary_from"] = vacancy.salary.from_
-            values["salary_to"] = vacancy.salary.to
+        values.pop("work_exp", None)
+        if cv.salary is not UNSET:
+            values["salary_from"] = cv.salary.from_
+            values["salary_to"] = cv.salary.to
 
-        update_stmt = update(self._vacancy).where(self._vacancy.id == vacancy_id).values(values)
+        update_stmt = update(self._cv).where(self._cv.id == cv_id).values(values)
         await self._repo.execute(update_stmt)
 
         tasks: list[Coroutine[Any, Any, None]] = []
-        if vacancy.skills is not UNSET:
-            tasks.append(self._skill.update_skills(vacancy.skills, vacancy_id))
-        if vacancy.additional_skills is not UNSET:
-            s = [SkillSchema(id=skill.id, name=skill.name) for skill in vacancy.additional_skills]
-            tasks.append(self._skill.update_additional_skills(s, vacancy_id))
-        if vacancy.employment_type_ids is not UNSET:
-            tasks.append(self._employment_type.update_employment_types(vacancy_id, vacancy.employment_type_ids))
-        if vacancy.work_schedule_ids is not UNSET:
-            tasks.append(self._work_schedule.update_work_schedules(vacancy_id, vacancy.work_schedule_ids))
-        if vacancy.work_formats_id is not UNSET:
-            tasks.append(self._work_format.update_work_format(vacancy_id, vacancy.work_formats_id))
+        if cv.skills is not UNSET:
+            tasks.append(self._skill.update_additional_skills_for_cv(cv.skills, cv_id))
+        if cv.additional_skills is not UNSET:
+            s = [SkillSchema(id=skill.id, name=skill.name) for skill in cv.additional_skills]
+            tasks.append(self._skill.update_additional_skills_for_cv(s, cv_id))
+        if cv.employment_type_ids is not UNSET:
+            tasks.append(self._employment_type.update_employment_types_for_cv(cv_id, cv.employment_type_ids))
+        if cv.work_schedule_ids is not UNSET:
+            tasks.append(self._work_schedule.update_work_schedules_for_cv(cv_id, cv.work_schedule_ids))
+        if cv.work_formats_id is not UNSET:
+            tasks.append(self._work_format.update_work_formats_for_cv(cv_id, cv.work_formats_id))
+        if cv.work_exp is not UNSET:
+            tasks.append(self._work_exp.update_work_exp(cv_id, cv.work_exp))
 
         await asyncio.gather(*tasks)
 
-    async def delete_vacancy(self, vacancy_id: UUID) -> None:
-        await self._repo.execute(delete(self._vacancy).where(self._vacancy.id == vacancy_id))
-
-    async def create_recruiter(self, command: CreateRecruiterSchema) -> None:
-        insert_stmt = insert(self._recruiter).values(command.to_dict())
-        await self._repo.execute(insert_stmt)
+    async def delete_cv(self, cv_id: UUID) -> None:
+        await self._repo.execute(delete(self._cv).where(self._cv.id == cv_id))
 
 
 @dataclass(slots=True)
-class AlchemyVacancyReader:
-    """Vacancy Reader implementation."""
-
+class AlchemyCVReader:
     _paginator: ClassVar[type[AlchemyPaginator]] = AlchemyPaginator
-    _vacancy: ClassVar[type[Vacancy]] = Vacancy
-    _skill: ClassVar[type[Skill]] = Skill
+    _cv: ClassVar[type[CV]] = CV
 
     _base: AlchemyReader
 
-    async def get_vacancies(
-        self,
-        query: "GetVacanciesQuery",
-        pagination: PaginationParams,
-    ) -> PaginatedDTO[VacancyDTO]:
-        qs = qb.get_vacancy_qs(
-            filters=query,
-            search=query.search,
-        )
+    async def get_cv_by_id(self, cv_id: UUID) -> DetailedCVDTO:
+        qs = qb.get_cv_qs().where(self._cv.id == cv_id)
 
-        value_count = await self._base.count(qs)
-        qs = self._paginator.paginate(qs, pagination.page, pagination.per_page)
+        cv = await self._base.fetch_one(qs)
+        if cv is None:
+            raise CVIdNotExistError(cv_id)
 
-        vacancies = await self._base.fetch_all(qs)
-        if not vacancies:
-            return PaginatedDTO[VacancyDTO](count=value_count, page=pagination.page, results=[])
-        vacancies_id = [vacancy.id for vacancy in vacancies]
-        skills = await self._base.fetch_all(qb.get_vacancy_skill_qs(vacancies_id))
-        additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs(vacancies_id))
-        work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs(vacancies_id))
-        employment_types = await self._base.fetch_all(qb.get_employment_type_qs(vacancies_id))
-        work_formats = await self._base.fetch_all(qb.get_work_format_qs(vacancies_id))
+        skills = await self._base.fetch_all(qb.get_cv_skill_qs([cv.id]))
+        additional_skills = await self._base.fetch_all(qb.get_cv_additional_skill_qs([cv.id]))
+        work_schedules = await self._base.fetch_all(qb.get_cv_work_schedules_qs([cv.id]))
+        employment_types = await self._base.fetch_all(qb.get_cv_employment_type_qs([cv_id]))
+        work_formats = await self._base.fetch_all(qb.get_cv_work_format_qs([cv.id]))
+        work_exp = await self._base.fetch_all(qb.get_cv_work_exp_qs([cv.id]))
 
-        return PaginatedDTO[VacancyDTO](
-            count=value_count,
-            page=pagination.page,
-            results=convert_db_to_vacancy_list(
-                vacancies, skills, additional_skills, work_schedules, employment_types, work_formats
-            ),
-        )
-
-    async def get_vacancy_by_id(self, vacancy_id: UUID) -> DetailedVacancyDTO:
-        qs = qb.get_vacancy_qs().where(self._vacancy.id == vacancy_id)
-
-        vacancy = await self._base.fetch_one(qs)
-        if vacancy is None:
-            raise VacancyIdNotExistError(vacancy_id)
-
-        skills = await self._base.fetch_all(qb.get_vacancy_skill_qs([vacancy.id]))
-        additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs([vacancy.id]))
-        work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs([vacancy.id]))
-        employment_types = await self._base.fetch_all(qb.get_employment_type_qs([vacancy_id]))
-        work_formats = await self._base.fetch_all(qb.get_work_format_qs([vacancy.id]))
-
-        return convert_db_detailed_vacancy(
-            vacancy=vacancy,
+        return convert_db_to_detailed_cv(
+            cv=cv,
             skills=skills,
             additional_skills=additional_skills,
             work_schedules=work_schedules,
             employment_types=employment_types,
             work_formats=work_formats,
+            work_exp=work_exp,
         )
-
-    async def get_skills(self, search: str | None, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
-        qs = qb.get_skill_qs(search=search)
-
-        value_count = await self._base.count(qs)
-        qs = self._paginator.paginate(qs, pagination.page, pagination.per_page)
-
-        skills = await self._base.fetch_all(qs)
-
-        if not skills:
-            return PaginatedDTO[SkillDTO](count=value_count, page=pagination.page, results=[])
-
-        return PaginatedDTO[SkillDTO](
-            count=value_count,
-            page=pagination.page,
-            results=[convert_db_to_skill_dto(skill) for skill in skills],
-        )
-
-    async def get_work_schedules(self) -> list[WorkScheduleDTO]:
-        qs = qb.get_work_schedules_qs()
-        work_schedules = await self._base.fetch_all(qs)
-        return [WorkScheduleDTO(id=work_schedule.id, name=work_schedule.name) for work_schedule in work_schedules]
-
-    async def get_employment_types(self) -> list[EmploymentTypeDTO]:
-        qs = qb.get_employment_type_qs()
-        employment_types = await self._base.fetch_all(qs)
-        return [
-            EmploymentTypeDTO(id=employment_type.id, name=employment_type.name) for employment_type in employment_types
-        ]
-
-    async def get_work_formats(self) -> list[WorkFormatDTO]:
-        qs = qb.get_work_format_qs()
-        work_formats = await self._base.fetch_all(qs)
-        return [WorkFormatDTO(id=work_format.id, name=work_format.name) for work_format in work_formats]

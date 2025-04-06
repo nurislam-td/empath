@@ -13,6 +13,7 @@ from auth.api.schemas import JWTUserPayload
 from common.api.exception_handlers import error_handler
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
+from job.common.application.dto import EmploymentTypeDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.application.queries.get_employment_types import GetEmploymentTypesHandler
 from job.common.application.queries.get_skills import GetSkillsHandler
@@ -34,11 +35,7 @@ from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHan
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
 from job.recruitment.application.dto import (
     DetailedVacancyDTO,
-    EmploymentTypeDTO,
-    SkillDTO,
     VacancyDTO,
-    WorkFormatDTO,
-    WorkScheduleDTO,
 )
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
 

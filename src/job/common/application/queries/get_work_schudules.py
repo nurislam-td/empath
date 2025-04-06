@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
+from job.common.application.dto import WorkScheduleDTO
 from job.common.application.ports.repo import VacancyReader
-from job.recruitment.application.dto import WorkScheduleDTO
 
 
 @dataclass(frozen=True, slots=True)

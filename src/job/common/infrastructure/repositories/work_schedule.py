@@ -8,6 +8,8 @@ from sqlalchemy.dialects.postgresql import insert
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
 from common.infrastructure.repositories.pagination import AlchemyPaginator
 from job.common.infrastructure.models import (
+    CV,
+    RelCVWorkSchedule,
     RelVacancyWorkSchedule,
     Skill,
     Vacancy,
@@ -16,10 +18,8 @@ from job.common.infrastructure.models import (
 
 @dataclass(slots=True)
 class WorkScheduleDAO:
-    """Vacancy Repo implementation."""
-
-    _vacancy: ClassVar[type[Vacancy]] = Vacancy
     _rel_work_schedule_vacancy: ClassVar[type[RelVacancyWorkSchedule]] = RelVacancyWorkSchedule
+    _rel_work_schedule_cv: ClassVar[type[RelCVWorkSchedule]] = RelCVWorkSchedule
 
     _repo: AlchemyRepo
     _reader: AlchemyReader
@@ -43,13 +43,19 @@ class WorkScheduleDAO:
             return
         await self.map_work_schedules_to_vacancy(vacancy_id, work_schedule_ids)
 
+    async def map_work_schedules_to_cv(self, cv_id: UUID, work_schedules_id: list[UUID]) -> None:
+        insert_stmt = insert(self._rel_work_schedule_cv).values(
+            [{"cv_id": cv_id, "work_schedule_id": _id} for _id in work_schedules_id]
+        )
+        await self._repo.execute(insert_stmt)
 
-@dataclass(slots=True)
-class AlchemyVacancyReader:
-    """Vacancy Reader implementation."""
+    async def unmap_work_schedules_from_cv(self, cv_id: UUID) -> None:
+        await self._repo.execute(
+            delete(self._rel_work_schedule_cv).where(self._rel_work_schedule_cv.cv_id == cv_id),
+        )
 
-    _paginator: ClassVar[type[AlchemyPaginator]] = AlchemyPaginator
-    _vacancy: ClassVar[type[Vacancy]] = Vacancy
-    _skill: ClassVar[type[Skill]] = Skill
-
-    _base: AlchemyReader
+    async def update_work_schedules_for_cv(self, cv_id: UUID, work_schedules_ids: list[UUID]) -> None:
+        await self.unmap_work_schedules_from_cv(cv_id)
+        if not work_schedules_ids:
+            return
+        await self.map_work_schedules_to_cv(cv_id, work_schedules_ids)

@@ -5,17 +5,14 @@ from uuid import UUID
 from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert
 
-from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
-from common.infrastructure.repositories.pagination import AlchemyPaginator
-from job.common.infrastructure.models import RelVacancyWorkFormat, Skill, Vacancy
+from common.infrastructure.repositories.base import AlchemyRepo
+from job.common.infrastructure.models import RelCVWorkFormat, RelVacancyWorkFormat
 
 
 @dataclass(slots=True)
 class WorkFormatDAO:
-    """Vacancy Repo implementation."""
-
-    _vacancy: ClassVar[type[Vacancy]] = Vacancy
     _rel_work_format_vacancy: ClassVar[type[RelVacancyWorkFormat]] = RelVacancyWorkFormat
+    _rel_work_format_cv: ClassVar[type[RelCVWorkFormat]] = RelCVWorkFormat
 
     _repo: AlchemyRepo
 
@@ -38,13 +35,19 @@ class WorkFormatDAO:
             return
         await self.map_work_format_to_vacancy(vacancy_id, work_formats_id)
 
+    async def map_work_formats_to_cv(self, cv_id: UUID, work_formats_id: list[UUID]) -> None:
+        insert_stmt = insert(self._rel_work_format_cv).values(
+            [{"cv_id": cv_id, "work_format_id": _id} for _id in work_formats_id]
+        )
+        await self._repo.execute(insert_stmt)
 
-@dataclass(slots=True)
-class AlchemyVacancyReader:
-    """Vacancy Reader implementation."""
+    async def unmap_work_formats_from_cv(self, cv_id: UUID) -> None:
+        await self._repo.execute(
+            delete(self._rel_work_format_cv).where(self._rel_work_format_cv.cv_id == cv_id),
+        )
 
-    _paginator: ClassVar[type[AlchemyPaginator]] = AlchemyPaginator
-    _vacancy: ClassVar[type[Vacancy]] = Vacancy
-    _skill: ClassVar[type[Skill]] = Skill
-
-    _base: AlchemyReader
+    async def update_work_formats_for_cv(self, cv_id: UUID, work_formats_ids: list[UUID]) -> None:
+        await self.unmap_work_formats_from_cv(cv_id)
+        if not work_formats_ids:
+            return
+        await self.map_work_formats_to_cv(cv_id, work_formats_ids)

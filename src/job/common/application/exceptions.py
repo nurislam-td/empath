@@ -11,3 +11,12 @@ class VacancyIdNotExistError(ApplicationError):
     @property
     def message(self) -> str:
         return f"Vacancy with that id not exist: {self.vacancy_id}"
+
+
+@dataclass(slots=True, eq=False)
+class CVIdNotExistError(ApplicationError):
+    cv_id: UUID
+
+    @property
+    def message(self) -> str:
+        return f"CV with that id not exist: {self.cv_id}"
