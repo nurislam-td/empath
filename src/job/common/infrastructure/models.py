@@ -118,7 +118,7 @@ class Recruiter(JobBase):
 class CV(JobBase):
     __tablename__ = "cv"
 
-    title: Mapped[str]
+    title: Mapped[str]  # position
     is_visible: Mapped[bool]
     salary_from: Mapped[int | None] = mapped_column(BigInteger)
     salary_to: Mapped[int | None] = mapped_column(BigInteger)
@@ -192,3 +192,11 @@ class RelCVAdditionalSkill(JobBase):
     id: None = None  # type: ignore  # noqa: PGH003
     skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
     cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+
+
+class RelCVVacancy(JobBase):
+    __tablename__ = "rel_cv_vacancy"
+
+    id: None = None  # type: ignore  # noqa: PGH003
+    cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
