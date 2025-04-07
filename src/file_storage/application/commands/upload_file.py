@@ -10,10 +10,12 @@ from common.application.uow import UnitOfWork
 
 class StorageNames(str, Enum):
     ARTICLE = "article"
+    CV = "cv"
 
 
 class FileType(str, Enum):
     IMG = "imgs"
+    FILES = "files"
 
 
 @dataclass(frozen=True)
