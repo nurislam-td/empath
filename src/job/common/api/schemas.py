@@ -12,4 +12,4 @@ class SkillSchema(BaseStruct):
 
 class SalarySchema(BaseStruct):
     from_: int = field(name="from")
-    to: int = field(name="to")
+    to: int | None = field(name="to", default=None)

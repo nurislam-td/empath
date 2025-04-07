@@ -48,10 +48,10 @@ class CVDTO(DTO):
     title: str
     is_visible: bool
     salary: SalaryDTO
-    skills: list[SkillDTO]
+    skills: list[str]
     author: AuthorDTO
 
-    additional_skills: list[SkillDTO] | None
+    additional_skills: list[str] | None
     about_me: str | None
     cv_file: str | None
     id: UUID

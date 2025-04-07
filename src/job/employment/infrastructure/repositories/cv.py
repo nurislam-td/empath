@@ -4,18 +4,24 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import UUID
 
 from msgspec import UNSET
-from sqlalchemy import delete, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 
-from common.infrastructure.repositories.base import AlchemyRepo
+from common.application.dto import PaginatedDTO
+from common.application.query import PaginationParams
+from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
+from common.infrastructure.repositories.pagination import AlchemyPaginator
 from job.common.api.schemas import SkillSchema
 from job.common.infrastructure.models import CV
+from job.common.infrastructure.query_builders import cv as qb
 from job.employment.api.schemas import CreateCVSchema, UpdateCVSchema
+from job.employment.application.dto import CVDTO
 from job.employment.infrastructure.dao.employment_type import EmploymentTypeDAO
 from job.employment.infrastructure.dao.skill import SkillDAO
 from job.employment.infrastructure.dao.work_exp import WorkExpDAO
 from job.employment.infrastructure.dao.work_format import WorkFormatDAO
 from job.employment.infrastructure.dao.work_schedule import WorkScheduleDAO
+from job.employment.infrastructure.mapper import convert_db_to_cv_list
 
 if TYPE_CHECKING:
     from collections.abc import Coroutine
@@ -94,3 +100,39 @@ class AlchemyCVRepo:
 
     async def delete_cv(self, cv_id: UUID) -> None:
         await self._base.execute(delete(self._cv).where(self._cv.id == cv_id))
+
+
+@dataclass(slots=True)
+class AlchemyEmploymentCVReader:
+    _paginator: ClassVar[type[AlchemyPaginator]] = AlchemyPaginator
+    _cv: ClassVar[type[CV]] = CV
+
+    _base: AlchemyReader
+
+    async def get_cv_list(
+        self,
+        employer_id: UUID,
+        pagination: PaginationParams,
+    ) -> PaginatedDTO[CVDTO]:
+        qs = qb.get_cv_qs().where(self._cv.author_id == employer_id)
+
+        value_counts = await self._base.count(qs)
+        qs = self._paginator.paginate(qs, pagination.page, pagination.per_page)
+
+        cv = await self._base.fetch_all(qs)
+        if not cv:
+            return PaginatedDTO[CVDTO](count=value_counts, page=pagination.page, results=[])
+        cv_ids = [cv.id for cv in cv]
+
+        skills = await self._base.fetch_all(qb.get_cv_skill_qs(cv_ids))
+        additional_skills = await self._base.fetch_all(qb.get_cv_additional_skill_qs(cv_ids))
+
+        return PaginatedDTO[CVDTO](
+            count=value_counts,
+            page=pagination.page,
+            results=convert_db_to_cv_list(
+                cv_list=cv,
+                skills=skills,
+                additional_skills=additional_skills,
+            ),
+        )

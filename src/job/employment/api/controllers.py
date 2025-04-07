@@ -27,8 +27,11 @@ from job.employment.application.commands.create_cv import CreateCVHandler
 from job.employment.application.commands.response_to_vacancy import ResponseToVacancyHandler
 from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.employment.application.dto import (
+    CVDTO,
     VacancyDTO,
 )
+from job.employment.application.queries.get_cv_list import GetCvListHandler
+from job.employment.application.queries.get_responses import GetResponsesHandler
 from job.employment.application.queries.get_vacancies import GetVacanciesHandler
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
 
@@ -80,7 +83,7 @@ class ResponseController(Controller):
 
     @post(
         "/vacancies/{vacancy_id:uuid}/response",
-        status_code=status_codes.HTTP_200_OK,
+        status_code=status_codes.HTTP_201_CREATED,
         dto=response_to_vacancy_dto,
     )
     @inject
@@ -91,4 +94,35 @@ class ResponseController(Controller):
         response_to_vacancy: Depends[ResponseToVacancyHandler],
     ) -> Response[str]:
         await response_to_vacancy(data.create_instance(vacancy_id=vacancy_id))
-        return Response(content="", status_code=status_codes.HTTP_200_OK)
+        return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+
+    @get(
+        "/vacancies/responses",
+        status_code=status_codes.HTTP_200_OK,
+        dependencies={"filters": Provide(GetVacanciesFilters)},
+    )
+    @inject
+    async def get_responses(
+        self,
+        filters: GetVacanciesFilters,
+        pagination_params: PaginationParams,
+        get_responses: Depends[GetResponsesHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> PaginatedDTO[VacancyDTO]:
+        return await get_responses(
+            query=GetVacanciesQuery(**filters.to_dict()), employer_id=request.user.sub, pagination=pagination_params
+        )
+
+    @get(
+        "/cv",
+        status_code=status_codes.HTTP_200_OK,
+        dependencies={"filters": Provide(GetVacanciesFilters)},
+    )
+    @inject
+    async def get_cv(
+        self,
+        pagination_params: PaginationParams,
+        get_cv_list: Depends[GetCvListHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> PaginatedDTO[CVDTO]:
+        return await get_cv_list(employer_id=request.user.sub, pagination=pagination_params)

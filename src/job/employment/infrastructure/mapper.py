@@ -4,8 +4,8 @@ from uuid import UUID
 
 from sqlalchemy import RowMapping
 
-from job.common.application.dto import SalaryDTO
-from job.employment.application.dto import AuthorDTO, VacancyDTO
+from job.common.application.dto import EmploymentTypeDTO, SalaryDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
+from job.employment.application.dto import CVDTO, AuthorDTO, DetailedCVDTO, VacancyDTO
 
 
 def convert_db_to_vacancy(  # noqa: PLR0913
@@ -72,4 +72,53 @@ def convert_db_to_vacancy_list(  # noqa: PLR0913
             work_formats=work_format_map[vacancy.id],
         )
         for vacancy in vacancies
+    ]
+
+
+def convert_db_to_cv(
+    cv: RowMapping,
+    skills: Sequence[RowMapping],
+    additional_skills: Sequence[RowMapping],
+) -> CVDTO:
+    return CVDTO(
+        title=cv.title,
+        is_visible=cv.is_visible,
+        salary=SalaryDTO(from_=cv.salary_from, to=cv.salary_to),
+        skills=[s.name for s in skills],
+        author=AuthorDTO(
+            name=" ".join(
+                [
+                    cv.author_lastname if cv.author_lastname else "",
+                    cv.author_name if cv.author_name else "",
+                    cv.author_patronymic if cv.author_patronymic else "",
+                ],
+            ),
+        ),
+        additional_skills=[s.name for s in additional_skills],
+        about_me=cv.about_me,
+        cv_file=cv.cv_file,
+        id=cv.id,
+    )
+
+
+def convert_db_to_cv_list(
+    cv_list: Sequence[RowMapping],
+    skills: Sequence[RowMapping],
+    additional_skills: Sequence[RowMapping],
+) -> list[CVDTO]:
+    skill_map: dict[UUID, list[RowMapping]] = defaultdict(list)
+    for skill in skills:
+        skill_map[skill.cv_id].append(skill)
+
+    additional_skills_map: dict[UUID, list[RowMapping]] = defaultdict(list)
+    for skill in additional_skills:
+        additional_skills_map[skill.cv_id].append(skill)
+
+    return [
+        convert_db_to_cv(
+            cv=cv,
+            skills=skill_map[cv.id],
+            additional_skills=additional_skills_map[cv.id],
+        )
+        for cv in cv_list
     ]
