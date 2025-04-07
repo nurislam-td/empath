@@ -38,7 +38,7 @@ class Vacancy(JobBase):
 class Skill(JobBase):
     __tablename__ = "skill"
 
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=False, unique=True)
 
 
 class EmploymentType(JobBase):
