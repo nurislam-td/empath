@@ -1,5 +1,6 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
+from job.recruitment.application.commands.change_response_status import ChangeResponseStatusHandler
 from job.recruitment.application.commands.create_recruiter import CreateRecruiterHandler
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
@@ -10,6 +11,7 @@ from job.recruitment.infrastructure.dao.rel_skill_vacancy import RelVacancySkill
 from job.recruitment.infrastructure.dao.skill import SkillDAO
 from job.recruitment.infrastructure.dao.work_format import WorkFormatDAO
 from job.recruitment.infrastructure.dao.work_schedule import WorkScheduleDAO
+from job.recruitment.infrastructure.repositories.response_to_vacancy import AlchemyRecruitmentVacancyResponseRepo
 from job.recruitment.infrastructure.repositories.vacancy import AlchemyVacancyRepo
 
 
@@ -17,6 +19,7 @@ class RecruitmentProvider(Provider):
     scope = Scope.REQUEST
 
     vacancy_repo = provide(AlchemyVacancyRepo)
+    response_repo = provide(AlchemyRecruitmentVacancyResponseRepo)
 
     rel_additional_skill_vacancy = provide(RelVacancyAdditionalSkillDAO)
     rel_skill_vacancy = provide(RelVacancySkillDAO)
@@ -29,3 +32,4 @@ class RecruitmentProvider(Provider):
     update_vacancy = provide(UpdateVacancyHandler)
     delete_vacancy = provide(DeleteVacancyHandler)
     create_recruiter = provide(CreateRecruiterHandler)
+    change_response_status = provide(ChangeResponseStatusHandler)

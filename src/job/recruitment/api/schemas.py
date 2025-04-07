@@ -6,7 +6,7 @@ from msgspec import UNSET, UnsetType, field
 
 from common.api.schemas import BaseStruct
 from job.common.api.schemas import SalarySchema, SkillSchema
-from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
+from job.common.domain.enums import EducationEnum, VacancyResponseStatusEnum, WorkExpEnum, WorkFormatEnum
 
 
 class CreateVacancySchema(BaseStruct):
@@ -62,3 +62,9 @@ class CreateRecruiterSchema(BaseStruct):
 create_recruiter_dto = MsgspecDTO[
     Annotated[CreateRecruiterSchema, DTOConfig(exclude={"id"}, rename_fields={"salary.from_": "from"})]
 ]
+
+
+class ChangeResponseStatusSchema(BaseStruct):
+    cv_id: UUID
+    vacancy_id: UUID
+    status: VacancyResponseStatusEnum

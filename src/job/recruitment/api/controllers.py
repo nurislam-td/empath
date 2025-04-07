@@ -19,12 +19,14 @@ from job.common.application.queries.get_vacancy_responses import GetVacancyRespo
 from job.employment.api.schemas import GetVacanciesFilters
 from job.employment.application.dto import VacancyResponseDTO
 from job.recruitment.api.schemas import (
+    ChangeResponseStatusSchema,
     CreateRecruiterSchema,
     CreateVacancySchema,
     UpdateVacancySchema,
     create_recruiter_dto,
     create_vacancy_dto,
 )
+from job.recruitment.application.commands.change_response_status import ChangeResponseStatusHandler
 from job.recruitment.application.commands.create_recruiter import CreateRecruiterHandler
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
@@ -42,7 +44,6 @@ class VacancyController(Controller):
         EmptyWorkSchedulesError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         VacancyIdNotExistError: error_handler(status_codes.HTTP_404_NOT_FOUND),
     }
-    prefix = "/vacancies"
 
     @post(
         "/vacancies",
@@ -60,7 +61,7 @@ class VacancyController(Controller):
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
 
     @patch(
-        "/{vacancy_id:uuid}",
+        "/vacancies/{vacancy_id:uuid}",
         status_code=status_codes.HTTP_200_OK,
     )
     @inject
@@ -76,7 +77,7 @@ class VacancyController(Controller):
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
 
     @delete(
-        "/{vacancy_id:uuid}",
+        "/vacancies/{vacancy_id:uuid}",
         status_code=status_codes.HTTP_204_NO_CONTENT,
     )
     @inject
@@ -120,3 +121,14 @@ class VacancyController(Controller):
             pagination=pagination_params,
             query=GetVacancyResponsesQuery(vacancy_id=vacancy_id, response_author_id=request.user.sub),
         )
+
+    @patch("/responses", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def change_response_status(
+        self,
+        data: ChangeResponseStatusSchema,
+        change_response_status: Depends[ChangeResponseStatusHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> Response[str]:  # TODO check the author
+        await change_response_status(data)
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
