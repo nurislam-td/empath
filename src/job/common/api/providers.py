@@ -6,10 +6,12 @@ from job.common.application.queries.get_employment_types import GetEmploymentTyp
 from job.common.application.queries.get_skills import GetSkillsHandler
 from job.common.application.queries.get_vacancies import GetVacanciesHandler
 from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
+from job.common.application.queries.get_vacancy_responses import GetVacancyResponsesHandler
 from job.common.application.queries.get_work_formats import GetWorkFormatsHandler
 from job.common.application.queries.get_work_schedules import GetWorkSchedulesHandler
 from job.common.infrastructure.repositories.cv import AlchemyCVReader
 from job.common.infrastructure.repositories.vacancy import AlchemyVacancyReader
+from job.common.infrastructure.repositories.vacancy_responses import AlchemyVacancyResponseReader
 
 
 class JobProvider(Provider):
@@ -17,6 +19,7 @@ class JobProvider(Provider):
 
     vacancy_reader = provide(AlchemyVacancyReader, provides=VacancyReader)
     cv_reader = provide(AlchemyCVReader)
+    vacancy_response_reader = provide(AlchemyVacancyResponseReader)
 
     get_vacancies = provide(GetVacanciesHandler)
     get_vacancy_by_id = provide(GetVacancyByIdHandler)
@@ -25,3 +28,4 @@ class JobProvider(Provider):
     get_employment_types = provide(GetEmploymentTypesHandler)
     get_work_formats = provide(GetWorkFormatsHandler)
     get_cv_by_id = provide(GetCVByIdHandler)
+    get_vacancy_responses = provide(GetVacancyResponsesHandler)

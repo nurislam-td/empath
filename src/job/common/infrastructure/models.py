@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from common.infrastructure.models import TimedBaseModel
-from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
+from job.common.domain.enums import EducationEnum, VacancyResponseStatusEnum, WorkExpEnum, WorkFormatEnum
 
 
 class JobBase(TimedBaseModel):
@@ -200,3 +200,7 @@ class RelCVVacancy(JobBase):
     id: None = None  # type: ignore  # noqa: PGH003
     cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
     vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+    status: Mapped[VacancyResponseStatusEnum] = mapped_column(
+        String(length=50),
+        server_default=VacancyResponseStatusEnum.PENDING.value,
+    )

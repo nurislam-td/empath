@@ -71,3 +71,11 @@ class UpdateCVSchema(BaseStruct):
     address: str | UnsetType = UNSET
     about_me: str | UnsetType = UNSET
     cv_file: str | UnsetType = UNSET
+
+
+class ResponseToVacancySchema(BaseStruct):
+    cv_id: UUID
+    vacancy_id: UUID
+
+
+response_to_vacancy_dto = MsgspecDTO[Annotated[ResponseToVacancySchema, DTOConfig(exclude={"vacancy_id"})]]

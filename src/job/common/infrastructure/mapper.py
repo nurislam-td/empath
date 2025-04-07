@@ -6,7 +6,7 @@ from sqlalchemy import RowMapping
 
 from job.common.application.dto import EmploymentTypeDTO, SalaryDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
 from job.employment.application.dto import AuthorDTO as CVAuthorDTO
-from job.employment.application.dto import DetailedCVDTO, WorkExpDTO
+from job.employment.application.dto import DetailedCVDTO, VacancyResponseDTO, WorkExpDTO
 from job.recruitment.application.dto import (
     AuthorDTO,
     DetailedAuthorDTO,
@@ -167,4 +167,22 @@ def convert_db_to_detailed_cv(  # noqa: PLR0913
         about_me=cv.about_me,
         cv_file=cv.cv_file,
         id=cv.id,
+    )
+
+
+def convert_db_to_vacancy_responses(response: RowMapping) -> VacancyResponseDTO:
+    return VacancyResponseDTO(
+        created_at=response.created_at,
+        response_author=" ".join(
+            [
+                response.author_lastname if response.author_lastname else "",
+                response.author_name if response.author_name else "",
+                response.author_patronymic if response.author_patronymic else "",
+            ],
+        ),
+        response_email=response.response_email,
+        cv_title=response.cv_title,
+        cv_id=response.cv_id,
+        vacancy_id=response.vacancy_id,
+        status=response.status,
     )

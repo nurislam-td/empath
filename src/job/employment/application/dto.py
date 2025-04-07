@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from uuid import UUID
 
 from common.application.dto import DTO
 from job.common.application.dto import EmploymentTypeDTO, SalaryDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
-from job.common.domain.enums import EducationEnum
+from job.common.domain.enums import EducationEnum, VacancyResponseStatusEnum
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,3 +55,14 @@ class CVDTO(DTO):
     about_me: str | None
     cv_file: str | None
     id: UUID
+
+
+@dataclass(frozen=True, slots=True)
+class VacancyResponseDTO(DTO):
+    response_author: str
+    cv_title: str
+    cv_id: UUID
+    vacancy_id: UUID
+    created_at: datetime
+    response_email: str
+    status: VacancyResponseStatusEnum

@@ -15,7 +15,9 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
+from job.common.application.queries.get_vacancy_responses import GetVacancyResponsesHandler, GetVacancyResponsesQuery
 from job.employment.api.schemas import GetVacanciesFilters
+from job.employment.application.dto import VacancyResponseDTO
 from job.recruitment.api.schemas import (
     CreateRecruiterSchema,
     CreateVacancySchema,
@@ -104,3 +106,17 @@ class VacancyController(Controller):
     ) -> Response[str]:
         await create_recruiter(command=data.create_instance(id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+
+    @get("/responses", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_responses(
+        self,
+        pagination_params: PaginationParams,
+        get_responses: Depends[GetVacancyResponsesHandler],
+        request: Request[JWTUserPayload, str, State],
+        vacancy_id: UUID | None = None,
+    ) -> PaginatedDTO[VacancyResponseDTO]:
+        return await get_responses(
+            pagination=pagination_params,
+            query=GetVacancyResponsesQuery(vacancy_id=vacancy_id, response_author_id=request.user.sub),
+        )

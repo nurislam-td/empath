@@ -15,12 +15,18 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
-from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
-from job.employment.api.schemas import CreateCVSchema, GetVacanciesFilters, UpdateCVSchema, create_cv_dto
+from job.employment.api.schemas import (
+    CreateCVSchema,
+    GetVacanciesFilters,
+    ResponseToVacancySchema,
+    UpdateCVSchema,
+    create_cv_dto,
+    response_to_vacancy_dto,
+)
 from job.employment.application.commands.create_cv import CreateCVHandler
+from job.employment.application.commands.response_to_vacancy import ResponseToVacancyHandler
 from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.recruitment.application.dto import (
-    DetailedVacancyDTO,
     VacancyDTO,
 )
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
@@ -55,7 +61,7 @@ class ResponseController(Controller):
         await create_cv(data.create_instance(author_id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
 
-    @patch("cv/{cv_id:uuid}", status_code=status_codes.HTTP_200_OK)
+    @patch("/cv/{cv_id:uuid}", status_code=status_codes.HTTP_200_OK)
     @inject
     async def update_cv(
         self,
@@ -66,4 +72,19 @@ class ResponseController(Controller):
     ) -> Response[str]:
         # TODO check request user
         await update_cv(data, cv_id)
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @post(
+        "/vacancies/{vacancy_id:uuid}/response",
+        status_code=status_codes.HTTP_200_OK,
+        dto=response_to_vacancy_dto,
+    )
+    @inject
+    async def response_to_vacancy(
+        self,
+        vacancy_id: UUID,
+        data: DTOData[ResponseToVacancySchema],
+        response_to_vacancy: Depends[ResponseToVacancyHandler],
+    ) -> Response[str]:
+        await response_to_vacancy(data.create_instance(vacancy_id=vacancy_id))
         return Response(content="", status_code=status_codes.HTTP_200_OK)

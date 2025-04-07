@@ -19,3 +19,9 @@ class EducationEnum(str, Enum):
     BACHELOR = "bachelor"
     MASTER = "master"
     DOCTORATE = "doctorate"
+
+
+class VacancyResponseStatusEnum(str, Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
