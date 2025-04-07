@@ -14,7 +14,7 @@ from common.api.exception_handlers import error_handler
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from job.common.application.exceptions import VacancyIdNotExistError
-from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
+from job.common.application.queries.get_vacancies import GetVacanciesQuery
 from job.employment.api.schemas import (
     CreateCVSchema,
     GetVacanciesFilters,
@@ -26,9 +26,10 @@ from job.employment.api.schemas import (
 from job.employment.application.commands.create_cv import CreateCVHandler
 from job.employment.application.commands.response_to_vacancy import ResponseToVacancyHandler
 from job.employment.application.commands.update_cv import UpdateCVHandler
-from job.recruitment.application.dto import (
+from job.employment.application.dto import (
     VacancyDTO,
 )
+from job.employment.application.queries.get_vacancies import GetVacanciesHandler
 from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
 
 
@@ -47,8 +48,11 @@ class ResponseController(Controller):
         filters: GetVacanciesFilters,
         pagination_params: PaginationParams,
         get_vacancies: Depends[GetVacanciesHandler],
+        request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[VacancyDTO]:
-        return await get_vacancies(query=GetVacanciesQuery(**filters.to_dict()), pagination=pagination_params)
+        return await get_vacancies(
+            query=GetVacanciesQuery(**filters.to_dict()), employer_id=request.user.sub, pagination=pagination_params
+        )
 
     @post("/cv", status_code=status_codes.HTTP_201_CREATED, dto=create_cv_dto)
     @inject
