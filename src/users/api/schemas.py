@@ -13,5 +13,11 @@ class UserUpdateSchema(BaseStruct):
     date_birth: date | None = None
 
 
+class UserUpdateFullnameSchema(BaseStruct):
+    name: str
+    lastname: str
+    patronymic: str
+
+
 class UpdateAvatarResponse(CamelizedBaseStruct):
     url: str

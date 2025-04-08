@@ -5,7 +5,7 @@ from uuid import UUID
 
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Request, get, put, status_codes
+from litestar import Request, get, patch, put, status_codes
 from litestar.controller import Controller
 from litestar.datastructures import State, UploadFile
 from litestar.enums import RequestEncodingType
@@ -15,8 +15,9 @@ from litestar.response import Response
 from auth.api.schemas import JWTUserPayload
 from common.api.exception_handlers import error_handler
 from common.application.query import PaginationParams
-from users.api.schemas import UpdateAvatarResponse, UserUpdateSchema
+from users.api.schemas import UpdateAvatarResponse, UserUpdateFullnameSchema, UserUpdateSchema
 from users.application.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler
+from users.application.commands.update_fullname import UpdateFullname, UpdateFullnameHandler
 from users.application.commands.update_user import UpdateUser, UpdateUserHandler
 from users.application.dto.user import PaginatedUserDTO, UserDTO
 from users.application.exceptions import UserIdNotExistError
@@ -74,3 +75,15 @@ class UserController(Controller):
         command = UpdateUser(**data.to_dict(), user_id=user_id)
         await update_user(command)
         return Response(content=None, status_code=status_codes.HTTP_200_OK)
+
+    @patch(path="/fullname", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def update_full_name(
+        self,
+        data: UserUpdateFullnameSchema,
+        update_user: Depends[UpdateFullnameHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> Response[str]:
+        command = UpdateFullname(**data.to_dict(), user_id=request.user.sub)
+        await update_user(command)
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
