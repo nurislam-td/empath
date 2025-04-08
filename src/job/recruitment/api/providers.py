@@ -5,6 +5,7 @@ from job.recruitment.application.commands.create_recruiter import CreateRecruite
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
+from job.recruitment.application.queries.get_recruiter import GetRecruiterHandler
 from job.recruitment.infrastructure.dao.employment_type import EmploymentTypeDAO
 from job.recruitment.infrastructure.dao.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.recruitment.infrastructure.dao.rel_skill_vacancy import RelVacancySkillDAO
@@ -12,7 +13,7 @@ from job.recruitment.infrastructure.dao.skill import SkillDAO
 from job.recruitment.infrastructure.dao.work_format import WorkFormatDAO
 from job.recruitment.infrastructure.dao.work_schedule import WorkScheduleDAO
 from job.recruitment.infrastructure.repositories.response_to_vacancy import AlchemyRecruitmentVacancyResponseRepo
-from job.recruitment.infrastructure.repositories.vacancy import AlchemyVacancyRepo
+from job.recruitment.infrastructure.repositories.vacancy import AlchemyRecruitmentVacancyReader, AlchemyVacancyRepo
 
 
 class RecruitmentProvider(Provider):
@@ -20,6 +21,7 @@ class RecruitmentProvider(Provider):
 
     vacancy_repo = provide(AlchemyVacancyRepo)
     response_repo = provide(AlchemyRecruitmentVacancyResponseRepo)
+    vacancy_reader = provide(AlchemyRecruitmentVacancyReader)
 
     rel_additional_skill_vacancy = provide(RelVacancyAdditionalSkillDAO)
     rel_skill_vacancy = provide(RelVacancySkillDAO)
@@ -33,3 +35,4 @@ class RecruitmentProvider(Provider):
     delete_vacancy = provide(DeleteVacancyHandler)
     create_recruiter = provide(CreateRecruiterHandler)
     change_response_status = provide(ChangeResponseStatusHandler)
+    get_recruiter = provide(GetRecruiterHandler)

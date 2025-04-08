@@ -32,9 +32,16 @@ from job.recruitment.application.commands.create_vacancy import CreateVacancyHan
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
 from job.recruitment.application.dto import (
+    DetailedAuthorDTO,
     VacancyDTO,
 )
-from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.application.exceptions import (
+    EmptyEmploymentTypesError,
+    EmptySkillsError,
+    EmptyWorkSchedulesError,
+    RecruiterIdNotFoundError,
+)
+from job.recruitment.application.queries.get_recruiter import GetRecruiterHandler
 
 
 class VacancyController(Controller):
@@ -43,6 +50,7 @@ class VacancyController(Controller):
         EmptyEmploymentTypesError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         EmptyWorkSchedulesError: error_handler(status_codes.HTTP_400_BAD_REQUEST),
         VacancyIdNotExistError: error_handler(status_codes.HTTP_404_NOT_FOUND),
+        RecruiterIdNotFoundError: error_handler(status_codes.HTTP_404_NOT_FOUND),
     }
 
     @post(
@@ -107,6 +115,18 @@ class VacancyController(Controller):
     ) -> Response[str]:
         await create_recruiter(command=data.create_instance(id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+
+    @get(
+        "/vacancies/author",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def get_recruiter(
+        self,
+        get_recruiter: Depends[GetRecruiterHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> DetailedAuthorDTO:
+        return await get_recruiter(request.user.sub)
 
     @get("/responses", status_code=status_codes.HTTP_200_OK)
     @inject

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from uuid import UUID
 
 from common.application.exceptions import ApplicationError
 
@@ -29,3 +30,12 @@ class EmptyWorkSchedulesError(ApplicationError):
     @property
     def message(self) -> str:
         return "Empty work schedule list"
+
+
+@dataclass(slots=True, eq=False)
+class RecruiterIdNotFoundError(ApplicationError):
+    recruiter_id: UUID
+
+    @property
+    def message(self) -> str:
+        return f"Recruiter with id {self.recruiter_id} not found"

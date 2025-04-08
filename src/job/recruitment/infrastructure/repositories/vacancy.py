@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import UUID
 
 from msgspec import UNSET
-from sqlalchemy import delete, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 
 from common.infrastructure.repositories.base import AlchemyReader, AlchemyRepo
@@ -17,6 +17,8 @@ from job.recruitment.api.schemas import (
     CreateVacancySchema,
     UpdateVacancySchema,
 )
+from job.recruitment.application.dto import DetailedAuthorDTO
+from job.recruitment.application.exceptions import RecruiterIdNotFoundError
 from job.recruitment.infrastructure.dao.employment_type import EmploymentTypeDAO
 from job.recruitment.infrastructure.dao.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
 from job.recruitment.infrastructure.dao.rel_skill_vacancy import RelVacancySkillDAO
@@ -109,3 +111,18 @@ class AlchemyVacancyRepo:
     async def create_recruiter(self, command: CreateRecruiterSchema) -> None:
         insert_stmt = insert(self._recruiter).values(command.to_dict())
         await self._repo.execute(insert_stmt)
+
+
+@dataclass(slots=True)
+class AlchemyRecruitmentVacancyReader:
+    _recruiter: ClassVar[type[Recruiter]] = Recruiter
+    _base: AlchemyReader
+
+    async def get_recruiter(self, recruiter_id: UUID) -> DetailedAuthorDTO:
+        recruiter = await self._base.fetch_one(
+            select(self._recruiter.__table__).where(self._recruiter.id == recruiter_id)
+        )
+        if recruiter is None:
+            raise RecruiterIdNotFoundError(recruiter_id)
+
+        return DetailedAuthorDTO(about_us=recruiter.about_us, email=recruiter.email, name=recruiter.company_name)
