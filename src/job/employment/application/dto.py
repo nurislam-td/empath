@@ -83,4 +83,5 @@ class VacancyDTO(DTO):
     created_at: datetime
     email: str
     status: VacancyResponseStatusEnum | None
+    education: EducationEnum
     id: UUID

@@ -30,6 +30,7 @@ def convert_db_to_vacancy(  # noqa: PLR0913
         created_at=vacancy.created_at,
         email=vacancy.email,
         status=vacancy.status,
+        education=vacancy.education,
         id=vacancy.id,
     )
 

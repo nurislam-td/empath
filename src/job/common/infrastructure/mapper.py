@@ -77,6 +77,7 @@ def convert_db_to_vacancy(  # noqa: PLR0913
         additional_skills=[s.name for s in additional_skills],
         created_at=vacancy.created_at,
         email=vacancy.email,
+        education=vacancy.education,
         id=vacancy.id,
     )
 

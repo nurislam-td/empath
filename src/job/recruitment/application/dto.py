@@ -26,6 +26,7 @@ class VacancyDTO(DTO):
     address: str | None
     author: AuthorDTO
     work_exp: WorkExpEnum
+    education: EducationEnum
     work_schedules: list[str]
     employment_types: list[str]
     work_formats: list[str]
