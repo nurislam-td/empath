@@ -10,6 +10,7 @@ from litestar.openapi.spec import Components, SecurityScheme
 from auth.infrastructure.middlewares import JWTAuthMiddleware
 from config import get_settings
 from infrastructure.api import router
+from infrastructure.db import admin
 from infrastructure.di import get_ioc
 
 config = get_settings()
@@ -21,6 +22,7 @@ def get_litestar_app() -> Litestar:
         JWTAuthMiddleware,
         exclude=[
             "/schema",
+            "/admin",
             # "/auth",
         ],
     )
@@ -33,6 +35,7 @@ def get_litestar_app() -> Litestar:
     )
     litestar_app = Litestar(
         route_handlers=[router],
+        plugins=[admin.admin],
         debug=True,
         middleware=[auth_mw],
         logging_config=StructLoggingConfig(),

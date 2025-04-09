@@ -139,7 +139,7 @@ class VacancyController(Controller):
     ) -> PaginatedDTO[VacancyResponseDTO]:
         return await get_responses(
             pagination=pagination_params,
-            query=GetVacancyResponsesQuery(vacancy_id=vacancy_id, response_author_id=request.user.sub),
+            query=GetVacancyResponsesQuery(vacancy_id=vacancy_id, vacancy_author_id=request.user.sub),
         )
 
     @patch("/responses", status_code=status_codes.HTTP_200_OK)

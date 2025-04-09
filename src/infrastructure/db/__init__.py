@@ -10,6 +10,7 @@ from articles.infrastructure.models import (
 from auth.infrastructure.models import RefreshToken, User
 from common.infrastructure.models import BaseModel, TimedBaseModel
 from job.common.infrastructure.models import (
+    CV,
     EmploymentType,
     JobBase,
     RelVacancyAdditionalSkill,
@@ -18,6 +19,7 @@ from job.common.infrastructure.models import (
     RelVacancyWorkSchedule,
     Skill,
     Vacancy,
+    WorkExp,
     WorkFormat,
     WorkSchedule,
 )
@@ -44,4 +46,6 @@ __all__ = (
     "Vacancy",
     "WorkFormat",
     "WorkSchedule",
+    "CV",
+    "WorkExp",
 )

@@ -3,7 +3,7 @@ from datetime import date
 
 from sqlalchemy import BigInteger, Enum, ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from common.infrastructure.models import TimedBaseModel
 from job.common.domain.enums import EducationEnum, VacancyResponseStatusEnum, WorkExpEnum, WorkFormatEnum
@@ -34,26 +34,41 @@ class Vacancy(JobBase):
 
     author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
 
+    def __str__(self) -> str:
+        return f"title = {self.title} | date = {self.created_at} | id = {self.id} "
+
 
 class Skill(JobBase):
     __tablename__ = "skill"
 
     name: Mapped[str] = mapped_column(String, nullable=False, unique=True)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class EmploymentType(JobBase):
     __tablename__ = "employment_type"
     name: Mapped[str]
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class WorkSchedule(JobBase):
     __tablename__ = "work_schedule"
     name: Mapped[str]
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class WorkFormat(JobBase):
     __tablename__ = "work_format"
     name: Mapped[WorkFormatEnum] = mapped_column(String(length=50))
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class RelVacancyWorkFormat(JobBase):
@@ -132,6 +147,59 @@ class CV(JobBase):
     cv_file: Mapped[str | None]
 
     author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
+    # Отношение "один-ко-многим" с WorkExp
+    # work_experiences: Mapped[list["WorkExp"]] = relationship(
+    #     "WorkExp",
+    #     backref="cv",  # или можно использовать back_populates в обеих моделях
+    #     cascade="all, delete-orphan",
+    # )
+
+    author = relationship("User", backref="cvs")
+
+    # Отношение многие-ко-многим с WorkFormat через RelCVWorkFormat
+    work_formats = relationship(
+        "WorkFormat",
+        secondary="job.rel_cv_work_format",
+        backref="cvs",  # или back_populates с обратной стороны
+    )
+
+    # Отношение многие-ко-многим с EmploymentType через RelCVEmploymentType
+    employment_types = relationship(
+        "EmploymentType",
+        secondary="job.rel_cv_employment_type",
+        backref="cvs",
+    )
+
+    # Отношение многие-ко-многим с WorkSchedule через RelCVWorkSchedule
+    work_schedules = relationship(
+        "WorkSchedule",
+        secondary="job.rel_cv_work_schedule",
+        backref="cvs",
+    )
+
+    # Отношение многие-ко-многим с Skill через RelCVSkill (например, базовые навыки)
+    skills = relationship(
+        "Skill",
+        secondary="job.rel_cv_skill",
+        backref="cvs",
+    )
+
+    # Отношение многие-ко-многим с Skill через RelCVAdditionalSkill (например, дополнительные навыки)
+    additional_skills = relationship(
+        "Skill",
+        secondary="job.rel_cv_additional_skill",
+        backref="additional_cvs",
+    )
+
+    # Отношение многие-ко-многим с Vacancy через RelCVVacancy
+    vacancies = relationship(
+        "Vacancy",  # предполагаем, что такая модель определена где-то в вашем проекте
+        secondary="job.rel_cv_vacancy",
+        backref="cvs",
+    )
+
+    def __str__(self) -> str:
+        return f"{self.title} | {self.author}"
 
 
 class WorkExp(JobBase):
@@ -143,7 +211,11 @@ class WorkExp(JobBase):
     start_date: Mapped[date]
     end_date: Mapped[date | None]
     is_relevant: Mapped[bool]
-    cv_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+    cv_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("job.cv.id", ondelete="CASCADE"))
+    cv = relationship("CV", backref="work_experiences")
+
+    def __str__(self) -> str:
+        return f"{self.company_name} | {self.title}"
 
 
 class RelCVWorkFormat(JobBase):

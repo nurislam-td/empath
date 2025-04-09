@@ -35,6 +35,9 @@ class User(AuthBase):
     date_birth: Mapped[date | None] = mapped_column(Date, nullable=True)
     image: Mapped[str | None] = mapped_column(String, nullable=True)
 
+    def __str__(self) -> str:
+        return f"{self.nickname} | {self.email}"
+
 
 class RefreshToken(AuthBase):
     __tablename__ = "refresh_token"
