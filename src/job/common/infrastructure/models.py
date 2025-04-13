@@ -147,53 +147,41 @@ class CV(JobBase):
     cv_file: Mapped[str | None]
 
     author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
-    # Отношение "один-ко-многим" с WorkExp
-    # work_experiences: Mapped[list["WorkExp"]] = relationship(
-    #     "WorkExp",
-    #     backref="cv",  # или можно использовать back_populates в обеих моделях
-    #     cascade="all, delete-orphan",
-    # )
 
     author = relationship("User", backref="cvs")
 
-    # Отношение многие-ко-многим с WorkFormat через RelCVWorkFormat
     work_formats = relationship(
         "WorkFormat",
         secondary="job.rel_cv_work_format",
-        backref="cvs",  # или back_populates с обратной стороны
+        backref="cvs",
     )
 
-    # Отношение многие-ко-многим с EmploymentType через RelCVEmploymentType
     employment_types = relationship(
         "EmploymentType",
         secondary="job.rel_cv_employment_type",
         backref="cvs",
     )
 
-    # Отношение многие-ко-многим с WorkSchedule через RelCVWorkSchedule
     work_schedules = relationship(
         "WorkSchedule",
         secondary="job.rel_cv_work_schedule",
         backref="cvs",
     )
 
-    # Отношение многие-ко-многим с Skill через RelCVSkill (например, базовые навыки)
     skills = relationship(
         "Skill",
         secondary="job.rel_cv_skill",
         backref="cvs",
     )
 
-    # Отношение многие-ко-многим с Skill через RelCVAdditionalSkill (например, дополнительные навыки)
     additional_skills = relationship(
         "Skill",
         secondary="job.rel_cv_additional_skill",
         backref="additional_cvs",
     )
 
-    # Отношение многие-ко-многим с Vacancy через RelCVVacancy
     vacancies = relationship(
-        "Vacancy",  # предполагаем, что такая модель определена где-то в вашем проекте
+        "Vacancy",
         secondary="job.rel_cv_vacancy",
         backref="cvs",
     )
