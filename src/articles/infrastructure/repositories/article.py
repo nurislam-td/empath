@@ -23,6 +23,7 @@ from articles.infrastructure.mapper import (
     convert_db_to_article_dto_list,
 )
 from articles.infrastructure.models import Article, ArticleImg
+from articles.infrastructure.repositories.article_stats import AlchemyArticleStatRepo
 from articles.infrastructure.repositories.qb import ArticleQueryBuilder
 from articles.infrastructure.repositories.sub_article import AlchemySubArticleReader, AlchemySubArticleRepo
 from articles.infrastructure.repositories.tag import AlchemyTagReader, AlchemyTagRepo
@@ -48,6 +49,7 @@ class AlchemyArticleRepo(ArticleRepo):
     _base: AlchemyRepo
     _sub_article: AlchemySubArticleRepo
     _tag: AlchemyTagRepo
+    _stat: AlchemyArticleStatRepo
 
     async def _create_article_imgs(self, article_id: UUID, imgs: list[str]) -> None:
         if not imgs:
@@ -114,6 +116,21 @@ class AlchemyArticleRepo(ArticleRepo):
 
     async def delete_article(self, article_id: UUID) -> None:
         await self._base.execute(delete(self._article).where(self._article.id == article_id))
+
+    async def like_article(self, article_id: UUID, user_id: UUID) -> None:
+        await self._stat.like_article(article_id, user_id)
+
+    async def dislike_article(self, article_id: UUID, user_id: UUID) -> None:
+        await self._stat.dislike_article(article_id, user_id)
+
+    async def view_article(self, article_id: UUID, user_id: UUID) -> None:
+        await self._stat.view_article(article_id, user_id)
+
+    async def cancel_like_article(self, article_id: UUID, user_id: UUID) -> None:
+        await self._stat.cancel_like_article(article_id, user_id)
+
+    async def cancel_dislike_article(self, article_id: UUID, user_id: UUID) -> None:
+        await self._stat.cancel_dislike_article(article_id, user_id)
 
 
 class AlchemyArticleReader(ArticleReader):

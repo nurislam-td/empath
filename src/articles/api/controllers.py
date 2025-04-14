@@ -8,6 +8,8 @@ from litestar.datastructures import State
 from litestar.dto import DTOData
 
 from articles.api.schemas import ArticleCreateSchema, CreateCommentSchema, EditArticleSchema, EditCommentSchema
+from articles.application.commands.cancel_dislike_article import CancelDislikeArticle, CancelDislikeArticleHandler
+from articles.application.commands.cancel_like_article import CancelLikeArticle, CancelLikeArticleHandler
 from articles.application.commands.create_article import (
     CreateArticle,
     CreateArticleHandler,
@@ -15,8 +17,11 @@ from articles.application.commands.create_article import (
 from articles.application.commands.create_comment import CreateComment, CreateCommentHandler
 from articles.application.commands.delete_article import DeleteArticle, DeleteArticleHandler
 from articles.application.commands.delete_comment import DeleteComment, DeleteCommentHandler
+from articles.application.commands.dislike_article import DislikeArticle, DislikeArticleHandler
 from articles.application.commands.edit_article import EditArticle, EditArticleHandler
 from articles.application.commands.edit_comment import EditComment, EditCommentHandler
+from articles.application.commands.like_article import LikeArticle, LikeArticleHandler
+from articles.application.commands.view_article import ViewArticle, ViewArticleHandler
 from articles.application.dto.article import (
     ArticleDTO,
     CommentDTO,
@@ -192,3 +197,73 @@ class ArticleController(Controller):
         name: str | None = None,
     ) -> PaginatedDTO[SpecializationDTO]:
         return await get_specializations(GetSpecializations(pagination=pagination_params, name=name))
+
+    @post(
+        "/{article_id:uuid}/likes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def like_article(
+        self,
+        article_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        like_article: Depends[LikeArticleHandler],
+    ) -> Response[str]:
+        await like_article(LikeArticle(id=article_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @delete(
+        "/{article_id:uuid}/likes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def cancel_like_article(
+        self,
+        article_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        cancel_like_article: Depends[CancelLikeArticleHandler],
+    ) -> Response[str]:
+        await cancel_like_article(CancelLikeArticle(id=article_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @post(
+        "/{article_id:uuid}/dislikes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def dislike_article(
+        self,
+        article_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        dislike_article: Depends[DislikeArticleHandler],
+    ) -> Response[str]:
+        await dislike_article(DislikeArticle(id=article_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @delete(
+        "/{article_id:uuid}/dislikes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def cancel_dislike_article(
+        self,
+        article_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        cancel_dislike_article: Depends[CancelDislikeArticleHandler],
+    ) -> Response[str]:
+        await cancel_dislike_article(CancelDislikeArticle(id=article_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @post(
+        "/{article_id:uuid}/views",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def view_article(
+        self,
+        article_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        view_article: Depends[ViewArticleHandler],
+    ) -> Response[str]:
+        await view_article(ViewArticle(id=article_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)

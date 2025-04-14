@@ -84,3 +84,24 @@ class Comment(ArticleBase):
     author_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
     like_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     dislikes_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
+
+
+class RelArticleUserLike(ArticleBase):
+    __tablename__ = "rel_article_user_like"
+    id: None = None  # type: ignore  # noqa: PGH003
+    article_id: Mapped[UUID] = mapped_column(ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)
+
+
+class RelArticleUserDislike(ArticleBase):
+    __tablename__ = "rel_article_user_dislike"
+    id: None = None  # type: ignore  # noqa: PGH003
+    article_id: Mapped[UUID] = mapped_column(ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)
+
+
+class RelArticleUserView(ArticleBase):
+    __tablename__ = "rel_article_user_view"
+    id: None = None  # type: ignore  # noqa: PGH003
+    article_id: Mapped[UUID] = mapped_column(ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)
