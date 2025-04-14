@@ -17,11 +17,19 @@ from articles.application.commands.delete_article import DeleteArticle, DeleteAr
 from articles.application.commands.delete_comment import DeleteComment, DeleteCommentHandler
 from articles.application.commands.edit_article import EditArticle, EditArticleHandler
 from articles.application.commands.edit_comment import EditComment, EditCommentHandler
-from articles.application.dto.article import ArticleDTO, CommentDTO, PaginatedArticleDTO, SubArticleDTO, TagDTO
+from articles.application.dto.article import (
+    ArticleDTO,
+    CommentDTO,
+    PaginatedArticleDTO,
+    SpecializationDTO,
+    SubArticleDTO,
+    TagDTO,
+)
 from articles.application.exceptions import ContentAuthorMismatchError, EmptyArticleUpdatesError
 from articles.application.queries.get_article_by_id import GetArticleById, GetArticleByIdHandler
 from articles.application.queries.get_articles import ArticleFilter, GetArticles, GetArticlesHandler
 from articles.application.queries.get_comments import GetComments, GetCommentsHandler
+from articles.application.queries.get_specialization import GetSpecializations, GetSpecializationsHandler
 from articles.application.queries.get_tag_list import GetTagList, GetTagListHandler
 from articles.domain.entities.article import EmptyTagListError
 from articles.domain.value_objects.article_title import TooLongArticleTitleError
@@ -171,3 +179,16 @@ class ArticleController(Controller):
         pagination_params: PaginationParams,
     ) -> PaginatedDTO[CommentDTO]:
         return await get_comments(GetComments(pagination=pagination_params, article_id=article_id))
+
+    @get(
+        "/specializations",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def get_specializations(
+        self,
+        get_specializations: Depends[GetSpecializationsHandler],
+        pagination_params: PaginationParams,
+        name: str | None = None,
+    ) -> PaginatedDTO[SpecializationDTO]:
+        return await get_specializations(GetSpecializations(pagination=pagination_params, name=name))

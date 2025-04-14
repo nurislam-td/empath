@@ -7,9 +7,8 @@ from msgspec import UNSET, UnsetType, field
 from articles.application.commands.create_article import CreateArticle
 from articles.application.commands.create_comment import CreateComment
 from articles.application.commands.edit_comment import EditComment
-from articles.application.dto.article import ArticleDTO, SubArticleDTO, TagDTO
+from articles.application.dto.article import SubArticleDTO, TagDTO
 from common.api.schemas import BaseStruct
-from common.application.dto import PaginatedDTO
 
 
 class ArticleCreateSchema(DataclassDTO[CreateArticle]):
@@ -51,6 +50,7 @@ class EditArticleSchema(BaseStruct):
     is_visible: bool | UnsetType = UNSET
     imgs: list[str] | UnsetType = UNSET
     sub_articles: list[SubArticleSchema] | UnsetType = UNSET
+    specialization_id: UUID | UnsetType = UNSET
 
 
 class CreateCommentSchema(DataclassDTO[CreateComment]):

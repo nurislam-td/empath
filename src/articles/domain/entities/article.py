@@ -22,6 +22,7 @@ class Article(Aggregate):
     text: str
     author_id: UUID
     tags: list[Tag]
+    specialization_id: UUID | None = None
     is_visible: bool = field(default=False)
     imgs: list[str] = field(default_factory=list)
     sub_articles: list[SubArticle] = field(default_factory=list)

@@ -5,7 +5,7 @@ from uuid import UUID
 from sqlalchemy import Select, func, select
 
 from articles.application.queries.get_articles import ArticleFilter
-from articles.infrastructure.models import Article, ArticleImg, SubArticle, Tag
+from articles.infrastructure.models import Article, ArticleImg, Specialization, SubArticle, Tag
 from auth.infrastructure.models import User
 
 
@@ -26,6 +26,7 @@ class ArticleQueryBuilder:
     _article_img = ArticleImg
     _author = User
     _sub_article = SubArticle
+    _specialization = Specialization
 
     @classmethod
     def _filter_article(cls, qs: Select[Any], article_filter: ArticleFilter) -> Select[Any]:
@@ -47,7 +48,7 @@ class ArticleQueryBuilder:
         article_authors_join = cls._article.__table__.join(
             cls._author.__table__,
             cls._article.author_id == cls._author.id,
-        )
+        ).outerjoin(cls._specialization.__table__, cls._article.specialization_id == cls._specialization.id)
 
         qs = select(
             cls._article.__table__,
@@ -56,6 +57,7 @@ class ArticleQueryBuilder:
             cls._author.lastname.label("author_lastname"),
             cls._author.patronymic.label("author_patronymic"),
             cls._author.image.label("author_img"),
+            cls._specialization.name.label("specialization_name"),
         ).select_from(article_authors_join)
 
         if article_filter:
@@ -76,3 +78,10 @@ class ArticleQueryBuilder:
         if article_ids:
             query = query.where(cls._article_img.article_id.in_(article_ids))
         return query
+
+    @classmethod
+    def get_specialization_qs(cls, name: str | None = None) -> Select[Any]:
+        qs = select(cls._specialization.__table__)
+        if name:
+            qs = qs.where(cls._specialization.name.ilike(f"%{name}%"))
+        return qs

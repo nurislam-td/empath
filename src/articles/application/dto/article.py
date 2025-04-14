@@ -44,6 +44,12 @@ class TagDTO(DTO):
 
 
 @dataclass(frozen=True, slots=True)
+class SpecializationDTO(DTO):
+    name: str
+    id: UUID = field(default_factory=uuid4)
+
+
+@dataclass(frozen=True, slots=True)
 class ArticleDTO(DTO):
     title: str
     text: str
@@ -55,6 +61,7 @@ class ArticleDTO(DTO):
     views_cnt: int = 0
     likes_cnt: int = 0
     dislikes_cnt: int = 0
+    specialization: SpecializationDTO | None = None
     id: UUID = field(default_factory=uuid4)
 
 

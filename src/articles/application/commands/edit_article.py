@@ -26,6 +26,7 @@ class EditArticle(Command[None]):
     is_visible: bool | Empty = Empty.UNSET
     imgs: list[str] | Empty = Empty.UNSET
     sub_articles: list[SubArticleDTO] | Empty = Empty.UNSET
+    specialization_id: UUID | Empty = Empty.UNSET
 
 
 @dataclass
@@ -36,11 +37,11 @@ class EditArticleHandler(CommandHandler[EditArticle, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: EditArticle) -> None:
-        article_dto = await self._article_reader.get_article_by_id(command.id)
-        article = convert_dto_to_article(article_dto)
         if len(keys := command.to_dict_exclude_unset().keys()) == 2 and {"author_id", "id"} <= keys:  # noqa: PLR2004
             raise EmptyArticleUpdatesError
 
+        article_dto = await self._article_reader.get_article_by_id(command.id)
+        article = convert_dto_to_article(article_dto)
         for attr, value in command.to_dict_exclude_unset().items():
             convert_fun = convert_strategy.get(attr, lambda x: x)
             setattr(article, attr, convert_fun(value))

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import UUID
 
-from sqlalchemy import Select, delete, select, update
+from sqlalchemy import delete, update
 from sqlalchemy.dialects.postgresql import insert
 
 from articles.application.commands.create_article import CreateArticle
@@ -11,6 +11,7 @@ from articles.application.commands.edit_article import EditArticle
 from articles.application.dto.article import (
     ArticleDTO,
     PaginatedArticleDTO,
+    SpecializationDTO,
     TagDTO,
 )
 from articles.application.exceptions import ArticleIdNotExistError
@@ -22,7 +23,6 @@ from articles.infrastructure.mapper import (
     convert_db_to_article_dto_list,
 )
 from articles.infrastructure.models import Article, ArticleImg
-from articles.infrastructure.repositories.comment import AlchemyCommentRepo
 from articles.infrastructure.repositories.qb import ArticleQueryBuilder
 from articles.infrastructure.repositories.sub_article import AlchemySubArticleReader, AlchemySubArticleRepo
 from articles.infrastructure.repositories.tag import AlchemyTagReader, AlchemyTagRepo
@@ -34,6 +34,8 @@ from common.infrastructure.repositories.pagination import AlchemyPaginator
 
 if TYPE_CHECKING:
     from collections.abc import Coroutine
+
+    from articles.application.queries.get_specialization import GetSpecializations
 
 
 @dataclass(slots=True)
@@ -61,6 +63,7 @@ class AlchemyArticleRepo(ArticleRepo):
                 text=article.text,
                 is_visible=article.is_visible,
                 author_id=article.author_id,
+                specialization_id=article.specialization_id,
                 id=article.id,
             ),
         )
@@ -165,3 +168,18 @@ class AlchemyArticleReader(ArticleReader):
         )
 
         return PaginatedDTO[ArticleDTO](count=value_count, page=query.pagination.page, results=article_dto_list)
+
+    async def get_specialization(self, query: "GetSpecializations") -> PaginatedDTO[SpecializationDTO]:
+        qs = self._qb.get_specialization_qs(name=query.name)
+        value_count = await self._base.count(qs)
+        qs = self._paginator.paginate(qs, query.pagination.page, query.pagination.per_page)
+
+        specializations = await self._base.fetch_all(qs)
+        if not specializations:
+            return PaginatedDTO[SpecializationDTO](count=value_count, page=query.pagination.page, results=[])
+
+        return PaginatedDTO[SpecializationDTO](
+            count=value_count,
+            page=query.pagination.page,
+            results=[SpecializationDTO(name=spec.name, id=spec.id) for spec in specializations],
+        )

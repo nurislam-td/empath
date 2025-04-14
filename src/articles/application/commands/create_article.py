@@ -22,6 +22,7 @@ class CreateArticle(Command[None]):
     views_cnt: int = 0
     likes_cnt: int = 0
     dislikes_cnt: int = 0
+    specialization_id: UUID | None = None
     id: UUID = field(default_factory=uuid4)
 
 

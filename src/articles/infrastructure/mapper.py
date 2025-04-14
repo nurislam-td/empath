@@ -7,6 +7,7 @@ from sqlalchemy import RowMapping
 from articles.application.dto.article import (
     ArticleDTO,
     CommentDTO,
+    SpecializationDTO,
     SubArticleDTO,
     SubArticleWithArticleIdDTO,
     TagDTO,
@@ -71,6 +72,9 @@ def convert_db_to_article_dto(
         likes_cnt=article.likes_cnt,
         dislikes_cnt=article.dislikes_cnt,
         imgs=list(imgs),
+        specialization=SpecializationDTO(name=article.specialization_name, id=article.specialization_id)
+        if article.specialization_id
+        else None,
         id=article.id,
     )
 

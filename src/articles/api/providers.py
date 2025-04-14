@@ -10,6 +10,7 @@ from articles.application.ports.repo import ArticleReader, ArticleRepo, CommentR
 from articles.application.queries.get_article_by_id import GetArticleByIdHandler
 from articles.application.queries.get_articles import GetArticlesHandler
 from articles.application.queries.get_comments import GetCommentsHandler
+from articles.application.queries.get_specialization import GetSpecializationsHandler
 from articles.application.queries.get_tag_list import GetTagListHandler
 from articles.infrastructure.repositories.article import AlchemyArticleReader, AlchemyArticleRepo
 from articles.infrastructure.repositories.comment import AlchemyCommentReader, AlchemyCommentRepo
@@ -40,3 +41,4 @@ class ArticleProvider(Provider):
     get_articles = provide(GetArticlesHandler)
     get_comments = provide(GetCommentsHandler)
     get_article_by_id = provide(GetArticleByIdHandler)
+    get_specialization = provide(GetSpecializationsHandler)
