@@ -3,6 +3,7 @@ from articles.infrastructure.models import (
     ArticleBase,
     ArticleImg,
     RelArticleTag,
+    Specialization,
     SubArticle,
     SubArticleImg,
     Tag,
@@ -25,7 +26,9 @@ from job.common.infrastructure.models import (
 )
 
 __all__ = (
+    "CV",
     "Article",
+    "ArticleBase",
     "ArticleBase",
     "ArticleImg",
     "BaseModel",
@@ -38,14 +41,14 @@ __all__ = (
     "RelVacancySkill",
     "RelVacancyWorkSchedule",
     "Skill",
+    "Specialization",
     "SubArticle",
     "SubArticleImg",
     "Tag",
     "TimedBaseModel",
     "User",
     "Vacancy",
+    "WorkExp",
     "WorkFormat",
     "WorkSchedule",
-    "CV",
-    "WorkExp",
 )

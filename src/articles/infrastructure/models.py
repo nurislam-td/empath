@@ -18,6 +18,12 @@ class ArticleBase(TimedBaseModel):
     __table_args__ = {"schema": "article"}  # noqa: RUF012
 
 
+class Specialization(ArticleBase):
+    __tablename__ = "specialization"
+
+    name: Mapped[str] = mapped_column(String, unique=True)
+
+
 class Article(ArticleBase):
     __tablename__ = "article"
 
@@ -28,6 +34,10 @@ class Article(ArticleBase):
     views_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     likes_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     dislikes_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
+    specialization_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("article.specialization.id", ondelete="SET NULL"),
+        nullable=True,
+    )
 
 
 class Tag(ArticleBase):
