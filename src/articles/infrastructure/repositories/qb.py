@@ -50,15 +50,19 @@ class ArticleQueryBuilder:
             cls._article.author_id == cls._author.id,
         ).outerjoin(cls._specialization.__table__, cls._article.specialization_id == cls._specialization.id)
 
-        qs = select(
-            cls._article.__table__,
-            cls._author.nickname.label("author_nickname"),
-            cls._author.name.label("author_name"),
-            cls._author.lastname.label("author_lastname"),
-            cls._author.patronymic.label("author_patronymic"),
-            cls._author.image.label("author_img"),
-            cls._specialization.name.label("specialization_name"),
-        ).select_from(article_authors_join)
+        qs = (
+            select(
+                cls._article.__table__,
+                cls._author.nickname.label("author_nickname"),
+                cls._author.name.label("author_name"),
+                cls._author.lastname.label("author_lastname"),
+                cls._author.patronymic.label("author_patronymic"),
+                cls._author.image.label("author_img"),
+                cls._specialization.name.label("specialization_name"),
+            )
+            .select_from(article_authors_join)
+            .order_by(cls._article.created_at.desc())
+        )
 
         if article_filter:
             qs = cls._filter_article(qs=qs, article_filter=article_filter)

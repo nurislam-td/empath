@@ -30,7 +30,13 @@ from articles.application.dto.article import (
     SubArticleDTO,
     TagDTO,
 )
-from articles.application.exceptions import ContentAuthorMismatchError, EmptyArticleUpdatesError
+from articles.application.exceptions import (
+    ContentAuthorMismatchError,
+    DislikeAlreadyExistError,
+    EmptyArticleUpdatesError,
+    LikeAlreadyExistError,
+    ViewAlreadyExistError,
+)
 from articles.application.queries.get_article_by_id import GetArticleById, GetArticleByIdHandler
 from articles.application.queries.get_articles import ArticleFilter, GetArticles, GetArticlesHandler
 from articles.application.queries.get_comments import GetComments, GetCommentsHandler
@@ -52,6 +58,9 @@ class ArticleController(Controller):
         EmptyTagListError: error_handler(status_code=status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
         EmptyArticleUpdatesError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
         ContentAuthorMismatchError: error_handler(status_codes.HTTP_403_FORBIDDEN),
+        DislikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
+        LikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
+        ViewAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
     }
 
     @post(
