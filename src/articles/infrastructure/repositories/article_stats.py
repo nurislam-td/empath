@@ -3,7 +3,6 @@ from uuid import UUID
 from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert
 
-
 from articles.infrastructure.models import (
     RelArticleUserDislike,
     RelArticleUserLike,
@@ -31,7 +30,7 @@ class AlchemyArticleStatRepo:
         )
 
     async def like_article(self, article_id: UUID, user_id: UUID) -> None:
-        await self.cancel_dislike_article(article_id=article_id, user_id=user_id))
+        await self.cancel_dislike_article(article_id=article_id, user_id=user_id)
         await self.base.execute(
             insert(self._like).values({"article_id": article_id, "user_id": user_id}),
         )
