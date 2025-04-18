@@ -107,3 +107,17 @@ class RelArticleUserView(ArticleBase):
     id: None = None  # type: ignore  # noqa: PGH003
     article_id: Mapped[UUID] = mapped_column(ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True)
     user_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)
+
+
+class RelCommentUserLike(ArticleBase):
+    __tablename__ = "rel_comment_user_like"
+    id: None = None  # type: ignore  # noqa: PGH003
+    comment_id: Mapped[UUID] = mapped_column(ForeignKey("article.comment.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)
+
+
+class RelCommentUserDislike(ArticleBase):
+    __tablename__ = "rel_comment_user_dislike"
+    id: None = None  # type: ignore  # noqa: PGH003
+    comment_id: Mapped[UUID] = mapped_column(ForeignKey("article.comment.id", ondelete="CASCADE"), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)

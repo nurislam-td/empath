@@ -18,6 +18,8 @@ class CommentDTO(DTO):
     article_id: UUID
     author: UserDTO
     is_visible: bool
+    likes_cnt: int
+    dislikes_cnt: int
     parent_id: UUID | None = None
     id: UUID = field(default_factory=uuid4)
 

@@ -9,7 +9,9 @@ from litestar.dto import DTOData
 
 from articles.api.schemas import ArticleCreateSchema, CreateCommentSchema, EditArticleSchema, EditCommentSchema
 from articles.application.commands.cancel_dislike_article import CancelDislikeArticle, CancelDislikeArticleHandler
+from articles.application.commands.cancel_dislike_comment import CancelDislikeComment, CancelDislikeCommentHandler
 from articles.application.commands.cancel_like_article import CancelLikeArticle, CancelLikeArticleHandler
+from articles.application.commands.cancel_like_comment import CancelLikeComment, CancelLikeCommentHandler
 from articles.application.commands.create_article import (
     CreateArticle,
     CreateArticleHandler,
@@ -18,9 +20,11 @@ from articles.application.commands.create_comment import CreateComment, CreateCo
 from articles.application.commands.delete_article import DeleteArticle, DeleteArticleHandler
 from articles.application.commands.delete_comment import DeleteComment, DeleteCommentHandler
 from articles.application.commands.dislike_article import DislikeArticle, DislikeArticleHandler
+from articles.application.commands.dislike_comment import DislikeComment, DislikeCommentHandler
 from articles.application.commands.edit_article import EditArticle, EditArticleHandler
 from articles.application.commands.edit_comment import EditComment, EditCommentHandler
 from articles.application.commands.like_article import LikeArticle, LikeArticleHandler
+from articles.application.commands.like_comment import LikeComment, LikeCommentHandler
 from articles.application.commands.view_article import ViewArticle, ViewArticleHandler
 from articles.application.dto.article import (
     ArticleDTO,
@@ -277,4 +281,60 @@ class ArticleController(Controller):
         view_article: Depends[ViewArticleHandler],
     ) -> Response[str]:
         await view_article(ViewArticle(id=article_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @post(
+        "/comments/{comment_id:uuid}/likes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def like_comment(
+        self,
+        comment_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        like_comment: Depends[LikeCommentHandler],
+    ) -> Response[str]:
+        await like_comment(LikeComment(id=comment_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @delete(
+        "/comments/{comment_id:uuid}/likes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def cancel_like_comment(
+        self,
+        comment_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        cancel_like_comment: Depends[CancelLikeCommentHandler],
+    ) -> Response[str]:
+        await cancel_like_comment(CancelLikeComment(id=comment_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @post(
+        "/comments/{comment_id:uuid}/dislikes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def dislike_comment(
+        self,
+        comment_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        dislike_comment: Depends[DislikeCommentHandler],
+    ) -> Response[str]:
+        await dislike_comment(DislikeComment(id=comment_id, user_id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @delete(
+        "/comments/{comment_id:uuid}/dislikes",
+        status_code=status_codes.HTTP_200_OK,
+    )
+    @inject
+    async def cancel_dislike_comment(
+        self,
+        comment_id: UUID,
+        request: Request[JWTUserPayload, str, State],
+        cancel_dislike_comment: Depends[CancelDislikeCommentHandler],
+    ) -> Response[str]:
+        await cancel_dislike_comment(CancelDislikeComment(id=comment_id, user_id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_200_OK)

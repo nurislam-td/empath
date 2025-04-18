@@ -1,15 +1,19 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
 from articles.application.commands.cancel_dislike_article import CancelDislikeArticleHandler
+from articles.application.commands.cancel_dislike_comment import CancelDislikeCommentHandler
 from articles.application.commands.cancel_like_article import CancelLikeArticleHandler
+from articles.application.commands.cancel_like_comment import CancelLikeCommentHandler
 from articles.application.commands.create_article import CreateArticleHandler
 from articles.application.commands.create_comment import CreateCommentHandler
 from articles.application.commands.delete_article import DeleteArticleHandler
 from articles.application.commands.delete_comment import DeleteCommentHandler
 from articles.application.commands.dislike_article import DislikeArticleHandler
+from articles.application.commands.dislike_comment import DislikeCommentHandler
 from articles.application.commands.edit_article import EditArticleHandler
 from articles.application.commands.edit_comment import EditCommentHandler
 from articles.application.commands.like_article import LikeArticleHandler
+from articles.application.commands.like_comment import LikeCommentHandler
 from articles.application.commands.view_article import ViewArticleHandler
 from articles.application.ports.repo import ArticleReader, ArticleRepo, CommentReader, CommentRepo
 from articles.application.queries.get_article_by_id import GetArticleByIdHandler
@@ -20,6 +24,7 @@ from articles.application.queries.get_tag_list import GetTagListHandler
 from articles.infrastructure.repositories.article import AlchemyArticleReader, AlchemyArticleRepo
 from articles.infrastructure.repositories.article_stats import AlchemyArticleStatRepo
 from articles.infrastructure.repositories.comment import AlchemyCommentReader, AlchemyCommentRepo
+from articles.infrastructure.repositories.comment_stats import AlchemyCommentStatRepo
 from articles.infrastructure.repositories.sub_article import AlchemySubArticleReader, AlchemySubArticleRepo
 from articles.infrastructure.repositories.tag import AlchemyTagReader, AlchemyTagRepo
 
@@ -36,6 +41,7 @@ class ArticleProvider(Provider):
     comment_repo = provide(AlchemyCommentRepo, provides=CommentRepo)
     comment_reader = provide(AlchemyCommentReader, provides=CommentReader)
     article_stat_repo = provide(AlchemyArticleStatRepo)
+    comment_stat_repo = provide(AlchemyCommentStatRepo)
 
     create_article = provide(CreateArticleHandler)
     edit_article = provide(EditArticleHandler)
@@ -43,11 +49,17 @@ class ArticleProvider(Provider):
     create_comment = provide(CreateCommentHandler)
     edit_comment = provide(EditCommentHandler)
     delete_comment = provide(DeleteCommentHandler)
+
     like_article = provide(LikeArticleHandler)
     dislike_article = provide(DislikeArticleHandler)
     cancel_like_article = provide(CancelLikeArticleHandler)
     cancel_dislike_article = provide(CancelDislikeArticleHandler)
     view_article = provide(ViewArticleHandler)
+
+    like_comment = provide(LikeCommentHandler)
+    dislike_comment = provide(DislikeCommentHandler)
+    cancel_like_comment = provide(CancelLikeCommentHandler)
+    cancel_dislike_comment = provide(CancelDislikeCommentHandler)
 
     get_tag_list = provide(GetTagListHandler)
     get_articles = provide(GetArticlesHandler)

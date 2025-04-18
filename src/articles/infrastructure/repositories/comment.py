@@ -14,6 +14,7 @@ from articles.application.exceptions import CommentIdNotExistError
 from articles.application.ports.repo import CommentReader, CommentRepo
 from articles.infrastructure.mapper import convert_db_to_comment_dto
 from articles.infrastructure.models import Comment
+from articles.infrastructure.repositories.comment_stats import AlchemyCommentStatRepo
 from auth.infrastructure.models import User
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
@@ -28,6 +29,7 @@ class AlchemyCommentRepo(CommentRepo):
     comment: ClassVar[type[Comment]] = Comment
 
     _base: AlchemyRepo
+    _stat: AlchemyCommentStatRepo
 
     async def create_comment(self, comment: CreateComment) -> None:
         await self._base.execute(
@@ -41,6 +43,18 @@ class AlchemyCommentRepo(CommentRepo):
         await self._base.execute(
             update(self.comment).filter(self.comment.id == comment.id).values(text=comment.text),
         )
+
+    async def like_comment(self, comment_id: UUID, user_id: UUID) -> None:
+        await self._stat.like_comment(comment_id, user_id)
+
+    async def dislike_comment(self, comment_id: UUID, user_id: UUID) -> None:
+        await self._stat.dislike_comment(comment_id, user_id)
+
+    async def cancel_like_comment(self, comment_id: UUID, user_id: UUID) -> None:
+        await self._stat.cancel_like_comment(comment_id, user_id)
+
+    async def cancel_dislike_comment(self, comment_id: UUID, user_id: UUID) -> None:
+        await self._stat.cancel_dislike_comment(comment_id, user_id)
 
 
 @dataclass(slots=True)

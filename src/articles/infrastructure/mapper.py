@@ -128,4 +128,6 @@ def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
         parent_id=comment.parent_id,
         id=comment.id,
         is_visible=comment.is_visible,
+        likes_cnt=comment.like_cnt,
+        dislikes_cnt=comment.dislikes_cnt,
     )
