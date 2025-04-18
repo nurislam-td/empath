@@ -35,6 +35,7 @@ from articles.application.exceptions import (
     DislikeAlreadyExistError,
     EmptyArticleUpdatesError,
     LikeAlreadyExistError,
+    NothingToCancelError,
     ViewAlreadyExistError,
 )
 from articles.application.queries.get_article_by_id import GetArticleById, GetArticleByIdHandler
@@ -61,6 +62,7 @@ class ArticleController(Controller):
         DislikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
         LikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
         ViewAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
+        NothingToCancelError: error_handler(status_codes.HTTP_409_CONFLICT),
     }
 
     @post(

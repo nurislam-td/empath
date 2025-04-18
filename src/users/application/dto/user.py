@@ -17,6 +17,7 @@ class UserDTO(DTO):
     date_birth: date | None
     gender: str | None
     image: str | None
+    rating: int | None
 
 
 type PaginatedUserDTO = PaginatedDTO[UserDTO]

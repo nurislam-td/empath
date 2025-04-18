@@ -2,7 +2,7 @@ import enum
 from datetime import date
 from uuid import UUID
 
-from sqlalchemy import Date, Enum, ForeignKey, LargeBinary, String
+from sqlalchemy import BigInteger, Date, Enum, ForeignKey, LargeBinary, String
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -34,6 +34,7 @@ class User(AuthBase):
     patronymic: Mapped[str | None] = mapped_column(String(255), nullable=True)
     date_birth: Mapped[date | None] = mapped_column(Date, nullable=True)
     image: Mapped[str | None] = mapped_column(String, nullable=True)
+    rating: Mapped[int] = mapped_column(BigInteger, server_default="0")
 
     def __str__(self) -> str:
         return f"{self.nickname} | {self.email}"

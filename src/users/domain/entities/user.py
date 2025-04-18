@@ -19,4 +19,5 @@ class User(Entity):
     patronymic: str | None = None
     date_birth: date | None = None
     image: str | None = None
+    rating: int = field(default=0)
     id: UUID = field(default_factory=uuid4)

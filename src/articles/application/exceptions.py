@@ -64,3 +64,9 @@ class ViewAlreadyExistError(ApplicationError):
     @property
     def message(self) -> str:
         return "View already exist"
+
+
+class NothingToCancelError(ApplicationError):
+    @property
+    def message(self) -> str:
+        return "Nothing to cancel"

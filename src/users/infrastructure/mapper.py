@@ -34,6 +34,7 @@ def convert_db_model_to_user_entity(user: RowMapping) -> entities.User:
         date_birth=user.date_birth,
         gender=user.gender,
         image=user.image,
+        rating=user.rating,
     )
 
 
@@ -49,6 +50,7 @@ def convert_user_entity_to_user_dto(user: entities.User) -> UserDTO:
         date_birth=user.date_birth,
         gender=user.gender,
         image=user.image,
+        rating=user.rating,
     )
 
 
@@ -64,4 +66,5 @@ def convert_db_model_to_dto(user: RowMapping) -> UserDTO:
         date_birth=user.date_birth,
         gender=user.gender,
         image=user.image,
+        rating=user.rating,
     )
