@@ -35,7 +35,7 @@ class AlchemyCommentRepo(CommentRepo):
         )
 
     async def delete_comment(self, comment_id: UUID) -> None:
-        await self._base.execute(delete(self.comment).filter(self.comment.id == comment_id))
+        await self._base.execute(update(self.comment).filter(self.comment.id == comment_id).values(is_visible=False))
 
     async def update_comment(self, comment: EditComment) -> None:
         await self._base.execute(

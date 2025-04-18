@@ -11,6 +11,7 @@ class CreateComment(Command[None]):
     text: str
     article_id: UUID
     author_id: UUID
+    parent_id: UUID | None = None
     id: UUID = field(default_factory=uuid4)
 
 

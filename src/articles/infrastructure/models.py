@@ -84,6 +84,8 @@ class Comment(ArticleBase):
     author_id: Mapped[UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
     like_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     dislikes_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
+    parent_id: Mapped[UUID] = mapped_column(ForeignKey("article.comment.id", ondelete="SET NULL"), nullable=True)
+    is_visible: Mapped[bool] = mapped_column(Boolean, server_default="true", nullable=False)
 
 
 class RelArticleUserLike(ArticleBase):

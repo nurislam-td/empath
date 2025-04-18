@@ -125,4 +125,7 @@ def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
             full_name=author_fullname,
             img=comment.author_img,
         ),
+        parent_id=comment.parent_id,
+        id=comment.id,
+        is_visible=comment.is_visible,
     )
