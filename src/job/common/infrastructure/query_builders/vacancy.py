@@ -40,7 +40,7 @@ def filter_vacancy(qs: Select[Any], filters: "GetVacanciesQuery") -> Select[Any]
     if filters.salary_to:
         qs = qs.where(_vacancy.salary_to <= filters.salary_to)
     if filters.work_exp:
-        qs = qs.where(_vacancy.work_exp.lower().in_(filters.work_exp))
+        qs = qs.where(_vacancy.work_exp.in_(filters.work_exp))
     if filters.education:
         qs = qs.where(_vacancy.education.in_(filters.education))
     if filters.work_format:
