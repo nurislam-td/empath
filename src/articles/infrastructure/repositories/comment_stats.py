@@ -63,9 +63,6 @@ class AlchemyCommentStatRepo:
         )
 
     async def like_comment(self, comment_id: UUID, user_id: UUID) -> None:
-        with contextlib.suppress(NothingToCancelError):
-            await self.cancel_dislike_comment(comment_id=comment_id, user_id=user_id)
-
         try:
             await self.base.execute(
                 insert(self._like).values({"comment_id": comment_id, "user_id": user_id}),
@@ -78,9 +75,6 @@ class AlchemyCommentStatRepo:
         )
 
     async def dislike_comment(self, comment_id: UUID, user_id: UUID) -> None:
-        with contextlib.suppress(NothingToCancelError):
-            await self.cancel_like_comment(comment_id=comment_id, user_id=user_id)
-
         try:
             await self.base.execute(
                 insert(self._dislike).values({"comment_id": comment_id, "user_id": user_id}),

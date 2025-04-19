@@ -35,6 +35,8 @@ from articles.application.dto.article import (
     TagDTO,
 )
 from articles.application.exceptions import (
+    ArticleIdNotExistError,
+    CommentIdNotExistError,
     ContentAuthorMismatchError,
     DislikeAlreadyExistError,
     EmptyArticleUpdatesError,
@@ -67,6 +69,8 @@ class ArticleController(Controller):
         LikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
         ViewAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
         NothingToCancelError: error_handler(status_codes.HTTP_409_CONFLICT),
+        CommentIdNotExistError: error_handler(status_codes.HTTP_404_NOT_FOUND),
+        ArticleIdNotExistError: error_handler(status_codes.HTTP_404_NOT_FOUND),
     }
 
     @post(

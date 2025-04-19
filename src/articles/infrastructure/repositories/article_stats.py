@@ -66,9 +66,6 @@ class AlchemyArticleStatRepo:
         )
 
     async def like_article(self, article_id: UUID, user_id: UUID) -> None:
-        with contextlib.suppress(NothingToCancelError):
-            await self.cancel_dislike_article(article_id=article_id, user_id=user_id)
-
         try:
             await self.base.execute(
                 insert(self._like).values({"article_id": article_id, "user_id": user_id}),
@@ -81,9 +78,6 @@ class AlchemyArticleStatRepo:
         )
 
     async def dislike_article(self, article_id: UUID, user_id: UUID) -> None:
-        with contextlib.suppress(NothingToCancelError):
-            await self.cancel_like_article(article_id=article_id, user_id=user_id)
-
         try:
             await self.base.execute(
                 insert(self._dislike).values({"article_id": article_id, "user_id": user_id}),
