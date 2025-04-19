@@ -57,7 +57,7 @@ class AlchemyCommentStatRepo:
             ),
             self.base.execute(
                 update(self._comment)
-                .values(likes_cnt=self._comment.like_cnt - 1)
+                .values(like_cnt=self._comment.like_cnt - 1)
                 .where(self._comment.id == comment_id),
             ),
         )
@@ -74,7 +74,7 @@ class AlchemyCommentStatRepo:
             raise LikeAlreadyExistError from e
 
         await self.base.execute(
-            update(self._comment).values(likes_cnt=self._comment.like_cnt + 1).where(self._comment.id == comment_id),
+            update(self._comment).values(like_cnt=self._comment.like_cnt + 1).where(self._comment.id == comment_id),
         )
 
     async def dislike_comment(self, comment_id: UUID, user_id: UUID) -> None:
