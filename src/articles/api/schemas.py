@@ -71,3 +71,14 @@ class EditCommentSchema(DataclassDTO[EditComment]):
             "author_id",
         },
     )
+
+
+class GetArticleFilters(BaseStruct):
+    search: str | None = None
+    liked: bool | None = None
+    disliked: bool | None = None
+    viewed: bool | None = None
+    specializations_id: list[UUID] | None = None
+    exclude_words: list[str] | None = None
+    include_words: list[str] | None = None
+    tags_id: list[UUID] | None = None

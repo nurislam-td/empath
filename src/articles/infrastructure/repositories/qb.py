@@ -2,10 +2,20 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Select, func, select
+from sqlalchemy import Select, func, or_, select
 
 from articles.application.queries.get_articles import ArticleFilter
-from articles.infrastructure.models import Article, ArticleImg, Specialization, SubArticle, Tag
+from articles.infrastructure.models import (
+    Article,
+    ArticleImg,
+    RelArticleTag,
+    RelArticleUserDislike,
+    RelArticleUserLike,
+    RelArticleUserView,
+    Specialization,
+    SubArticle,
+    Tag,
+)
 from auth.infrastructure.models import User
 
 
@@ -27,6 +37,11 @@ class ArticleQueryBuilder:
     _author = User
     _sub_article = SubArticle
     _specialization = Specialization
+    _like = RelArticleUserLike
+    _dislike = RelArticleUserDislike
+    _view = RelArticleUserView
+    _tag = Tag
+    _rel_tag_article = RelArticleTag
 
     @classmethod
     def _filter_article(cls, qs: Select[Any], article_filter: ArticleFilter) -> Select[Any]:
@@ -41,6 +56,53 @@ class ArticleQueryBuilder:
             )
             qs = qs.where(search_filter)
             qs = qs.order_by(cls._article.created_at.desc())
+        if article_filter.liked_user_id:
+            qs = qs.join(
+                cls._like.__table__,
+                (cls._article.id == cls._like.article_id) & (cls._like.user_id == article_filter.liked_user_id),
+            )
+        if article_filter.disliked_user_id:
+            qs = qs.join(
+                cls._dislike.__table__,
+                (cls._article.id == cls._dislike.article_id)
+                & (cls._dislike.user_id == article_filter.disliked_user_id),
+            )
+        if article_filter.viewed_user_id:
+            qs = qs.join(
+                cls._view.__table__,
+                (cls._article.id == cls._view.article_id) & (cls._view.user_id == article_filter.viewed_user_id),
+            )
+        if article_filter.specializations_id:
+            qs = qs.where(cls._article.specialization_id.in_(article_filter.specializations_id))
+        if article_filter.tags_id:
+            tag_qs = select(cls._rel_tag_article.article_id).join(
+                cls._tag.__table__,
+                (cls._tag.id == cls._rel_tag_article.tag_id) & (cls._tag.id.in_(article_filter.tags_id)),
+            )
+            qs = qs.where(cls._article.id.in_(tag_qs))
+        if article_filter.exclude_words:
+            for word in article_filter.exclude_words:
+                qs = qs.where(cls._article.title.not_ilike(f"%{word}%"))
+                qs = qs.where(cls._article.text.not_ilike(f"%{word}%"))
+                qs = qs.where(
+                    cls._article.id.in_(
+                        select(cls._sub_article.article_id)
+                        .where(cls._sub_article.text.not_ilike(f"%{word}%"))
+                        .where(cls._sub_article.title.not_ilike(f"%{word}%")),
+                    ),
+                )
+        if article_filter.include_words:
+            conditions = [
+                cls._article.title.ilike(f"%{word}%")
+                | cls._article.text.ilike(f"%{word}%")
+                | cls._article.id.in_(
+                    select(cls._sub_article.article_id).where(
+                        cls._sub_article.text.ilike(f"%{word}%") | cls._sub_article.title.ilike(f"%{word}%"),
+                    )
+                )
+                for word in article_filter.include_words
+            ]
+            qs = qs.where(or_(*conditions))
         return qs
 
     @classmethod

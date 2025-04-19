@@ -5,9 +5,16 @@ from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
 from litestar import Controller, Request, Response, delete, get, patch, post, put, status_codes
 from litestar.datastructures import State
+from litestar.di import Provide
 from litestar.dto import DTOData
 
-from articles.api.schemas import ArticleCreateSchema, CreateCommentSchema, EditArticleSchema, EditCommentSchema
+from articles.api.schemas import (
+    ArticleCreateSchema,
+    CreateCommentSchema,
+    EditArticleSchema,
+    EditCommentSchema,
+    GetArticleFilters,
+)
 from articles.application.commands.cancel_dislike_article import CancelDislikeArticle, CancelDislikeArticleHandler
 from articles.application.commands.cancel_dislike_comment import CancelDislikeComment, CancelDislikeCommentHandler
 from articles.application.commands.cancel_like_article import CancelLikeArticle, CancelLikeArticleHandler
@@ -122,16 +129,30 @@ class ArticleController(Controller):
         await edit_article(command)
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
-    @get("/", status_code=status_codes.HTTP_200_OK)
+    @get("/", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetArticleFilters)})
     @inject
     async def get_articles(
         self,
         get_articles: Depends[GetArticlesHandler],
+        filters: GetArticleFilters,
         pagination_params: PaginationParams,
+        request: Request[JWTUserPayload, str, State],
         search: str | None = None,
     ) -> PaginatedArticleDTO:
         return await get_articles(
-            GetArticles(pagination=pagination_params, articles_filter=ArticleFilter(search=search)),
+            GetArticles(
+                pagination=pagination_params,
+                articles_filter=ArticleFilter(
+                    search=search,
+                    liked_user_id=request.user.sub if filters.liked else None,
+                    disliked_user_id=request.user.sub if filters.disliked else None,
+                    viewed_user_id=request.user.sub if filters.viewed else None,
+                    specializations_id=filters.specializations_id,
+                    exclude_words=filters.exclude_words,
+                    include_words=filters.include_words,
+                    tags_id=filters.tags_id,
+                ),
+            ),
         )
 
     @get("/{article_id:uuid}", status_code=status_codes.HTTP_200_OK)
