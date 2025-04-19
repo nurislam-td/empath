@@ -46,7 +46,10 @@ def filter_vacancy(qs: Select[Any], filters: "GetVacanciesQuery") -> Select[Any]
     if filters.work_format:
         format_filter = select(_rel_work_format_vacancy.vacancy_id).join(
             _work_format.__table__,
-            (_work_format.name.in_(filters.work_format) & _work_format.id == _rel_work_format_vacancy.work_format_id),
+            (
+                _work_format.name.in_(filters.work_format)
+                & (_work_format.id == _rel_work_format_vacancy.work_format_id)
+            ),
         )
         qs = qs.where(_vacancy.id.in_(format_filter))
     if filters.exclude_word:
