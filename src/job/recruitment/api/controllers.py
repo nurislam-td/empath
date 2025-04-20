@@ -82,7 +82,7 @@ class VacancyController(Controller):
     ) -> Response[str]:
         # TODO check author
         await update_vacancy(vacancy_id=vacancy_id, command=data)
-        return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+        return Response(content="", status_code=status_codes.HTTP_200_OK)
 
     @delete(
         "/vacancies/{vacancy_id:uuid}",
