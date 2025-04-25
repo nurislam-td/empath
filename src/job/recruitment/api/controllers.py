@@ -13,6 +13,7 @@ from auth.api.schemas import JWTUserPayload
 from common.api.exception_handlers import error_handler
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
+from job.common.application.dto import RecommendationsDTO
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
 from job.common.application.queries.get_vacancy_responses import GetVacancyResponsesHandler, GetVacancyResponsesQuery
@@ -41,6 +42,7 @@ from job.recruitment.application.exceptions import (
     EmptyWorkSchedulesError,
     RecruiterIdNotFoundError,
 )
+from job.recruitment.application.queries.get_recommendations import GetRecommendationsHandler
 from job.recruitment.application.queries.get_recruiter import GetRecruiterHandler
 
 
@@ -152,3 +154,12 @@ class VacancyController(Controller):
     ) -> Response[str]:  # TODO check the author
         await change_response_status(data)
         return Response(content="", status_code=status_codes.HTTP_200_OK)
+
+    @get("/vacancies/{vacancy_id:uuid}/recommendations", status_code=status_codes.HTTP_200_OK)
+    @inject
+    async def get_recommendations(
+        self,
+        get_recommendations: Depends[GetRecommendationsHandler],
+        vacancy_id: UUID,
+    ) -> RecommendationsDTO:
+        return await get_recommendations(vacancy_id=vacancy_id)

@@ -48,6 +48,19 @@ def get_cv_qs() -> Select[Any]:
     return qs
 
 
+def filter_cv_skill(qs: Select[Any], include_skills: set[UUID]) -> Select[Any]:
+    skill = select(_rel_cv_skill.cv_id).where(
+        _rel_cv_skill.skill_id.in_(include_skills),
+    )
+
+    additional_skill = select(_rel_cv_additional_skill.cv_id).where(
+        _rel_cv_additional_skill.skill_id.in_(include_skills)
+    )
+    return qs.where(
+        _cv.id.in_(skill) | _cv.id.in_(additional_skill),
+    )
+
+
 def get_cv_additional_skill_qs(
     cv_ids: list[UUID],
 ) -> Select[Any]:

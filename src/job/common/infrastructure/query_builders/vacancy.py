@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
-from sqlalchemy import Select, func, or_, select
+from sqlalchemy import Float, Select, cast, func, literal, or_, select
 
 from job.common.infrastructure.models import (
     EmploymentType,
@@ -174,3 +174,29 @@ def get_vacancy_qs(filters: "GetVacanciesQuery | None" = None, search: str | Non
         qs = search_vacancy(qs, search)
 
     return qs
+
+
+def get_weight_qs(skill_ids: set[UUID]) -> Select[tuple[UUID, str, float]]:
+    doc_count = select(func.count().label("N")).select_from(_vacancy.__table__).cte("doc_count")
+
+    df = (  # noqa: PD901
+        select(
+            _rel_skill_vacancy.skill_id,
+            _skill.name.label("skill_name"),
+            func.count(func.distinct(_rel_skill_vacancy.vacancy_id)).label("df"),
+        )
+        .join(_skill.__table__, (_skill.id == _rel_skill_vacancy.skill_id) & (_skill.id.in_(skill_ids)))
+        .group_by(_rel_skill_vacancy.skill_id, _skill.name)
+        .cte("df")
+    )
+
+    return select(
+        df.c.skill_id,
+        df.c.skill_name,
+        func.log(cast(doc_count.c.N, Float) / (df.c.df + 1)).label("idf_smooth"),
+    ).select_from(
+        df.join(
+            doc_count,
+            literal(True),  # noqa: FBT003
+        ),
+    )

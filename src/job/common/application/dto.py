@@ -32,3 +32,35 @@ class WorkScheduleDTO(DTO):
 class SkillDTO(DTO):
     name: str
     id: UUID
+
+
+@dataclass(frozen=True, slots=True)
+class SkillWithWeightDTO(SkillDTO):
+    weight: float
+
+
+@dataclass(frozen=True, slots=True)
+class CvAuthorDTO(DTO):
+    name: str
+
+
+@dataclass(frozen=True, slots=True)
+class CvWithWeightDTO:
+    title: str
+    is_visible: bool
+    salary: SalaryDTO
+    skills: list[str]
+    author: CvAuthorDTO
+
+    additional_skills: list[str] | None
+    about_me: str | None
+    cv_file: str | None
+    id: UUID
+
+    weight: float
+
+
+@dataclass(frozen=True, slots=True)
+class RecommendationsDTO(DTO):
+    weights: list[SkillWithWeightDTO]
+    recommendations: list[CvWithWeightDTO]

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from uuid import UUID
 
 from msgspec import UNSET
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, update
 from sqlalchemy.dialects.postgresql import insert
 
 from common.application.dto import PaginatedDTO

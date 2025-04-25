@@ -7,7 +7,7 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from common.infrastructure.repositories.base import AlchemyReader
 from common.infrastructure.repositories.pagination import AlchemyPaginator
-from job.common.application.dto import EmploymentTypeDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
+from job.common.application.dto import EmploymentTypeDTO, SkillDTO, SkillWithWeightDTO, WorkFormatDTO, WorkScheduleDTO
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.infrastructure.mapper import (
     convert_db_detailed_vacancy,
@@ -18,7 +18,10 @@ from job.common.infrastructure.models import (
     Skill,
     Vacancy,
 )
+from job.common.infrastructure.query_builders import cv as qb_cv
 from job.common.infrastructure.query_builders import vacancy as qb
+from job.employment.application.dto import CVDTO
+from job.employment.infrastructure.mapper import convert_db_to_cv_list
 from job.recruitment.application.dto import (
     DetailedVacancyDTO,
     VacancyDTO,
@@ -122,3 +125,33 @@ class AlchemyVacancyReader:
         qs = qb.get_work_format_qs()
         work_formats = await self._base.fetch_all(qs)
         return [WorkFormatDTO(id=work_format.id, name=work_format.name) for work_format in work_formats]
+
+    async def get_weights(self, skill_ids: set[UUID]) -> list[SkillWithWeightDTO]:
+        qs = qb.get_weight_qs(skill_ids)
+        skills = await self._base.fetch_all(qs)
+        return [
+            SkillWithWeightDTO(
+                id=skill.skill_id,
+                name=skill.skill_name,
+                weight=skill.idf_smooth,
+            )
+            for skill in skills
+        ]
+
+    async def get_cvs(self, include_skills: set[UUID]) -> list[CVDTO]:
+        qs = qb_cv.get_cv_qs()
+        qs = qb_cv.filter_cv_skill(qs, include_skills)
+
+        cv = await self._base.fetch_all(qs)
+        if not cv:
+            return []
+        cv_ids = [cv.id for cv in cv]
+
+        skills = await self._base.fetch_all(qb_cv.get_cv_skill_qs(cv_ids))
+        additional_skills = await self._base.fetch_all(qb_cv.get_cv_additional_skill_qs(cv_ids))
+
+        return convert_db_to_cv_list(
+            cv_list=cv,
+            skills=skills,
+            additional_skills=additional_skills,
+        )
