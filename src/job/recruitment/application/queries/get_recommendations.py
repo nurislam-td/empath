@@ -1,13 +1,20 @@
+import heapq
 from dataclasses import dataclass
+from functools import partial
 from uuid import UUID
 
 from job.common.application.dto import CvAuthorDTO, CvWithWeightDTO, RecommendationsDTO, SkillNameWeightDTO
 from job.common.application.ports.repo import VacancyReader
+from job.employment.application.dto import CVDTO
 
 
 @dataclass(frozen=True, slots=True)
 class GetRecommendationsHandler:
     _reader: VacancyReader
+
+    def _get_cv_weight(self, cv: CVDTO, weight_map: dict[str, float]) -> float:
+        all_skills = set(cv.skills) | set(cv.additional_skills or ())
+        return sum(weight_map.get(s, 0.0) for s in all_skills)
 
     async def __call__(self, vacancy_id: UUID) -> RecommendationsDTO:
         vacancy = await self._reader.get_vacancy_by_id(vacancy_id=vacancy_id)
@@ -18,31 +25,29 @@ class GetRecommendationsHandler:
 
         cvs = await self._reader.get_cvs(include_skills=skill_ids)
 
-        recommendations = [
-            CvWithWeightDTO(
-                title=cv.title,
-                is_visible=cv.is_visible,
-                salary=cv.salary,
-                skills=[SkillNameWeightDTO(name=skill, weight=weight_map.get(skill, 0.0)) for skill in cv.skills],
-                author=CvAuthorDTO(name=cv.author.name),
-                additional_skills=[
-                    SkillNameWeightDTO(name=skill, weight=weight_map.get(skill, 0.0)) for skill in cv.additional_skills
-                ]
-                if cv.additional_skills
-                else None,
-                about_me=cv.about_me,
-                cv_file=cv.cv_file,
-                id=cv.id,
-                weight=sum(
-                    weight_map.get(skill, 0.0)
-                    for skill in cv.skills + (cv.additional_skills if cv.additional_skills else [])
+        calculate_cv_weight = partial(self._get_cv_weight, weight_map=weight_map)
+        top_cvs = heapq.nlargest(10, cvs, key=calculate_cv_weight)
+
+        recommendations: list[CvWithWeightDTO] = []
+        for cv in top_cvs:
+            w = calculate_cv_weight(cv)
+            skills_dto = [SkillNameWeightDTO(name=s, weight=weight_map.get(s, 0.0)) for s in cv.skills]
+            add_skills = cv.additional_skills or []
+            additional_dto = [SkillNameWeightDTO(name=s, weight=weight_map.get(s, 0.0)) for s in add_skills] or None
+
+            recommendations.append(
+                CvWithWeightDTO(
+                    title=cv.title,
+                    is_visible=cv.is_visible,
+                    salary=cv.salary,
+                    skills=skills_dto,
+                    author=CvAuthorDTO(name=cv.author.name),
+                    additional_skills=additional_dto,
+                    about_me=cv.about_me,
+                    cv_file=cv.cv_file,
+                    id=cv.id,
+                    weight=w,
                 ),
             )
-            for cv in cvs
-        ]
 
-        recommendations = sorted(recommendations, key=lambda x: x.weight, reverse=True)[:10]
-        return RecommendationsDTO(
-            recommendations=recommendations,
-            weights=skill_weights,
-        )
+        return RecommendationsDTO(recommendations=recommendations, weights=skill_weights)
