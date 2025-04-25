@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from job.common.application.dto import CvWithWeightDTO, RecommendationsDTO
+from job.common.application.dto import CvAuthorDTO, CvWithWeightDTO, RecommendationsDTO, SkillNameWeightDTO
 from job.common.application.ports.repo import VacancyReader
 
 
@@ -20,8 +20,23 @@ class GetRecommendationsHandler:
 
         recommendations = [
             CvWithWeightDTO(
-                **cv.to_dict(),
-                weight=sum(weight_map.get(skill, 0.0) for skill in cv.skills),
+                title=cv.title,
+                is_visible=cv.is_visible,
+                salary=cv.salary,
+                skills=[SkillNameWeightDTO(name=skill, weight=weight_map.get(skill, 0.0)) for skill in cv.skills],
+                author=CvAuthorDTO(name=cv.author.name),
+                additional_skills=[
+                    SkillNameWeightDTO(name=skill, weight=weight_map.get(skill, 0.0)) for skill in cv.additional_skills
+                ]
+                if cv.additional_skills
+                else None,
+                about_me=cv.about_me,
+                cv_file=cv.cv_file,
+                id=cv.id,
+                weight=sum(
+                    weight_map.get(skill, 0.0)
+                    for skill in cv.skills + (cv.additional_skills if cv.additional_skills else [])
+                ),
             )
             for cv in cvs
         ]

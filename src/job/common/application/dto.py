@@ -45,14 +45,20 @@ class CvAuthorDTO(DTO):
 
 
 @dataclass(frozen=True, slots=True)
-class CvWithWeightDTO:
+class SkillNameWeightDTO(DTO):
+    name: str
+    weight: float
+
+
+@dataclass(frozen=True, slots=True)
+class CvWithWeightDTO(DTO):
     title: str
     is_visible: bool
     salary: SalaryDTO
-    skills: list[str]
+    skills: list[SkillNameWeightDTO]
     author: CvAuthorDTO
 
-    additional_skills: list[str] | None
+    additional_skills: list[SkillNameWeightDTO] | None
     about_me: str | None
     cv_file: str | None
     id: UUID
