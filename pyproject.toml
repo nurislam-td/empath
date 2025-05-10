@@ -12,6 +12,7 @@ dependencies = [
     "cryptography>=44.0.2",
     "dishka>=1.4.2",
     "litestar[standard]>=2.15.1",
+    "psycopg[binary,pool]>=3.2.7",
     "pyjwt[crypto]>=2.10.1",
     "redis>=5.2.1",
     "sqladmin-litestar-plugin>=0.2.0",
@@ -20,7 +21,13 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ipython>=9.0.0", "mimesis>=18.0.0", "pytest>=8.3.5"]
+dev = [
+    "aiosqlite>=0.21.0",
+    "ipython>=9.0.0",
+    "mimesis>=18.0.0",
+    "pytest-asyncio>=0.26.0",
+    "pytest>=8.3.5",
+]
 
 [tool.ruff]
 target-version = "py313"
@@ -28,7 +35,7 @@ line-length = 119
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["B024", "D102", "D107", "D100", "D"]
+ignore = ["B024", "D102", "D107", "D100", "D", "S101"]
 
 
 [tool.ruff.lint.pydocstyle]
@@ -37,3 +44,4 @@ convention = "google"
 
 [tool.pytest.ini_options]
 testpaths = "src/tests"
+asyncio_mode = "auto"
