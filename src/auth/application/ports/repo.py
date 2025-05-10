@@ -1,16 +1,11 @@
 from datetime import timedelta
-from typing import Any, Protocol
+from typing import Protocol
 from uuid import UUID
 
 from auth.application.ports.jwt import JWTPair
-from users.domain import entities
 
 
 class AuthRepo(Protocol):
-    async def create_user(self, user: entities.User) -> None: ...
-
-    async def update_user(self, values: dict[str, Any], filters: dict[str, Any]) -> None: ...
-
     async def create_jwt(self, jwt: JWTPair, user_id: UUID) -> None: ...
 
     async def refresh_jwt(self, jwt: JWTPair, user_id: UUID) -> None: ...
