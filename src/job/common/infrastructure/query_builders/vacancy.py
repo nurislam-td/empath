@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
-from sqlalchemy import Float, Select, cast, func, literal, or_, select
+from sqlalchemy import Float, Select, cast, desc, func, literal, or_, select
 
 from job.common.infrastructure.models import (
     EmploymentType,
@@ -190,13 +190,17 @@ def get_weight_qs(skill_ids: set[UUID]) -> Select[tuple[UUID, str, float]]:
         .cte("df")
     )
 
-    return select(
-        df.c.skill_id,
-        df.c.skill_name,
-        func.log(cast(doc_count.c.N, Float) / (df.c.df + 1)).label("idf_smooth"),
-    ).select_from(
-        df.join(
-            doc_count,
-            literal(True),  # noqa: FBT003
-        ),
+    return (
+        select(
+            df.c.skill_id,
+            df.c.skill_name,
+            func.log(cast(doc_count.c.N, Float) / (df.c.df + 1)).label("idf_smooth"),
+        )
+        .select_from(
+            df.join(
+                doc_count,
+                literal(True),  # noqa: FBT003
+            ),
+        )
+        .order_by(desc("idf_smooth"))
     )
