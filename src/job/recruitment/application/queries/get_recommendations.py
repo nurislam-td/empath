@@ -14,7 +14,7 @@ class GetRecommendationsHandler:
 
     def _get_cv_weight(self, cv: CVDTO, weight_map: dict[str, float]) -> float:
         all_skills = set(cv.skills) | set(cv.additional_skills or ())
-        return sum(weight_map.get(s, 0.0) for s in all_skills)
+        return sum(weight_map.get(s, 0.0) for s in all_skills) / len(all_skills) if all_skills else 0.0
 
     async def __call__(self, vacancy_id: UUID) -> RecommendationsDTO:
         vacancy = await self._reader.get_vacancy_by_id(vacancy_id=vacancy_id)
