@@ -43,6 +43,7 @@ def get_cv_qs() -> Select[Any]:
         _cv_author.name.label("author_name"),
         _cv_author.lastname.label("author_lastname"),
         _cv_author.patronymic.label("author_patronymic"),
+        _cv_author.email.label("author_email"),
     ).select_from(table)
 
     return qs

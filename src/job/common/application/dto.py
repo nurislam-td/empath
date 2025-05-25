@@ -42,6 +42,7 @@ class SkillWithWeightDTO(SkillDTO):
 @dataclass(frozen=True, slots=True)
 class CvAuthorDTO(DTO):
     name: str
+    email: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

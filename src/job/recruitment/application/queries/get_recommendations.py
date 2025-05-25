@@ -41,7 +41,7 @@ class GetRecommendationsHandler:
                     is_visible=cv.is_visible,
                     salary=cv.salary,
                     skills=skills_dto,
-                    author=CvAuthorDTO(name=cv.author.name),
+                    author=CvAuthorDTO(name=cv.author.name, email=cv.author.email),
                     additional_skills=additional_dto,
                     about_me=cv.about_me,
                     cv_file=cv.cv_file,

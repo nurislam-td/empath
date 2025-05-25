@@ -94,6 +94,7 @@ def convert_db_to_cv(
                     cv.author_patronymic if cv.author_patronymic else "",
                 ],
             ),
+            email=cv.author_email if cv.author_email else "",
         ),
         additional_skills=[s.name for s in additional_skills],
         about_me=cv.about_me,

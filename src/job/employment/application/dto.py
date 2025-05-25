@@ -20,6 +20,7 @@ class WorkExpDTO(DTO):
 @dataclass(frozen=True, slots=True)
 class AuthorDTO(DTO):
     name: str
+    email: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
