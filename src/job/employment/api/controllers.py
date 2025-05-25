@@ -4,7 +4,7 @@ from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, get, patch, post, status_codes
+from litestar import Controller, Request, Response, delete, get, patch, post, status_codes
 from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.dto import DTOData
@@ -24,6 +24,7 @@ from job.employment.api.schemas import (
     response_to_vacancy_dto,
 )
 from job.employment.application.commands.create_cv import CreateCVHandler
+from job.employment.application.commands.delete_cv import DeleteCVHandler
 from job.employment.application.commands.response_to_vacancy import ResponseToVacancyHandler
 from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.employment.application.dto import (
@@ -126,3 +127,16 @@ class ResponseController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[CVDTO]:
         return await get_cv_list(employer_id=request.user.sub, pagination=pagination_params)
+
+    @delete(
+        "/cv/{cv_id:uuid}",
+        status_code=status_codes.HTTP_200_OK,
+        dependencies={"filters": Provide(GetVacanciesFilters)},
+    )
+    @inject
+    async def delete_cv(
+        self,
+        cv_id: UUID,
+        delete_cv: Depends[DeleteCVHandler],
+    ) -> None:
+        return await delete_cv(cv_id=cv_id)

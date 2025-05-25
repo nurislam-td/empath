@@ -1,6 +1,7 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
 from job.employment.application.commands.create_cv import CreateCVHandler
+from job.employment.application.commands.delete_cv import DeleteCVHandler
 from job.employment.application.commands.response_to_vacancy import ResponseToVacancyHandler
 from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.employment.application.queries.get_cv_list import GetCvListHandler
@@ -37,6 +38,7 @@ class EmploymentProvider(Provider):
     create_cv = provide(CreateCVHandler)
     update_cv = provide(UpdateCVHandler)
     response_to_vacancy = provide(ResponseToVacancyHandler)
+    delete_cv = provide(DeleteCVHandler)
 
     get_vacancies = provide(GetVacanciesHandler)
     get_responses = provide(GetResponsesHandler)
