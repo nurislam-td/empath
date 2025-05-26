@@ -59,9 +59,15 @@ class CreateRecruiterSchema(BaseStruct):
     id: UUID
 
 
-create_recruiter_dto = MsgspecDTO[
-    Annotated[CreateRecruiterSchema, DTOConfig(exclude={"id"}, rename_fields={"salary.from_": "from"})]
-]
+class UpdateRecruiterSchema(BaseStruct):
+    id: UUID
+    company_name: str | UnsetType = UNSET
+    about_us: str | UnsetType = UNSET
+    email: str | UnsetType = UNSET
+
+
+create_recruiter_dto = MsgspecDTO[Annotated[CreateRecruiterSchema, DTOConfig(exclude={"id"})]]
+update_recruiter_dto = MsgspecDTO[Annotated[UpdateRecruiterSchema, DTOConfig(exclude={"id"})]]
 
 
 class ChangeResponseStatusSchema(BaseStruct):

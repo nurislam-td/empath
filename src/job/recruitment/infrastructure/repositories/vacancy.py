@@ -15,6 +15,7 @@ from job.common.infrastructure.models import (
 from job.recruitment.api.schemas import (
     CreateRecruiterSchema,
     CreateVacancySchema,
+    UpdateRecruiterSchema,
     UpdateVacancySchema,
 )
 from job.recruitment.application.dto import DetailedAuthorDTO
@@ -111,6 +112,10 @@ class AlchemyVacancyRepo:
     async def create_recruiter(self, command: CreateRecruiterSchema) -> None:
         insert_stmt = insert(self._recruiter).values(command.to_dict())
         await self._repo.execute(insert_stmt)
+
+    async def update_recruiter(self, command: UpdateRecruiterSchema) -> None:
+        update_stmt = update(self._recruiter).where(self._recruiter.id == command.id).values(command.to_dict())
+        await self._repo.execute(update_stmt)
 
 
 @dataclass(slots=True)

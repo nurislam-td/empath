@@ -5,6 +5,7 @@ from job.recruitment.application.commands.create_recruiter import CreateRecruite
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
+from job.recruitment.application.commands.update_recruiter import UpdateRecruiterHandler
 from job.recruitment.application.queries.get_recommendations import GetRecommendationsHandler
 from job.recruitment.application.queries.get_recruiter import GetRecruiterHandler
 from job.recruitment.infrastructure.dao.employment_type import EmploymentTypeDAO
@@ -35,6 +36,7 @@ class RecruitmentProvider(Provider):
     update_vacancy = provide(UpdateVacancyHandler)
     delete_vacancy = provide(DeleteVacancyHandler)
     create_recruiter = provide(CreateRecruiterHandler)
+    update_recruiter = provide(UpdateRecruiterHandler)
     change_response_status = provide(ChangeResponseStatusHandler)
     get_recruiter = provide(GetRecruiterHandler)
     get_recommendations = provide(GetRecommendationsHandler)

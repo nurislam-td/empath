@@ -23,15 +23,18 @@ from job.recruitment.api.schemas import (
     ChangeResponseStatusSchema,
     CreateRecruiterSchema,
     CreateVacancySchema,
+    UpdateRecruiterSchema,
     UpdateVacancySchema,
     create_recruiter_dto,
     create_vacancy_dto,
+    update_recruiter_dto,
 )
 from job.recruitment.application.commands.change_response_status import ChangeResponseStatusHandler
 from job.recruitment.application.commands.create_recruiter import CreateRecruiterHandler
 from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
 from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
 from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
+from job.recruitment.application.commands.update_recruiter import UpdateRecruiterHandler
 from job.recruitment.application.dto import (
     DetailedAuthorDTO,
     VacancyDTO,
@@ -116,6 +119,17 @@ class VacancyController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> Response[str]:
         await create_recruiter(command=data.create_instance(id=request.user.sub))
+        return Response(content="", status_code=status_codes.HTTP_201_CREATED)
+
+    @patch("/vacancies/author", status_code=status_codes.HTTP_201_CREATED, dto=update_recruiter_dto)
+    @inject
+    async def update_recruiter(
+        self,
+        data: DTOData[UpdateRecruiterSchema],
+        update_recruiter: Depends[UpdateRecruiterHandler],
+        request: Request[JWTUserPayload, str, State],
+    ) -> Response[str]:
+        await update_recruiter(command=data.create_instance(id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
 
     @get(
