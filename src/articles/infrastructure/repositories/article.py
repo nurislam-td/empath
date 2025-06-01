@@ -150,7 +150,7 @@ class AlchemyArticleReader(ArticleReader):
     async def get_tag_list(self, query: GetTagList) -> PaginatedDTO[TagDTO]:
         return await self._tag.get_tag_list(query)
 
-    async def get_article_by_id(self, user_id: UUID, article_id: UUID) -> ArticleDTO:
+    async def get_article_by_id(self, article_id: UUID, user_id: UUID | None = None) -> ArticleDTO:
         qs = self._qb.get_articles_qs(user_id)
         qs = qs.where(self._article.id == article_id)
         article = await self._base.fetch_one(qs)

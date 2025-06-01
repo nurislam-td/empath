@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, ClassVar
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import Select, exists, select, update
 from sqlalchemy.dialects.postgresql import insert
@@ -69,7 +69,7 @@ class AlchemyCommentReader(CommentReader):
 
     _base: AlchemyReader
 
-    def get_comments_qs(self, user_id: UUID) -> Select[Any]:
+    def get_comments_qs(self, user_id: UUID | None = None) -> Select[Any]:
         comment_authors_join = self._comment.__table__.join(
             self._author.__table__,
             self._comment.author_id == self._author.id,
@@ -118,7 +118,7 @@ class AlchemyCommentReader(CommentReader):
             results=[convert_db_to_comment_dto(comment) for comment in comments],
         )
 
-    async def get_comment_by_id(self, user_id: UUID, comment_id: UUID) -> CommentDTO:
+    async def get_comment_by_id(self, comment_id: UUID, user_id: UUID | None = None) -> CommentDTO:
         qs = self.get_comments_qs(user_id=user_id)
         qs = qs.where(self._comment.id == comment_id)
         comment = await self._base.fetch_one(qs)

@@ -22,7 +22,7 @@ class EditCommentHandler(CommandHandler[EditComment, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: EditComment) -> None:
-        comment_dto = await self._reader.get_comment_by_id(command.id)
+        comment_dto = await self._reader.get_comment_by_id(comment_id=command.id)
         if comment_dto.author.id != command.author_id:
             raise ContentAuthorMismatchError
         await self._repo.update_comment(command)

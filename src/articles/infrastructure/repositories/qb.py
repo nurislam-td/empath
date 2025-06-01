@@ -106,7 +106,7 @@ class ArticleQueryBuilder:
         return qs
 
     @classmethod
-    def get_articles_qs(cls, user_id: UUID, article_filter: ArticleFilter | None = None) -> Select[Any]:
+    def get_articles_qs(cls, user_id: UUID | None = None, article_filter: ArticleFilter | None = None) -> Select[Any]:
         article_authors_join = cls._article.__table__.join(
             cls._author.__table__,
             cls._article.author_id == cls._author.id,
