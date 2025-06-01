@@ -27,7 +27,7 @@ class WorkExpSchema(BaseStruct):
     description: str
     start_date: date
     is_relevant: bool
-    end_date: date | None
+    end_date: date | UnsetType = UNSET
 
 
 class CreateCVSchema(BaseStruct):
