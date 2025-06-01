@@ -22,6 +22,7 @@ class ArticleFilter(DTO):
 @dataclass(frozen=True, slots=True)
 class GetArticles(Query[PaginatedArticleDTO]):
     pagination: PaginationParams
+    user_id: UUID
     articles_filter: ArticleFilter | None = None
 
 

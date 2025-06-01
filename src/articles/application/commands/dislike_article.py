@@ -23,7 +23,7 @@ class DislikeArticleHandler(CommandHandler[DislikeArticle, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: DislikeArticle) -> None:
-        article = await self._article_reader.get_article_by_id(command.id)
+        article = await self._article_reader.get_article_by_id(user_id=command.user_id, article_id=command.id)
         minus_rating = 1
 
         try:

@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
+from typing import Literal
 from uuid import UUID, uuid4
 
 from common.application.dto import DTO, PaginatedDTO
+
+ReactionStatus = Literal["is_liked", "is_disliked", "no_reaction"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -20,6 +23,7 @@ class CommentDTO(DTO):
     is_visible: bool
     likes_cnt: int
     dislikes_cnt: int
+    reaction_status: ReactionStatus = "no_reaction"
     parent_id: UUID | None = None
     id: UUID = field(default_factory=uuid4)
 
@@ -28,7 +32,7 @@ class CommentDTO(DTO):
 class SubArticleDTO(DTO):
     title: str
     text: str
-    imgs: list[str] = field(default_factory=list)
+    imgs: list[str] = field(default_factory=list[str])
     id: UUID = field(default_factory=uuid4)
 
 
@@ -37,7 +41,7 @@ class SubArticleWithArticleIdDTO(DTO):
     article_id: UUID
     title: str
     text: str
-    imgs: list[str] = field(default_factory=list)
+    imgs: list[str] = field(default_factory=list[str])
     id: UUID = field(default_factory=uuid4)
 
 
@@ -60,8 +64,9 @@ class ArticleDTO(DTO):
     author: UserDTO
     tags: list[TagDTO]
     is_visible: bool
-    imgs: list[str] = field(default_factory=list)
-    sub_articles: list[SubArticleDTO] = field(default_factory=list)
+    imgs: list[str] = field(default_factory=list[str])
+    sub_articles: list[SubArticleDTO] = field(default_factory=list[SubArticleDTO])
+    reaction_status: ReactionStatus = "no_reaction"
     views_cnt: int = 0
     likes_cnt: int = 0
     dislikes_cnt: int = 0

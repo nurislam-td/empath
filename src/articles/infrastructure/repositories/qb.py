@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Select, func, or_, select
+from sqlalchemy import Select, exists, func, or_, select, true
 
 from articles.application.queries.get_articles import ArticleFilter
 from articles.infrastructure.models import (
@@ -106,11 +106,22 @@ class ArticleQueryBuilder:
         return qs
 
     @classmethod
-    def get_articles_qs(cls, article_filter: ArticleFilter | None = None) -> Select[Any]:
+    def get_articles_qs(cls, user_id: UUID, article_filter: ArticleFilter | None = None) -> Select[Any]:
         article_authors_join = cls._article.__table__.join(
             cls._author.__table__,
             cls._article.author_id == cls._author.id,
         ).outerjoin(cls._specialization.__table__, cls._article.specialization_id == cls._specialization.id)
+        is_liked_subq = select(
+            exists()
+            .where(cls._like.article_id == cls._article.id, cls._like.user_id == user_id)
+            .correlate(cls._article),
+        ).scalar_subquery()
+
+        is_disliked_subq = select(
+            exists()
+            .where(cls._dislike.article_id == cls._article.id, cls._dislike.user_id == user_id)
+            .correlate(cls._article),
+        ).scalar_subquery()
 
         qs = (
             select(
@@ -121,6 +132,8 @@ class ArticleQueryBuilder:
                 cls._author.patronymic.label("author_patronymic"),
                 cls._author.image.label("author_img"),
                 cls._specialization.name.label("specialization_name"),
+                is_liked_subq.label("is_liked"),
+                is_disliked_subq.label("is_disliked"),
             )
             .select_from(article_authors_join)
             .order_by(cls._article.created_at.desc())

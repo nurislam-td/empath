@@ -7,6 +7,7 @@ from sqlalchemy import RowMapping
 from articles.application.dto.article import (
     ArticleDTO,
     CommentDTO,
+    ReactionStatus,
     SpecializationDTO,
     SubArticleDTO,
     SubArticleWithArticleIdDTO,
@@ -53,6 +54,14 @@ def convert_db_to_article_dto(
             article.author_patronymic or "",
         ],
     ).strip()
+
+    reaction_status: ReactionStatus = "no_reaction"
+    # raise Exception(article.is_disliked, article.is_liked)
+    if article.is_liked:
+        reaction_status = "is_liked"
+    if article.is_disliked:
+        reaction_status = "is_disliked"
+
     return ArticleDTO(
         title=article.title,
         text=article.text,
@@ -68,6 +77,7 @@ def convert_db_to_article_dto(
             SubArticleDTO(**{key: value for key, value in sub_article.to_dict().items() if key != "article_id"})
             for sub_article in sub_articles
         ],
+        reaction_status=reaction_status,
         views_cnt=article.views_cnt,
         likes_cnt=article.likes_cnt,
         dislikes_cnt=article.dislikes_cnt,

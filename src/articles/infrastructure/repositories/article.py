@@ -150,8 +150,8 @@ class AlchemyArticleReader(ArticleReader):
     async def get_tag_list(self, query: GetTagList) -> PaginatedDTO[TagDTO]:
         return await self._tag.get_tag_list(query)
 
-    async def get_article_by_id(self, article_id: UUID) -> ArticleDTO:
-        qs = self._qb.get_articles_qs()
+    async def get_article_by_id(self, user_id: UUID, article_id: UUID) -> ArticleDTO:
+        qs = self._qb.get_articles_qs(user_id)
         qs = qs.where(self._article.id == article_id)
         article = await self._base.fetch_one(qs)
         if not article:
@@ -164,7 +164,7 @@ class AlchemyArticleReader(ArticleReader):
         return convert_db_to_article_dto(article, sub_articles, article_imgs, article_tags)
 
     async def get_articles(self, query: GetArticles) -> PaginatedArticleDTO:
-        qs = self._qb.get_articles_qs(article_filter=query.articles_filter)
+        qs = self._qb.get_articles_qs(user_id=query.user_id, article_filter=query.articles_filter)
 
         value_count = await self._base.count(qs)
         qs = self._paginator.paginate(qs, query.pagination.page, query.pagination.per_page)
@@ -181,7 +181,10 @@ class AlchemyArticleReader(ArticleReader):
             self._base.fetch_all(self._tag.get_tags_qs(article_ids)),
         )
         article_dto_list = convert_db_to_article_dto_list(
-            articles=articles, sub_articles=sub_articles, imgs=article_imgs, tags=article_tags
+            articles=articles,
+            sub_articles=sub_articles,
+            imgs=article_imgs,
+            tags=article_tags,
         )
 
         return PaginatedDTO[ArticleDTO](count=value_count, page=query.pagination.page, results=article_dto_list)

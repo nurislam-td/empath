@@ -142,6 +142,7 @@ class ArticleController(Controller):
         return await get_articles(
             GetArticles(
                 pagination=pagination_params,
+                user_id=request.user.sub,
                 articles_filter=ArticleFilter(
                     search=search,
                     liked_user_id=request.user.sub if filters.liked else None,
@@ -161,9 +162,10 @@ class ArticleController(Controller):
         self,
         get_article: Depends[GetArticleByIdHandler],
         article_id: UUID,
+        request: Request[JWTUserPayload, str, State],
     ) -> ArticleDTO:
         return await get_article(
-            GetArticleById(article_id=article_id),
+            GetArticleById(user_id=request.user.sub, article_id=article_id),
         )
 
     @delete("/{article_id:uuid}")

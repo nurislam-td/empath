@@ -22,7 +22,7 @@ class CancelDislikeArticleHandler(CommandHandler[CancelDislikeArticle, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: CancelDislikeArticle) -> None:
-        article = await self._article_reader.get_article_by_id(command.id)
+        article = await self._article_reader.get_article_by_id(user_id=command.user_id, article_id=command.id)
         await self._article_repo.cancel_dislike_article(article_id=command.id, user_id=command.user_id)
         user = await self._user_reader.get_user_by_id(article.author.id)
         await self._user_repo.update_user({"rating": user.rating + 1}, {"id": user.id})

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from http.client import TOO_EARLY
 from uuid import UUID
 
 from articles.application.exceptions import NothingToCancelError
@@ -24,7 +23,7 @@ class LikeArticleHandler(CommandHandler[LikeArticle, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: LikeArticle) -> None:
-        article = await self._article_reader.get_article_by_id(command.id)
+        article = await self._article_reader.get_article_by_id(user_id=command.user_id, article_id=command.id)
         plus_rating = 1
 
         try:
