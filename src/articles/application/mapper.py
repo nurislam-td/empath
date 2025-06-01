@@ -48,7 +48,7 @@ def convert_dto_to_article(dto: ArticleDTO) -> Article:
         return x
 
     for key, value in dto.to_dict().items():
-        if key in {"author", "specialization"}:
+        if key in {"author", "specialization", "reaction_status"}:
             continue
         converter = convert_strategy.get(key, default_converter)
         converted_data[key] = converter(value)
