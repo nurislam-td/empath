@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any, ClassVar
 from uuid import UUID
 
-from sqlalchemy import Select, delete, select, update
+from sqlalchemy import Select, exists, select, update
 from sqlalchemy.dialects.postgresql import insert
 
 from articles.application.commands.create_comment import CreateComment
@@ -13,7 +13,7 @@ from articles.application.dto.article import (
 from articles.application.exceptions import CommentIdNotExistError
 from articles.application.ports.repo import CommentReader, CommentRepo
 from articles.infrastructure.mapper import convert_db_to_comment_dto
-from articles.infrastructure.models import Comment
+from articles.infrastructure.models import Comment, RelCommentUserDislike, RelCommentUserLike
 from articles.infrastructure.repositories.comment_stats import AlchemyCommentStatRepo
 from auth.infrastructure.models import User
 from common.application.dto import PaginatedDTO
@@ -63,15 +63,28 @@ class AlchemyCommentReader(CommentReader):
 
     _comment: ClassVar[type[Comment]] = Comment
     _author: ClassVar[type[User]] = User
+    _like: ClassVar[type[RelCommentUserLike]] = RelCommentUserLike
+    _dislike: ClassVar[type[RelCommentUserDislike]] = RelCommentUserDislike
     _paginator: ClassVar[type[AlchemyPaginator]] = AlchemyPaginator
 
     _base: AlchemyReader
 
-    def get_comments_qs(self) -> Select[Any]:
+    def get_comments_qs(self, user_id: UUID) -> Select[Any]:
         comment_authors_join = self._comment.__table__.join(
             self._author.__table__,
             self._comment.author_id == self._author.id,
         )
+        is_liked_subq = select(
+            exists()
+            .where(self._like.comment_id == self._comment.id, self._like.user_id == user_id)
+            .correlate(self._comment),
+        ).scalar_subquery()
+
+        is_disliked_subq = select(
+            exists()
+            .where(self._dislike.comment_id == self._comment.id, self._dislike.user_id == user_id)
+            .correlate(self._comment),
+        ).scalar_subquery()
 
         return select(
             self._comment.__table__,
@@ -80,10 +93,17 @@ class AlchemyCommentReader(CommentReader):
             self._author.lastname.label("author_lastname"),
             self._author.patronymic.label("author_patronymic"),
             self._author.image.label("author_img"),
+            is_disliked_subq.label("is_disliked"),
+            is_liked_subq.label("is_liked"),
         ).select_from(comment_authors_join)
 
-    async def get_article_comments(self, article_id: UUID, pagination: PaginationParams) -> PaginatedDTO[CommentDTO]:
-        qs = self.get_comments_qs()
+    async def get_article_comments(
+        self,
+        user_id: UUID,
+        article_id: UUID,
+        pagination: PaginationParams,
+    ) -> PaginatedDTO[CommentDTO]:
+        qs = self.get_comments_qs(user_id=user_id)
         qs = qs.where(self._comment.article_id == article_id)
 
         value_count = await self._base.count(qs)
@@ -98,8 +118,8 @@ class AlchemyCommentReader(CommentReader):
             results=[convert_db_to_comment_dto(comment) for comment in comments],
         )
 
-    async def get_comment_by_id(self, comment_id: UUID) -> CommentDTO:
-        qs = self.get_comments_qs()
+    async def get_comment_by_id(self, user_id: UUID, comment_id: UUID) -> CommentDTO:
+        qs = self.get_comments_qs(user_id=user_id)
         qs = qs.where(self._comment.id == comment_id)
         comment = await self._base.fetch_one(qs)
         if not comment:

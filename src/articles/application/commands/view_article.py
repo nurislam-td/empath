@@ -19,6 +19,6 @@ class ViewArticleHandler(CommandHandler[ViewArticle, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: ViewArticle) -> None:
-        await self._article_reader.get_article_by_id(command.id)
+        await self._article_reader.get_article_by_id(article_id=command.id, user_id=command.user_id)
         await self._article_repo.view_article(article_id=command.id, user_id=command.user_id)
         await self._uow.commit()

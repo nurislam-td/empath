@@ -23,7 +23,7 @@ class LikeCommentHandler(CommandHandler[LikeComment, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: LikeComment) -> None:
-        comment = await self._comment_reader.get_comment_by_id(command.id)
+        comment = await self._comment_reader.get_comment_by_id(comment_id=command.id, user_id=command.user_id)
         plus_rating = 1
 
         try:

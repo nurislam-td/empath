@@ -224,8 +224,11 @@ class ArticleController(Controller):
         article_id: UUID,
         get_comments: Depends[GetCommentsHandler],
         pagination_params: PaginationParams,
+        request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[CommentDTO]:
-        return await get_comments(GetComments(pagination=pagination_params, article_id=article_id))
+        return await get_comments(
+            GetComments(pagination=pagination_params, user_id=request.user.sub, article_id=article_id)
+        )
 
     @get(
         "/specializations",

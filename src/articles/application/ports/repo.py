@@ -42,7 +42,8 @@ class CommentRepo(Protocol):
 class CommentReader(Protocol):
     async def get_article_comments(
         self,
+        user_id: UUID,
         article_id: UUID,
         pagination: PaginationParams,
     ) -> PaginatedDTO[CommentDTO]: ...
-    async def get_comment_by_id(self, comment_id: UUID) -> CommentDTO: ...
+    async def get_comment_by_id(self, user_id: UUID, comment_id: UUID) -> CommentDTO: ...

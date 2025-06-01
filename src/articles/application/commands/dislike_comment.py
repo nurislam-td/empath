@@ -23,7 +23,7 @@ class DislikeCommentHandler(CommandHandler[DislikeComment, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: DislikeComment) -> None:
-        comment = await self._comment_reader.get_comment_by_id(command.id)
+        comment = await self._comment_reader.get_comment_by_id(user_id=command.user_id, comment_id=command.id)
         minus_rating = 1
 
         try:

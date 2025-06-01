@@ -126,6 +126,11 @@ def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
             comment.author_patronymic or "",
         ],
     ).strip()
+    reaction_status: ReactionStatus = "no_reaction"
+    if comment.is_disliked:
+        reaction_status = "is_liked"
+    if comment.is_liked:
+        reaction_status = "is_liked"
     return CommentDTO(
         text=comment.text,
         article_id=comment.article_id,
@@ -140,4 +145,5 @@ def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
         is_visible=comment.is_visible,
         likes_cnt=comment.like_cnt,
         dislikes_cnt=comment.dislikes_cnt,
+        reaction_status=reaction_status,
     )

@@ -22,7 +22,7 @@ class CancelDislikeCommentHandler(CommandHandler[CancelDislikeComment, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: CancelDislikeComment) -> None:
-        comment = await self._comment_reader.get_comment_by_id(command.id)
+        comment = await self._comment_reader.get_comment_by_id(comment_id=command.id, user_id=command.user_id)
         await self._comment_repo.cancel_dislike_comment(comment_id=command.id, user_id=command.user_id)
         user = await self._user_reader.get_user_by_id(comment.author.id)
         await self._user_repo.update_user({"rating": user.rating + 1}, {"id": user.id})
