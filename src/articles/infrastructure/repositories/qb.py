@@ -131,6 +131,7 @@ class ArticleQueryBuilder:
                 cls._author.lastname.label("author_lastname"),
                 cls._author.patronymic.label("author_patronymic"),
                 cls._author.image.label("author_img"),
+                cls._author.rating.label("author_rating"),
                 cls._specialization.name.label("specialization_name"),
                 is_liked_subq.label("is_liked"),
                 is_disliked_subq.label("is_disliked"),

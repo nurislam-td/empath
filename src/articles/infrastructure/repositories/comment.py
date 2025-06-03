@@ -93,6 +93,7 @@ class AlchemyCommentReader(CommentReader):
             self._author.lastname.label("author_lastname"),
             self._author.patronymic.label("author_patronymic"),
             self._author.image.label("author_img"),
+            self._author.rating.label("author_rating"),
             is_disliked_subq.label("is_disliked"),
             is_liked_subq.label("is_liked"),
         ).select_from(comment_authors_join)

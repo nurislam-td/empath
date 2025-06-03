@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass, field
 from typing import Literal
 from uuid import UUID, uuid4
@@ -13,6 +14,7 @@ class UserDTO(DTO):
     nickname: str
     img: str | None = None
     full_name: str | None = None
+    rating: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,6 +26,7 @@ class CommentDTO(DTO):
     likes_cnt: int
     dislikes_cnt: int
     reaction_status: ReactionStatus = "no_reaction"
+    created_at: datetime.datetime | None = None
     parent_id: UUID | None = None
     id: UUID = field(default_factory=uuid4)
 

@@ -56,7 +56,6 @@ def convert_db_to_article_dto(
     ).strip()
 
     reaction_status: ReactionStatus = "no_reaction"
-    # raise Exception(article.is_disliked, article.is_liked)
     if article.is_liked:
         reaction_status = "is_liked"
     if article.is_disliked:
@@ -70,6 +69,7 @@ def convert_db_to_article_dto(
             nickname=article.author_nickname,
             full_name=author_fullname,
             img=article.author_img,
+            rating=article.author_rating,
         ),
         tags=[convert_db_to_tag_dto(db_tag) for db_tag in tags],
         is_visible=article.is_visible,
@@ -139,6 +139,7 @@ def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
             nickname=comment.author_nickname,
             full_name=author_fullname,
             img=comment.author_img,
+            rating=comment.author_rating,
         ),
         parent_id=comment.parent_id,
         id=comment.id,
@@ -146,4 +147,5 @@ def convert_db_to_comment_dto(comment: RowMapping) -> CommentDTO:
         likes_cnt=comment.like_cnt,
         dislikes_cnt=comment.dislikes_cnt,
         reaction_status=reaction_status,
+        created_at=comment.created_at,
     )
