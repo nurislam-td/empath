@@ -10,7 +10,6 @@ class UserDTO(DTO):
     id: UUID
     nickname: str
     email: str
-    password: bytes
     lastname: str | None
     name: str | None
     patronymic: str | None
