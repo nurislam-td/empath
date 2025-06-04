@@ -85,6 +85,7 @@ def convert_db_to_article_dto(
         specialization=SpecializationDTO(name=article.specialization_name, id=article.specialization_id)
         if article.specialization_id
         else None,
+        is_viewed=article.is_viewed,
         id=article.id,
     )
 

@@ -123,6 +123,12 @@ class ArticleQueryBuilder:
             .correlate(cls._article),
         ).scalar_subquery()
 
+        is_viewed_subq = select(
+            exists()
+            .where(cls._view.article_id == cls._article.id, cls._view.user_id == user_id)
+            .correlate(cls._article),
+        ).scalar_subquery()
+
         qs = (
             select(
                 cls._article.__table__,
@@ -135,6 +141,7 @@ class ArticleQueryBuilder:
                 cls._specialization.name.label("specialization_name"),
                 is_liked_subq.label("is_liked"),
                 is_disliked_subq.label("is_disliked"),
+                is_viewed_subq.label("is_viewed"),
             )
             .select_from(article_authors_join)
             .order_by(cls._article.created_at.desc())

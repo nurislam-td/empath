@@ -74,6 +74,7 @@ class ArticleDTO(DTO):
     likes_cnt: int = 0
     dislikes_cnt: int = 0
     specialization: SpecializationDTO | None = None
+    is_viewed: bool | None = None
     id: UUID = field(default_factory=uuid4)
 
 
