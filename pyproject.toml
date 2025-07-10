@@ -27,6 +27,7 @@ dev = [
     "mimesis>=18.0.0",
     "pytest-asyncio>=0.26.0",
     "pytest>=8.3.5",
+    "testcontainers>=4.10.0",
 ]
 
 [tool.ruff]

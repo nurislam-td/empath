@@ -129,7 +129,11 @@ class ArticleController(Controller):
         await edit_article(command)
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
-    @get("/", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetArticleFilters)})
+    @get(
+        "/",
+        status_code=status_codes.HTTP_200_OK,
+        dependencies={"filters": Provide(GetArticleFilters)},
+    )
     @inject
     async def get_articles(
         self,

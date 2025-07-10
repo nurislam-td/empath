@@ -2,19 +2,26 @@ from collections.abc import AsyncIterable
 
 import pytest
 from dishka import AsyncContainer, make_async_container
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
+from auth.api.providers import AuthProvider
 from config import Settings, get_settings
-from tests.fixtures.di.common import MockAppProvider
+from infrastructure.di.providers import AppProvider
+from users.api.providers import UsersProvider
+from job.employment.api.providers import EmploymentProvider
 
-from .auth import MockAuthProvider
 
-
-@pytest.fixture(scope="session")
-def app_container() -> AsyncContainer:
+@pytest.fixture
+def app_container(session_factory: async_sessionmaker[AsyncSession]) -> AsyncContainer:
     return make_async_container(
-        MockAppProvider(),
-        MockAuthProvider(),
-        context={Settings: get_settings()},
+        AppProvider(),
+        AuthProvider(),
+        UsersProvider(),
+        EmploymentProvider(),
+        context={
+            Settings: get_settings(),
+            async_sessionmaker[AsyncSession]: session_factory,
+        },
     )
 
 
