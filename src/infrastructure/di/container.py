@@ -1,12 +1,14 @@
 from functools import lru_cache
 
 from dishka import AsyncContainer, make_async_container
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from articles.api.providers import ArticleProvider
 from auth.api.providers import AuthProvider
 from common.infrastructure.di.providers import CommonProvider
 from config import Settings, get_settings
 from file_storage.api.providers import FileStorageProvider
+from infrastructure.db.config import get_async_sessionmaker
 from infrastructure.di.providers import AppProvider
 from job.common.api.providers import JobProvider
 from job.employment.api.providers import EmploymentProvider
@@ -26,5 +28,5 @@ def get_ioc() -> AsyncContainer:
         RecruitmentProvider(),
         EmploymentProvider(),
         JobProvider(),
-        context={Settings: get_settings()},
+        context={Settings: get_settings(), async_sessionmaker[AsyncSession]: get_async_sessionmaker()},
     )

@@ -97,7 +97,11 @@ class VacancyController(Controller):
     async def delete_vacancy(self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler]) -> None:
         await delete_vacancy(vacancy_id)
 
-    @get("/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesFilters)})
+    @get(
+        "/vacancies",
+        status_code=status_codes.HTTP_200_OK,
+        dependencies={"filters": Provide(GetVacanciesFilters)},
+    )
     @inject
     async def get_vacancies(
         self,

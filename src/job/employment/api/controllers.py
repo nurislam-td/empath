@@ -45,7 +45,11 @@ class ResponseController(Controller):
         VacancyIdNotExistError: error_handler(status_codes.HTTP_404_NOT_FOUND),
     }
 
-    @get("/vacancies", status_code=status_codes.HTTP_200_OK, dependencies={"filters": Provide(GetVacanciesFilters)})
+    @get(
+        "/vacancies",
+        status_code=status_codes.HTTP_200_OK,
+        dependencies={"filters": Provide(GetVacanciesFilters)},
+    )
     @inject
     async def get_vacancies(
         self,
