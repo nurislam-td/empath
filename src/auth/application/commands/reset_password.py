@@ -31,9 +31,15 @@ class ResetPasswordHandler(CommandHandler[ResetPassword, None]):
 
     async def __call__(self, command: ResetPassword) -> None:
         user = await self._user_reader.get_user_by_id(command.user_id)
-        if self._pwd_manager.verify_password(command.old_password, hash_password=user.password):
+        if self._pwd_manager.verify_password(
+            command.old_password, hash_password=user.password
+        ):
             await self._user_repo.update_user(
-                values={"password": self._pwd_manager.hash_password(Password(command.new_password).to_base())},
+                values={
+                    "password": self._pwd_manager.hash_password(
+                        Password(command.new_password).to_base()
+                    )
+                },
                 filters={"id": command.user_id},
             )
             await self._uow.commit()

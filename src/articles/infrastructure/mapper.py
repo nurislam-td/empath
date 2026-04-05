@@ -74,7 +74,13 @@ def convert_db_to_article_dto(
         tags=[convert_db_to_tag_dto(db_tag) for db_tag in tags],
         is_visible=article.is_visible,
         sub_articles=[
-            SubArticleDTO(**{key: value for key, value in sub_article.to_dict().items() if key != "article_id"})
+            SubArticleDTO(
+                **{
+                    key: value
+                    for key, value in sub_article.to_dict().items()
+                    if key != "article_id"
+                }
+            )
             for sub_article in sub_articles
         ],
         reaction_status=reaction_status,
@@ -82,7 +88,9 @@ def convert_db_to_article_dto(
         likes_cnt=article.likes_cnt,
         dislikes_cnt=article.dislikes_cnt,
         imgs=list(imgs),
-        specialization=SpecializationDTO(name=article.specialization_name, id=article.specialization_id)
+        specialization=SpecializationDTO(
+            name=article.specialization_name, id=article.specialization_id
+        )
         if article.specialization_id
         else None,
         is_viewed=article.is_viewed,

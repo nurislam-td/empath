@@ -25,12 +25,16 @@ def filter_skill(qs: Select[Any], filters: SkillFilters) -> Select[Any]:
     if include := filters.include:
         qs = qs.where(func.lower(_skill.name).in_({word.lower() for word in include}))
     if exclude := filters.exclude:
-        qs = qs.where(func.lower(_skill.name).not_in({word.lower() for word in exclude}))
+        qs = qs.where(
+            func.lower(_skill.name).not_in({word.lower() for word in exclude})
+        )
 
     return qs
 
 
-def get_skill_qs(filters: SkillFilters | None = None, search: str | None = None) -> Select[Any]:
+def get_skill_qs(
+    filters: SkillFilters | None = None, search: str | None = None
+) -> Select[Any]:
     qs = select(_skill.__table__)
     if filters:
         qs = filter_skill(qs, filters)

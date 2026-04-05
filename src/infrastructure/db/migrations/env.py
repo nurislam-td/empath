@@ -97,7 +97,9 @@ def run_migrations_online() -> None:
         case Connection():  # type: ignore
             do_run_migrations(connection)  # type: ignore
         case _:
-            raise TypeError(f"Unexpected connection type: {type(connection)}. Expected Connection")
+            raise TypeError(
+                f"Unexpected connection type: {type(connection)}. Expected Connection"
+            )
 
 
 def main() -> None:

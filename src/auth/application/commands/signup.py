@@ -35,10 +35,14 @@ class SignUpHandler(CommandHandler[SignUp, JWTPair]):
             raise UserEmailAlreadyExistError(command.email)
         user = User(
             email=Email(command.email),
-            password=self._pwd_manager.hash_password(Password(command.password).to_base()),
+            password=self._pwd_manager.hash_password(
+                Password(command.password).to_base()
+            ),
             nickname=Nickname(command.nickname),
         )
-        jwt = self._jwt_manager.create_pair(payload={"sub": str(user.id), "email": command.email})
+        jwt = self._jwt_manager.create_pair(
+            payload={"sub": str(user.id), "email": command.email}
+        )
         await self._user_repo.create_user(user=user)
         await self._auth_repo.create_jwt(jwt=jwt, user_id=user.id)
         await self._uow.commit()

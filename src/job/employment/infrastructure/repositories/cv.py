@@ -53,14 +53,19 @@ class AlchemyCVRepo:
 
         tasks: list[Coroutine[Any, Any, None]] = [
             self._skill.create_skills_for_cv(cv.skills, cv.id),
-            self._employment_type.map_employment_types_to_cv(cv.id, cv.employment_type_ids),
+            self._employment_type.map_employment_types_to_cv(
+                cv.id, cv.employment_type_ids
+            ),
             self._work_schedule.map_work_schedules_to_cv(cv.id, cv.work_schedule_ids),
             self._work_format.map_work_formats_to_cv(cv.id, cv.work_formats_id),
             self._work_exp.create_work_exp(cv_id=cv.id, work_exp=cv.work_exp),
         ]
 
         if cv.additional_skills is not UNSET and cv.additional_skills:
-            s = [SkillSchema(id=skill.id, name=skill.name) for skill in cv.additional_skills]
+            s = [
+                SkillSchema(id=skill.id, name=skill.name)
+                for skill in cv.additional_skills
+            ]
             tasks.append(self._skill.create_additional_skills_for_cv(s, cv.id))
 
         await asyncio.gather(*tasks)
@@ -85,14 +90,27 @@ class AlchemyCVRepo:
         if cv.skills is not UNSET:
             tasks.append(self._skill.update_skills_for_cv(cv.skills, cv_id))
         if cv.additional_skills is not UNSET:
-            s = [SkillSchema(id=skill.id, name=skill.name) for skill in cv.additional_skills]
+            s = [
+                SkillSchema(id=skill.id, name=skill.name)
+                for skill in cv.additional_skills
+            ]
             tasks.append(self._skill.update_additional_skills_for_cv(s, cv_id))
         if cv.employment_type_ids is not UNSET:
-            tasks.append(self._employment_type.update_employment_types_for_cv(cv_id, cv.employment_type_ids))
+            tasks.append(
+                self._employment_type.update_employment_types_for_cv(
+                    cv_id, cv.employment_type_ids
+                )
+            )
         if cv.work_schedule_ids is not UNSET:
-            tasks.append(self._work_schedule.update_work_schedules_for_cv(cv_id, cv.work_schedule_ids))
+            tasks.append(
+                self._work_schedule.update_work_schedules_for_cv(
+                    cv_id, cv.work_schedule_ids
+                )
+            )
         if cv.work_formats_id is not UNSET:
-            tasks.append(self._work_format.update_work_formats_for_cv(cv_id, cv.work_formats_id))
+            tasks.append(
+                self._work_format.update_work_formats_for_cv(cv_id, cv.work_formats_id)
+            )
         if cv.work_exp is not UNSET:
             tasks.append(self._work_exp.update_work_exp(cv_id, cv.work_exp))
 
@@ -121,11 +139,15 @@ class AlchemyEmploymentCVReader:
 
         cv = await self._base.fetch_all(qs)
         if not cv:
-            return PaginatedDTO[CVDTO](count=value_counts, page=pagination.page, results=[])
+            return PaginatedDTO[CVDTO](
+                count=value_counts, page=pagination.page, results=[]
+            )
         cv_ids = [cv.id for cv in cv]
 
         skills = await self._base.fetch_all(qb.get_cv_skill_qs(cv_ids))
-        additional_skills = await self._base.fetch_all(qb.get_cv_additional_skill_qs(cv_ids))
+        additional_skills = await self._base.fetch_all(
+            qb.get_cv_additional_skill_qs(cv_ids)
+        )
 
         return PaginatedDTO[CVDTO](
             count=value_counts,

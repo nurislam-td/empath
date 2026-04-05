@@ -25,22 +25,59 @@ def upgrade() -> None:
         "work_format",
         sa.Column(
             "name",
-            postgresql.ENUM("REMOTE", "ONSITE", "HYBRID", name="workformatenum", create_type=False),
+            postgresql.ENUM(
+                "REMOTE",
+                "ONSITE",
+                "HYBRID",
+                name="workformatenum",
+                create_type=False,
+            ),
             nullable=False,
         ),  # type: ignore  # noqa: PGH003
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
+        ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_work_format")),
         schema="job",
     )
-    op.create_index(op.f("ix_job_work_format_id"), "work_format", ["id"], unique=False, schema="job")
+    op.create_index(
+        op.f("ix_job_work_format_id"),
+        "work_format",
+        ["id"],
+        unique=False,
+        schema="job",
+    )
     op.create_table(
         "rel_vacancy_work_format",
         sa.Column("work_format_id", sa.Uuid(), nullable=False),
         sa.Column("vacancy_id", sa.Uuid(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
             ["vacancy_id"],
             ["job.vacancy.id"],
@@ -53,7 +90,11 @@ def upgrade() -> None:
             name=op.f("fk_rel_vacancy_work_format_work_format_id_work_format"),
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("work_format_id", "vacancy_id", name=op.f("pk_rel_vacancy_work_format")),
+        sa.PrimaryKeyConstraint(
+            "work_format_id",
+            "vacancy_id",
+            name=op.f("pk_rel_vacancy_work_format"),
+        ),
         schema="job",
     )
     op.drop_column("vacancy", "work_format", schema="job")

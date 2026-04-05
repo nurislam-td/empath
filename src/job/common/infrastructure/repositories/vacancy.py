@@ -7,7 +7,13 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from common.infrastructure.repositories.base import AlchemyReader
 from common.infrastructure.repositories.pagination import AlchemyPaginator
-from job.common.application.dto import EmploymentTypeDTO, SkillDTO, SkillWithWeightDTO, WorkFormatDTO, WorkScheduleDTO
+from job.common.application.dto import (
+    EmploymentTypeDTO,
+    SkillDTO,
+    SkillWithWeightDTO,
+    WorkFormatDTO,
+    WorkScheduleDTO,
+)
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.infrastructure.mapper import (
     convert_db_detailed_vacancy,
@@ -54,19 +60,32 @@ class AlchemyVacancyReader:
 
         vacancies = await self._base.fetch_all(qs)
         if not vacancies:
-            return PaginatedDTO[VacancyDTO](count=value_count, page=pagination.page, results=[])
+            return PaginatedDTO[VacancyDTO](
+                count=value_count, page=pagination.page, results=[]
+            )
         vacancies_id = [vacancy.id for vacancy in vacancies]
         skills = await self._base.fetch_all(qb.get_vacancy_skill_qs(vacancies_id))
-        additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs(vacancies_id))
-        work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs(vacancies_id))
-        employment_types = await self._base.fetch_all(qb.get_employment_type_qs(vacancies_id))
+        additional_skills = await self._base.fetch_all(
+            qb.get_vacancy_additional_skill_qs(vacancies_id)
+        )
+        work_schedules = await self._base.fetch_all(
+            qb.get_work_schedules_qs(vacancies_id)
+        )
+        employment_types = await self._base.fetch_all(
+            qb.get_employment_type_qs(vacancies_id)
+        )
         work_formats = await self._base.fetch_all(qb.get_work_format_qs(vacancies_id))
 
         return PaginatedDTO[VacancyDTO](
             count=value_count,
             page=pagination.page,
             results=convert_db_to_vacancy_list(
-                vacancies, skills, additional_skills, work_schedules, employment_types, work_formats
+                vacancies,
+                skills,
+                additional_skills,
+                work_schedules,
+                employment_types,
+                work_formats,
             ),
         )
 
@@ -78,9 +97,15 @@ class AlchemyVacancyReader:
             raise VacancyIdNotExistError(vacancy_id)
 
         skills = await self._base.fetch_all(qb.get_vacancy_skill_qs([vacancy.id]))
-        additional_skills = await self._base.fetch_all(qb.get_vacancy_additional_skill_qs([vacancy.id]))
-        work_schedules = await self._base.fetch_all(qb.get_work_schedules_qs([vacancy.id]))
-        employment_types = await self._base.fetch_all(qb.get_employment_type_qs([vacancy_id]))
+        additional_skills = await self._base.fetch_all(
+            qb.get_vacancy_additional_skill_qs([vacancy.id])
+        )
+        work_schedules = await self._base.fetch_all(
+            qb.get_work_schedules_qs([vacancy.id])
+        )
+        employment_types = await self._base.fetch_all(
+            qb.get_employment_type_qs([vacancy_id])
+        )
         work_formats = await self._base.fetch_all(qb.get_work_format_qs([vacancy.id]))
 
         return convert_db_detailed_vacancy(
@@ -92,7 +117,9 @@ class AlchemyVacancyReader:
             work_formats=work_formats,
         )
 
-    async def get_skills(self, search: str | None, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]:
+    async def get_skills(
+        self, search: str | None, pagination: PaginationParams
+    ) -> PaginatedDTO[SkillDTO]:
         qs = job.common.infrastructure.query_builders.common.get_skill_qs(search=search)
 
         value_count = await self._base.count(qs)
@@ -101,7 +128,9 @@ class AlchemyVacancyReader:
         skills = await self._base.fetch_all(qs)
 
         if not skills:
-            return PaginatedDTO[SkillDTO](count=value_count, page=pagination.page, results=[])
+            return PaginatedDTO[SkillDTO](
+                count=value_count, page=pagination.page, results=[]
+            )
 
         return PaginatedDTO[SkillDTO](
             count=value_count,
@@ -112,19 +141,26 @@ class AlchemyVacancyReader:
     async def get_work_schedules(self) -> list[WorkScheduleDTO]:
         qs = qb.get_work_schedules_qs()
         work_schedules = await self._base.fetch_all(qs)
-        return [WorkScheduleDTO(id=work_schedule.id, name=work_schedule.name) for work_schedule in work_schedules]
+        return [
+            WorkScheduleDTO(id=work_schedule.id, name=work_schedule.name)
+            for work_schedule in work_schedules
+        ]
 
     async def get_employment_types(self) -> list[EmploymentTypeDTO]:
         qs = qb.get_employment_type_qs()
         employment_types = await self._base.fetch_all(qs)
         return [
-            EmploymentTypeDTO(id=employment_type.id, name=employment_type.name) for employment_type in employment_types
+            EmploymentTypeDTO(id=employment_type.id, name=employment_type.name)
+            for employment_type in employment_types
         ]
 
     async def get_work_formats(self) -> list[WorkFormatDTO]:
         qs = qb.get_work_format_qs()
         work_formats = await self._base.fetch_all(qs)
-        return [WorkFormatDTO(id=work_format.id, name=work_format.name) for work_format in work_formats]
+        return [
+            WorkFormatDTO(id=work_format.id, name=work_format.name)
+            for work_format in work_formats
+        ]
 
     async def get_weights(self, skill_ids: set[UUID]) -> list[SkillWithWeightDTO]:
         qs = qb.get_weight_qs(skill_ids)
@@ -148,7 +184,9 @@ class AlchemyVacancyReader:
         cv_ids = [cv.id for cv in cv]
 
         skills = await self._base.fetch_all(qb_cv.get_cv_skill_qs(cv_ids))
-        additional_skills = await self._base.fetch_all(qb_cv.get_cv_additional_skill_qs(cv_ids))
+        additional_skills = await self._base.fetch_all(
+            qb_cv.get_cv_additional_skill_qs(cv_ids)
+        )
 
         return convert_db_to_cv_list(
             cv_list=cv,

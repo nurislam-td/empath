@@ -1,21 +1,46 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
-from job.recruitment.application.commands.change_response_status import ChangeResponseStatusHandler
-from job.recruitment.application.commands.create_recruiter import CreateRecruiterHandler
-from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
-from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
-from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
-from job.recruitment.application.commands.update_recruiter import UpdateRecruiterHandler
-from job.recruitment.application.queries.get_recommendations import GetRecommendationsHandler
-from job.recruitment.application.queries.get_recruiter import GetRecruiterHandler
+from job.recruitment.application.commands.change_response_status import (
+    ChangeResponseStatusHandler,
+)
+from job.recruitment.application.commands.create_recruiter import (
+    CreateRecruiterHandler,
+)
+from job.recruitment.application.commands.create_vacancy import (
+    CreateVacancyHandler,
+)
+from job.recruitment.application.commands.delete_vacancy import (
+    DeleteVacancyHandler,
+)
+from job.recruitment.application.commands.edit_vacancy import (
+    UpdateVacancyHandler,
+)
+from job.recruitment.application.commands.update_recruiter import (
+    UpdateRecruiterHandler,
+)
+from job.recruitment.application.queries.get_recommendations import (
+    GetRecommendationsHandler,
+)
+from job.recruitment.application.queries.get_recruiter import (
+    GetRecruiterHandler,
+)
 from job.recruitment.infrastructure.dao.employment_type import EmploymentTypeDAO
-from job.recruitment.infrastructure.dao.rel_additional_skill_vacancy import RelVacancyAdditionalSkillDAO
-from job.recruitment.infrastructure.dao.rel_skill_vacancy import RelVacancySkillDAO
+from job.recruitment.infrastructure.dao.rel_additional_skill_vacancy import (
+    RelVacancyAdditionalSkillDAO,
+)
+from job.recruitment.infrastructure.dao.rel_skill_vacancy import (
+    RelVacancySkillDAO,
+)
 from job.recruitment.infrastructure.dao.skill import SkillDAO
 from job.recruitment.infrastructure.dao.work_format import WorkFormatDAO
 from job.recruitment.infrastructure.dao.work_schedule import WorkScheduleDAO
-from job.recruitment.infrastructure.repositories.response_to_vacancy import AlchemyRecruitmentVacancyResponseRepo
-from job.recruitment.infrastructure.repositories.vacancy import AlchemyRecruitmentVacancyReader, AlchemyVacancyRepo
+from job.recruitment.infrastructure.repositories.response_to_vacancy import (
+    AlchemyRecruitmentVacancyResponseRepo,
+)
+from job.recruitment.infrastructure.repositories.vacancy import (
+    AlchemyRecruitmentVacancyReader,
+    AlchemyVacancyRepo,
+)
 
 
 class RecruitmentProvider(Provider):

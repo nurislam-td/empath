@@ -27,20 +27,68 @@ def upgrade() -> None:
         sa.Column("article_id", sa.Uuid(), nullable=False),
         sa.Column("like_cnt", sa.BigInteger(), nullable=False),
         sa.Column("dislikes_cnt", sa.BigInteger(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
-            ["article_id"], ["article.article.id"], name=op.f("fk_comment_article_id_article"), ondelete="CASCADE"
+            ["article_id"],
+            ["article.article.id"],
+            name=op.f("fk_comment_article_id_article"),
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_comment")),
         schema="article",
     )
-    op.create_index(op.f("ix_article_comment_id"), "comment", ["id"], unique=False, schema="article")
-    op.alter_column("refresh_token", "user_id", existing_type=sa.UUID(), nullable=False, schema="auth")
-    op.alter_column("user", "password", existing_type=postgresql.BYTEA(), nullable=False, schema="auth")
-    op.alter_column("user", "email", existing_type=sa.VARCHAR(length=255), nullable=False, schema="auth")
-    op.alter_column("user", "nickname", existing_type=sa.VARCHAR(length=20), nullable=False, schema="auth")
+    op.create_index(
+        op.f("ix_article_comment_id"),
+        "comment",
+        ["id"],
+        unique=False,
+        schema="article",
+    )
+    op.alter_column(
+        "refresh_token",
+        "user_id",
+        existing_type=sa.UUID(),
+        nullable=False,
+        schema="auth",
+    )
+    op.alter_column(
+        "user",
+        "password",
+        existing_type=postgresql.BYTEA(),
+        nullable=False,
+        schema="auth",
+    )
+    op.alter_column(
+        "user",
+        "email",
+        existing_type=sa.VARCHAR(length=255),
+        nullable=False,
+        schema="auth",
+    )
+    op.alter_column(
+        "user",
+        "nickname",
+        existing_type=sa.VARCHAR(length=20),
+        nullable=False,
+        schema="auth",
+    )
     op.alter_column(
         "user",
         "gender",
@@ -60,10 +108,34 @@ def downgrade() -> None:
         nullable=True,
         schema="auth",
     )
-    op.alter_column("user", "nickname", existing_type=sa.VARCHAR(length=20), nullable=True, schema="auth")
-    op.alter_column("user", "email", existing_type=sa.VARCHAR(length=255), nullable=True, schema="auth")
-    op.alter_column("user", "password", existing_type=postgresql.BYTEA(), nullable=True, schema="auth")
-    op.alter_column("refresh_token", "user_id", existing_type=sa.UUID(), nullable=True, schema="auth")
+    op.alter_column(
+        "user",
+        "nickname",
+        existing_type=sa.VARCHAR(length=20),
+        nullable=True,
+        schema="auth",
+    )
+    op.alter_column(
+        "user",
+        "email",
+        existing_type=sa.VARCHAR(length=255),
+        nullable=True,
+        schema="auth",
+    )
+    op.alter_column(
+        "user",
+        "password",
+        existing_type=postgresql.BYTEA(),
+        nullable=True,
+        schema="auth",
+    )
+    op.alter_column(
+        "refresh_token",
+        "user_id",
+        existing_type=sa.UUID(),
+        nullable=True,
+        schema="auth",
+    )
     op.drop_index(op.f("ix_article_comment_id"), table_name="comment", schema="article")
     op.drop_table("comment", schema="article")
     # ### end Alembic commands ###

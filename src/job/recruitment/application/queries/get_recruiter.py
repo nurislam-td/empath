@@ -2,7 +2,9 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from job.recruitment.application.dto import DetailedAuthorDTO
-from job.recruitment.infrastructure.repositories.vacancy import AlchemyRecruitmentVacancyReader
+from job.recruitment.infrastructure.repositories.vacancy import (
+    AlchemyRecruitmentVacancyReader,
+)
 
 
 @dataclass(frozen=True, slots=True)

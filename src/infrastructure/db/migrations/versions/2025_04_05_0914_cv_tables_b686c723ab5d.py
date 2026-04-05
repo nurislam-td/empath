@@ -28,18 +28,44 @@ def upgrade() -> None:
         sa.Column("salary_to", sa.BigInteger(), nullable=True),
         sa.Column(
             "education",
-            sa.Enum("SCHOOL", "BACHELOR", "MASTER", "DOCTORATE", name="educationenum", native_enum=False, length=50),
+            sa.Enum(
+                "SCHOOL",
+                "BACHELOR",
+                "MASTER",
+                "DOCTORATE",
+                name="educationenum",
+                native_enum=False,
+                length=50,
+            ),
             nullable=False,
         ),
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("about_me", sa.String(), nullable=True),
         sa.Column("address", sa.String(), nullable=True),
         sa.Column("author_id", sa.Uuid(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
-            ["author_id"], ["auth.user.id"], name=op.f("fk_cv_author_id_user"), ondelete="CASCADE"
+            ["author_id"],
+            ["auth.user.id"],
+            name=op.f("fk_cv_author_id_user"),
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_cv")),
         schema="job",
@@ -49,25 +75,56 @@ def upgrade() -> None:
         "rel_cv_additional_skill",
         sa.Column("skill_id", sa.Uuid(), nullable=False),
         sa.Column("cv_id", sa.Uuid(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["cv_id"], ["job.cv.id"], name=op.f("fk_rel_cv_additional_skill_cv_id_cv"), ondelete="CASCADE"
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.ForeignKeyConstraint(
-            ["skill_id"], ["job.skill.id"], name=op.f("fk_rel_cv_additional_skill_skill_id_skill"), ondelete="CASCADE"
+            ["cv_id"],
+            ["job.cv.id"],
+            name=op.f("fk_rel_cv_additional_skill_cv_id_cv"),
+            ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("skill_id", "cv_id", name=op.f("pk_rel_cv_additional_skill")),
+        sa.ForeignKeyConstraint(
+            ["skill_id"],
+            ["job.skill.id"],
+            name=op.f("fk_rel_cv_additional_skill_skill_id_skill"),
+            ondelete="CASCADE",
+        ),
+        sa.PrimaryKeyConstraint(
+            "skill_id", "cv_id", name=op.f("pk_rel_cv_additional_skill")
+        ),
         schema="job",
     )
     op.create_table(
         "rel_cv_employment_type",
         sa.Column("employment_type_id", sa.Uuid(), nullable=False),
         sa.Column("cv_id", sa.Uuid(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
-            ["cv_id"], ["job.cv.id"], name=op.f("fk_rel_cv_employment_type_cv_id_cv"), ondelete="CASCADE"
+            ["cv_id"],
+            ["job.cv.id"],
+            name=op.f("fk_rel_cv_employment_type_cv_id_cv"),
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["employment_type_id"],
@@ -75,18 +132,40 @@ def upgrade() -> None:
             name=op.f("fk_rel_cv_employment_type_employment_type_id_employment_type"),
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("employment_type_id", "cv_id", name=op.f("pk_rel_cv_employment_type")),
+        sa.PrimaryKeyConstraint(
+            "employment_type_id",
+            "cv_id",
+            name=op.f("pk_rel_cv_employment_type"),
+        ),
         schema="job",
     )
     op.create_table(
         "rel_cv_skill",
         sa.Column("skill_id", sa.Uuid(), nullable=False),
         sa.Column("cv_id", sa.Uuid(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.ForeignKeyConstraint(["cv_id"], ["job.cv.id"], name=op.f("fk_rel_cv_skill_cv_id_cv"), ondelete="CASCADE"),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
-            ["skill_id"], ["job.skill.id"], name=op.f("fk_rel_cv_skill_skill_id_skill"), ondelete="CASCADE"
+            ["cv_id"],
+            ["job.cv.id"],
+            name=op.f("fk_rel_cv_skill_cv_id_cv"),
+            ondelete="CASCADE",
+        ),
+        sa.ForeignKeyConstraint(
+            ["skill_id"],
+            ["job.skill.id"],
+            name=op.f("fk_rel_cv_skill_skill_id_skill"),
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("skill_id", "cv_id", name=op.f("pk_rel_cv_skill")),
         schema="job",
@@ -95,10 +174,23 @@ def upgrade() -> None:
         "rel_cv_work_format",
         sa.Column("work_format_id", sa.Uuid(), nullable=False),
         sa.Column("cv_id", sa.Uuid(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
-            ["cv_id"], ["job.cv.id"], name=op.f("fk_rel_cv_work_format_cv_id_cv"), ondelete="CASCADE"
+            ["cv_id"],
+            ["job.cv.id"],
+            name=op.f("fk_rel_cv_work_format_cv_id_cv"),
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["work_format_id"],
@@ -106,17 +198,32 @@ def upgrade() -> None:
             name=op.f("fk_rel_cv_work_format_work_format_id_work_format"),
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("work_format_id", "cv_id", name=op.f("pk_rel_cv_work_format")),
+        sa.PrimaryKeyConstraint(
+            "work_format_id", "cv_id", name=op.f("pk_rel_cv_work_format")
+        ),
         schema="job",
     )
     op.create_table(
         "rel_cv_work_schedule",
         sa.Column("work_schedule_id", sa.Uuid(), nullable=False),
         sa.Column("cv_id", sa.Uuid(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(
-            ["cv_id"], ["job.cv.id"], name=op.f("fk_rel_cv_work_schedule_cv_id_cv"), ondelete="CASCADE"
+            ["cv_id"],
+            ["job.cv.id"],
+            name=op.f("fk_rel_cv_work_schedule_cv_id_cv"),
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["work_schedule_id"],
@@ -124,7 +231,9 @@ def upgrade() -> None:
             name=op.f("fk_rel_cv_work_schedule_work_schedule_id_work_schedule"),
             ondelete="CASCADE",
         ),
-        sa.PrimaryKeyConstraint("work_schedule_id", "cv_id", name=op.f("pk_rel_cv_work_schedule")),
+        sa.PrimaryKeyConstraint(
+            "work_schedule_id", "cv_id", name=op.f("pk_rel_cv_work_schedule")
+        ),
         schema="job",
     )
     op.create_table(
@@ -133,14 +242,40 @@ def upgrade() -> None:
         sa.Column("title", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=False),
         sa.Column("cv_id", sa.UUID(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False),
-        sa.Column("id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False),
-        sa.ForeignKeyConstraint(["cv_id"], ["job.cv.id"], name=op.f("fk_work_exp_cv_id_cv"), ondelete="CASCADE"),
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
+        ),
+        sa.ForeignKeyConstraint(
+            ["cv_id"],
+            ["job.cv.id"],
+            name=op.f("fk_work_exp_cv_id_cv"),
+            ondelete="CASCADE",
+        ),
         sa.PrimaryKeyConstraint("cv_id", "id", name=op.f("pk_work_exp")),
         schema="job",
     )
-    op.create_index(op.f("ix_job_work_exp_id"), "work_exp", ["id"], unique=False, schema="job")
+    op.create_index(
+        op.f("ix_job_work_exp_id"),
+        "work_exp",
+        ["id"],
+        unique=False,
+        schema="job",
+    )
     # ### end Alembic commands ###
 
 

@@ -4,7 +4,16 @@ from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, delete, get, patch, post, status_codes
+from litestar import (
+    Controller,
+    Request,
+    Response,
+    delete,
+    get,
+    patch,
+    post,
+    status_codes,
+)
 from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.dto import DTOData
@@ -15,8 +24,14 @@ from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 from job.common.application.dto import RecommendationsDTO
 from job.common.application.exceptions import VacancyIdNotExistError
-from job.common.application.queries.get_vacancies import GetVacanciesHandler, GetVacanciesQuery
-from job.common.application.queries.get_vacancy_responses import GetVacancyResponsesHandler, GetVacancyResponsesQuery
+from job.common.application.queries.get_vacancies import (
+    GetVacanciesHandler,
+    GetVacanciesQuery,
+)
+from job.common.application.queries.get_vacancy_responses import (
+    GetVacancyResponsesHandler,
+    GetVacancyResponsesQuery,
+)
 from job.employment.api.schemas import GetVacanciesFilters
 from job.employment.application.dto import VacancyResponseDTO
 from job.recruitment.api.schemas import (
@@ -29,12 +44,24 @@ from job.recruitment.api.schemas import (
     create_vacancy_dto,
     update_recruiter_dto,
 )
-from job.recruitment.application.commands.change_response_status import ChangeResponseStatusHandler
-from job.recruitment.application.commands.create_recruiter import CreateRecruiterHandler
-from job.recruitment.application.commands.create_vacancy import CreateVacancyHandler
-from job.recruitment.application.commands.delete_vacancy import DeleteVacancyHandler
-from job.recruitment.application.commands.edit_vacancy import UpdateVacancyHandler
-from job.recruitment.application.commands.update_recruiter import UpdateRecruiterHandler
+from job.recruitment.application.commands.change_response_status import (
+    ChangeResponseStatusHandler,
+)
+from job.recruitment.application.commands.create_recruiter import (
+    CreateRecruiterHandler,
+)
+from job.recruitment.application.commands.create_vacancy import (
+    CreateVacancyHandler,
+)
+from job.recruitment.application.commands.delete_vacancy import (
+    DeleteVacancyHandler,
+)
+from job.recruitment.application.commands.edit_vacancy import (
+    UpdateVacancyHandler,
+)
+from job.recruitment.application.commands.update_recruiter import (
+    UpdateRecruiterHandler,
+)
 from job.recruitment.application.dto import (
     DetailedAuthorDTO,
     VacancyDTO,
@@ -45,8 +72,12 @@ from job.recruitment.application.exceptions import (
     EmptyWorkSchedulesError,
     RecruiterIdNotFoundError,
 )
-from job.recruitment.application.queries.get_recommendations import GetRecommendationsHandler
-from job.recruitment.application.queries.get_recruiter import GetRecruiterHandler
+from job.recruitment.application.queries.get_recommendations import (
+    GetRecommendationsHandler,
+)
+from job.recruitment.application.queries.get_recruiter import (
+    GetRecruiterHandler,
+)
 
 
 class VacancyController(Controller):
@@ -94,7 +125,9 @@ class VacancyController(Controller):
         status_code=status_codes.HTTP_204_NO_CONTENT,
     )
     @inject
-    async def delete_vacancy(self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler]) -> None:
+    async def delete_vacancy(
+        self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler]
+    ) -> None:
         await delete_vacancy(vacancy_id)
 
     @get(
@@ -111,10 +144,15 @@ class VacancyController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[VacancyDTO]:
         return await get_vacancies(
-            query=GetVacanciesQuery(**filters.to_dict(), author_id=request.user.sub), pagination=pagination_params
+            query=GetVacanciesQuery(**filters.to_dict(), author_id=request.user.sub),
+            pagination=pagination_params,
         )
 
-    @post("/vacancies/author", status_code=status_codes.HTTP_201_CREATED, dto=create_recruiter_dto)
+    @post(
+        "/vacancies/author",
+        status_code=status_codes.HTTP_201_CREATED,
+        dto=create_recruiter_dto,
+    )
     @inject
     async def create_recruiter(
         self,
@@ -125,7 +163,11 @@ class VacancyController(Controller):
         await create_recruiter(command=data.create_instance(id=request.user.sub))
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
 
-    @patch("/vacancies/author", status_code=status_codes.HTTP_201_CREATED, dto=update_recruiter_dto)
+    @patch(
+        "/vacancies/author",
+        status_code=status_codes.HTTP_201_CREATED,
+        dto=update_recruiter_dto,
+    )
     @inject
     async def update_recruiter(
         self,
@@ -159,7 +201,9 @@ class VacancyController(Controller):
     ) -> PaginatedDTO[VacancyResponseDTO]:
         return await get_responses(
             pagination=pagination_params,
-            query=GetVacancyResponsesQuery(vacancy_id=vacancy_id, vacancy_author_id=request.user.sub),
+            query=GetVacancyResponsesQuery(
+                vacancy_id=vacancy_id, vacancy_author_id=request.user.sub
+            ),
         )
 
     @patch("/responses", status_code=status_codes.HTTP_200_OK)
@@ -173,7 +217,10 @@ class VacancyController(Controller):
         await change_response_status(data)
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
-    @get("/vacancies/{vacancy_id:uuid}/recommendations", status_code=status_codes.HTTP_200_OK)
+    @get(
+        "/vacancies/{vacancy_id:uuid}/recommendations",
+        status_code=status_codes.HTTP_200_OK,
+    )
     @inject
     async def get_recommendations(
         self,

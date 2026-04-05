@@ -27,13 +27,22 @@ def upgrade() -> None:
         "tag",
         sa.Column("name", sa.String(length=50), nullable=True),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_tag")),
         schema="article",
@@ -47,7 +56,9 @@ def upgrade() -> None:
         sa.Column("email", sa.String(length=255), nullable=True),
         sa.Column("nickname", sa.String(length=20), nullable=True),
         sa.Column(
-            "gender", sa.Enum("male", "female", "other", name="gender"), nullable=True
+            "gender",
+            sa.Enum("male", "female", "other", name="gender"),
+            nullable=True,
         ),
         sa.Column("name", sa.String(length=255), nullable=True),
         sa.Column("lastname", sa.String(length=255), nullable=True),
@@ -55,19 +66,32 @@ def upgrade() -> None:
         sa.Column("date_birth", sa.Date(), nullable=True),
         sa.Column("image", sa.String(), nullable=True),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_user")),
         schema="auth",
     )
     op.create_index(
-        op.f("ix_auth_user_email"), "user", ["email"], unique=True, schema="auth"
+        op.f("ix_auth_user_email"),
+        "user",
+        ["email"],
+        unique=True,
+        schema="auth",
     )
     op.create_index(
         op.f("ix_auth_user_id"), "user", ["id"], unique=False, schema="auth"
@@ -82,13 +106,22 @@ def upgrade() -> None:
         sa.Column("likes_cnt", sa.BigInteger(), nullable=True),
         sa.Column("dislikes_cnt", sa.BigInteger(), nullable=True),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
         ),
         sa.ForeignKeyConstraint(
             ["author_id"],
@@ -100,20 +133,33 @@ def upgrade() -> None:
         schema="article",
     )
     op.create_index(
-        op.f("ix_article_article_id"), "article", ["id"], unique=False, schema="article"
+        op.f("ix_article_article_id"),
+        "article",
+        ["id"],
+        unique=False,
+        schema="article",
     )
     op.create_table(
         "refresh_token",
         sa.Column("user_id", sa.Uuid(), nullable=True),
         sa.Column("refresh_token", sa.String(), nullable=False),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
         ),
         sa.ForeignKeyConstraint(
             ["user_id"],
@@ -136,13 +182,22 @@ def upgrade() -> None:
         sa.Column("url", sa.Text(), nullable=True),
         sa.Column("article_id", sa.Uuid(), nullable=True),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
         ),
         sa.ForeignKeyConstraint(
             ["article_id"],
@@ -165,10 +220,16 @@ def upgrade() -> None:
         sa.Column("article_id", sa.Uuid(), nullable=False),
         sa.Column("tag_id", sa.Uuid(), nullable=False),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.ForeignKeyConstraint(
             ["article_id"],
@@ -193,13 +254,22 @@ def upgrade() -> None:
         sa.Column("title", sa.String(length=50), nullable=True),
         sa.Column("text", sa.Text(), nullable=True),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
         ),
         sa.ForeignKeyConstraint(
             ["article_id"],
@@ -222,13 +292,22 @@ def upgrade() -> None:
         sa.Column("url", sa.Text(), nullable=True),
         sa.Column("sub_article_id", sa.Uuid(), nullable=True),
         sa.Column(
-            "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "created_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
+            "updated_at",
+            sa.DateTime(),
+            server_default=sa.text("now()"),
+            nullable=False,
         ),
         sa.Column(
-            "id", sa.Uuid(), server_default=sa.text("gen_random_uuid()"), nullable=False
+            "id",
+            sa.Uuid(),
+            server_default=sa.text("gen_random_uuid()"),
+            nullable=False,
         ),
         sa.ForeignKeyConstraint(
             ["sub_article_id"],
@@ -258,16 +337,22 @@ def downgrade() -> None:
     )
     op.drop_table("sub_article_img", schema="article")
     op.drop_index(
-        op.f("ix_article_sub_article_id"), table_name="sub_article", schema="article"
+        op.f("ix_article_sub_article_id"),
+        table_name="sub_article",
+        schema="article",
     )
     op.drop_table("sub_article", schema="article")
     op.drop_table("rel_article_tag", schema="article")
     op.drop_index(
-        op.f("ix_article_article_img_id"), table_name="article_img", schema="article"
+        op.f("ix_article_article_img_id"),
+        table_name="article_img",
+        schema="article",
     )
     op.drop_table("article_img", schema="article")
     op.drop_index(
-        op.f("ix_auth_refresh_token_id"), table_name="refresh_token", schema="auth"
+        op.f("ix_auth_refresh_token_id"),
+        table_name="refresh_token",
+        schema="auth",
     )
     op.drop_table("refresh_token", schema="auth")
     op.drop_index(op.f("ix_article_article_id"), table_name="article", schema="article")

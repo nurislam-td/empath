@@ -13,8 +13,14 @@ from articles.application.dto.article import (
 from articles.application.exceptions import CommentIdNotExistError
 from articles.application.ports.repo import CommentReader, CommentRepo
 from articles.infrastructure.mapper import convert_db_to_comment_dto
-from articles.infrastructure.models import Comment, RelCommentUserDislike, RelCommentUserLike
-from articles.infrastructure.repositories.comment_stats import AlchemyCommentStatRepo
+from articles.infrastructure.models import (
+    Comment,
+    RelCommentUserDislike,
+    RelCommentUserLike,
+)
+from articles.infrastructure.repositories.comment_stats import (
+    AlchemyCommentStatRepo,
+)
 from auth.infrastructure.models import User
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
@@ -37,11 +43,17 @@ class AlchemyCommentRepo(CommentRepo):
         )
 
     async def delete_comment(self, comment_id: UUID) -> None:
-        await self._base.execute(update(self.comment).filter(self.comment.id == comment_id).values(is_visible=False))
+        await self._base.execute(
+            update(self.comment)
+            .filter(self.comment.id == comment_id)
+            .values(is_visible=False)
+        )
 
     async def update_comment(self, comment: EditComment) -> None:
         await self._base.execute(
-            update(self.comment).filter(self.comment.id == comment.id).values(text=comment.text),
+            update(self.comment)
+            .filter(self.comment.id == comment.id)
+            .values(text=comment.text),
         )
 
     async def like_comment(self, comment_id: UUID, user_id: UUID) -> None:
@@ -76,13 +88,19 @@ class AlchemyCommentReader(CommentReader):
         )
         is_liked_subq = select(
             exists()
-            .where(self._like.comment_id == self._comment.id, self._like.user_id == user_id)
+            .where(
+                self._like.comment_id == self._comment.id,
+                self._like.user_id == user_id,
+            )
             .correlate(self._comment),
         ).scalar_subquery()
 
         is_disliked_subq = select(
             exists()
-            .where(self._dislike.comment_id == self._comment.id, self._dislike.user_id == user_id)
+            .where(
+                self._dislike.comment_id == self._comment.id,
+                self._dislike.user_id == user_id,
+            )
             .correlate(self._comment),
         ).scalar_subquery()
 
@@ -119,7 +137,9 @@ class AlchemyCommentReader(CommentReader):
             results=[convert_db_to_comment_dto(comment) for comment in comments],
         )
 
-    async def get_comment_by_id(self, comment_id: UUID, user_id: UUID | None = None) -> CommentDTO:
+    async def get_comment_by_id(
+        self, comment_id: UUID, user_id: UUID | None = None
+    ) -> CommentDTO:
         qs = self.get_comments_qs(user_id=user_id)
         qs = qs.where(self._comment.id == comment_id)
         comment = await self._base.fetch_one(qs)

@@ -23,7 +23,10 @@ from common.application.ports.email_sender import IEmailSender
 from common.infrastructure.adapters.email_sender import EmailSender
 from config import Settings
 from users.application.ports.repo import UserReader, UserRepo
-from users.infrastructure.repositories.user import AlchemyUserReader, AlchemyUserRepo
+from users.infrastructure.repositories.user import (
+    AlchemyUserReader,
+    AlchemyUserRepo,
+)
 
 
 class AuthProvider(Provider):

@@ -7,7 +7,9 @@ from auth.application.exceptions import UnAuthorizedError
 from common.domain.exceptions import AppError, UnexpectedError, ValueObjectError
 
 
-def error_handler(status_code: int) -> Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]]:
+def error_handler(
+    status_code: int,
+) -> Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]]:
     def handler(_: Request[Any, Any, Any], exc: AppError) -> Response[dict[str, Any]]:
         return Response(
             status_code=status_code,
@@ -17,7 +19,10 @@ def error_handler(status_code: int) -> Callable[[Request[Any, Any, Any], AppErro
     return handler
 
 
-exception_handler: dict[type[AppError], Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]]] = {
+exception_handler: dict[
+    type[AppError],
+    Callable[[Request[Any, Any, Any], AppError], Response[dict[str, Any]]],
+] = {
     ValueObjectError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
     UnexpectedError: error_handler(status_codes.HTTP_500_INTERNAL_SERVER_ERROR),
     UnAuthorizedError: error_handler(status_codes.HTTP_401_UNAUTHORIZED),

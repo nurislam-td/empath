@@ -70,7 +70,8 @@ def get_cv_additional_skill_qs(
         .add_columns(_rel_cv_additional_skill.cv_id)
         .join(
             _rel_cv_additional_skill.__table__,
-            (_rel_cv_additional_skill.skill_id == _skill.id) & _rel_cv_additional_skill.cv_id.in_(cv_ids),
+            (_rel_cv_additional_skill.skill_id == _skill.id)
+            & _rel_cv_additional_skill.cv_id.in_(cv_ids),
         )
     )
 
@@ -95,7 +96,8 @@ def get_cv_work_schedules_qs(cv_ids: list[UUID]) -> Select[Any]:
             _rel_cv_schedule.cv_id,
         ).join(
             _rel_cv_schedule.__table__,
-            (_rel_cv_schedule.work_schedule_id == _schedule.id) & _rel_cv_schedule.cv_id.in_(cv_ids),
+            (_rel_cv_schedule.work_schedule_id == _schedule.id)
+            & _rel_cv_schedule.cv_id.in_(cv_ids),
         )
     return qs
 
@@ -116,7 +118,8 @@ def get_cv_work_format_qs(cv_ids: list[UUID]) -> Select[Any]:
     if cv_ids:
         qs = qs.add_columns(_rel_cv_work_format.cv_id).join(
             _rel_cv_work_format.__table__,
-            (_rel_cv_work_format.work_format_id == _work_format.id) & _rel_cv_work_format.cv_id.in_(cv_ids),
+            (_rel_cv_work_format.work_format_id == _work_format.id)
+            & _rel_cv_work_format.cv_id.in_(cv_ids),
         )
     return qs
 

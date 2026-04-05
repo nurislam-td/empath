@@ -4,9 +4,19 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import RowMapping
 
-from job.common.application.dto import EmploymentTypeDTO, SalaryDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
+from job.common.application.dto import (
+    EmploymentTypeDTO,
+    SalaryDTO,
+    SkillDTO,
+    WorkFormatDTO,
+    WorkScheduleDTO,
+)
 from job.employment.application.dto import AuthorDTO as CVAuthorDTO
-from job.employment.application.dto import DetailedCVDTO, VacancyResponseDTO, WorkExpDTO
+from job.employment.application.dto import (
+    DetailedCVDTO,
+    VacancyResponseDTO,
+    WorkExpDTO,
+)
 from job.recruitment.application.dto import (
     AuthorDTO,
     DetailedAuthorDTO,
@@ -41,7 +51,9 @@ def convert_db_detailed_vacancy(  # noqa: PLR0913
         ),
         work_exp=vacancy.work_exp,
         work_schedules=[WorkScheduleDTO(name=s.name, id=s.id) for s in work_schedules],
-        employment_types=[EmploymentTypeDTO(name=t.name, id=t.id) for t in employment_types],
+        employment_types=[
+            EmploymentTypeDTO(name=t.name, id=t.id) for t in employment_types
+        ],
         work_formats=[WorkFormatDTO(name=w.name, id=w.id) for w in work_formats],
         skills=[SkillDTO(name=s.name, id=s.id) for s in skills],
         additional_skills=[SkillDTO(name=s.name, id=s.id) for s in additional_skills],
@@ -136,7 +148,9 @@ def convert_db_to_detailed_cv(  # noqa: PLR0913
         title=cv.title,
         is_visible=cv.is_visible,
         salary=SalaryDTO(from_=cv.salary_from, to=cv.salary_to),
-        employment_types=[EmploymentTypeDTO(name=t.name, id=t.id) for t in employment_types],
+        employment_types=[
+            EmploymentTypeDTO(name=t.name, id=t.id) for t in employment_types
+        ],
         work_schedules=[WorkScheduleDTO(name=s.name, id=s.id) for s in work_schedules],
         work_exp=[
             WorkExpDTO(

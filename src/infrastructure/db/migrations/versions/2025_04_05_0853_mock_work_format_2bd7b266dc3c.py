@@ -30,4 +30,6 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.execute("DELETE FROM job.work_format WHERE name IN ('remote', 'onsite', 'hybrid')")
+    op.execute(
+        "DELETE FROM job.work_format WHERE name IN ('remote', 'onsite', 'hybrid')"
+    )

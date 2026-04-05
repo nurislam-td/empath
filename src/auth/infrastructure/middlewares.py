@@ -2,7 +2,10 @@ from typing import Any
 
 from jwt import InvalidTokenError
 from litestar.connection import ASGIConnection
-from litestar.middleware import AbstractAuthenticationMiddleware, AuthenticationResult
+from litestar.middleware import (
+    AbstractAuthenticationMiddleware,
+    AuthenticationResult,
+)
 
 from auth.api.schemas import JWTUserPayload
 from auth.application.exceptions import UnAuthorizedError
@@ -15,7 +18,9 @@ container = get_ioc()
 
 
 class JWTAuthMiddleware(AbstractAuthenticationMiddleware):
-    async def authenticate_request(self, connection: ASGIConnection[Any, Any, Any, Any]) -> AuthenticationResult:
+    async def authenticate_request(
+        self, connection: ASGIConnection[Any, Any, Any, Any]
+    ) -> AuthenticationResult:
         auth_header = connection.headers.get(settings.AUTH_HEADERS)
         if not auth_header:
             raise UnAuthorizedError

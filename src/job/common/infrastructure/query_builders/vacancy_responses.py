@@ -11,7 +11,9 @@ from job.common.infrastructure.models import (
 )
 
 if TYPE_CHECKING:
-    from job.common.application.queries.get_vacancy_responses import GetVacancyResponsesQuery
+    from job.common.application.queries.get_vacancy_responses import (
+        GetVacancyResponsesQuery,
+    )
 
 _vacancy = Vacancy
 _cv = CV
@@ -19,7 +21,9 @@ _cv_author = User
 _rel_cv_vacancy = RelCVVacancy
 
 
-def filter_vacancy_response(qs: Select[Any], filters: "GetVacancyResponsesQuery") -> Select[Any]:
+def filter_vacancy_response(
+    qs: Select[Any], filters: "GetVacancyResponsesQuery"
+) -> Select[Any]:
     if filters.vacancy_id:
         qs = qs.where(_rel_cv_vacancy.vacancy_id == filters.vacancy_id)
     if filters.response_author_id:
@@ -29,7 +33,9 @@ def filter_vacancy_response(qs: Select[Any], filters: "GetVacancyResponsesQuery"
     return qs
 
 
-def get_vacancy_responses_qs(filters: "GetVacancyResponsesQuery | None" = None) -> Select[Any]:
+def get_vacancy_responses_qs(
+    filters: "GetVacancyResponsesQuery | None" = None,
+) -> Select[Any]:
     table = (
         _rel_cv_vacancy.__table__.join(_cv.__table__, _rel_cv_vacancy.cv_id == _cv.id)
         .join(_vacancy.__table__, _rel_cv_vacancy.vacancy_id == _vacancy.id)

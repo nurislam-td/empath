@@ -2,7 +2,9 @@ from dataclasses import dataclass
 
 from common.application.uow import UnitOfWork
 from job.employment.api.schemas import ResponseToVacancySchema
-from job.employment.infrastructure.repositories.response_to_vacancy import AlchemyVacancyResponseRepo
+from job.employment.infrastructure.repositories.response_to_vacancy import (
+    AlchemyVacancyResponseRepo,
+)
 
 
 @dataclass(slots=True)

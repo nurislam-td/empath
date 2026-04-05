@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from common.domain.exceptions import ValueObjectError
 from common.domain.value_object.base import ValueObject
 
-STRONG_PASSWORD_PATTERN = re.compile(r"(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,128}")
+STRONG_PASSWORD_PATTERN = re.compile(
+    r"(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,128}"
+)
 
 
 @dataclass(eq=False, slots=True)

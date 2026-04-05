@@ -26,7 +26,9 @@ class CancelLikeCommentHandler(CommandHandler[CancelLikeComment, None]):
             user_id=command.user_id,
             comment_id=command.id,
         )
-        await self._comment_repo.cancel_like_comment(comment_id=command.id, user_id=command.user_id)
+        await self._comment_repo.cancel_like_comment(
+            comment_id=command.id, user_id=command.user_id
+        )
         user = await self._user_reader.get_user_by_id(comment.author.id)
         await self._user_repo.update_user({"rating": user.rating - 1}, {"id": user.id})
         await self._uow.commit()

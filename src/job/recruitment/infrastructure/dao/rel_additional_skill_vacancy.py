@@ -15,17 +15,24 @@ from job.common.infrastructure.models import (
 @dataclass(slots=True)
 class RelVacancyAdditionalSkillDAO:
     _skill: ClassVar[type[Skill]] = Skill
-    _rel_additional_skill_vacancy: ClassVar[type[RelVacancyAdditionalSkill]] = RelVacancyAdditionalSkill
+    _rel_additional_skill_vacancy: ClassVar[type[RelVacancyAdditionalSkill]] = (
+        RelVacancyAdditionalSkill
+    )
 
     _repo: AlchemyRepo
     _reader: AlchemyReader
 
-    async def map_additional_skills_to_vacancy(self, vacancy_id: UUID, skills_id: list[UUID]) -> None:
+    async def map_additional_skills_to_vacancy(
+        self, vacancy_id: UUID, skills_id: list[UUID]
+    ) -> None:
         existing_skills_id = await self._reader.fetch_sequence(
             select(self._skill.id).where(self._skill.id.in_(skills_id)),
         )
         insert_stmt = insert(self._rel_additional_skill_vacancy).values(
-            [{"vacancy_id": vacancy_id, "skill_id": skill_id} for skill_id in existing_skills_id]
+            [
+                {"vacancy_id": vacancy_id, "skill_id": skill_id}
+                for skill_id in existing_skills_id
+            ]
         )
         await self._repo.execute(insert_stmt)
 

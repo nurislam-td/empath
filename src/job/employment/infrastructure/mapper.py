@@ -4,8 +4,19 @@ from uuid import UUID
 
 from sqlalchemy import RowMapping
 
-from job.common.application.dto import EmploymentTypeDTO, SalaryDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
-from job.employment.application.dto import CVDTO, AuthorDTO, DetailedCVDTO, VacancyDTO
+from job.common.application.dto import (
+    EmploymentTypeDTO,
+    SalaryDTO,
+    SkillDTO,
+    WorkFormatDTO,
+    WorkScheduleDTO,
+)
+from job.employment.application.dto import (
+    CVDTO,
+    AuthorDTO,
+    DetailedCVDTO,
+    VacancyDTO,
+)
 
 
 def convert_db_to_vacancy(  # noqa: PLR0913

@@ -37,7 +37,10 @@ class EditArticleHandler(CommandHandler[EditArticle, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: EditArticle) -> None:
-        if len(keys := command.to_dict_exclude_unset().keys()) == 2 and {"author_id", "id"} <= keys:  # noqa: PLR2004
+        if (
+            len(keys := command.to_dict_exclude_unset().keys()) == 2
+            and {"author_id", "id"} <= keys
+        ):  # noqa: PLR2004
             raise EmptyArticleUpdatesError
 
         article_dto = await self._article_reader.get_article_by_id(command.id)
@@ -56,9 +59,15 @@ class EditArticleHandler(CommandHandler[EditArticle, None]):
             await self._file_manager.delete_files(img_for_delete)
 
         if command.sub_articles is not Empty.UNSET and (
-            sub_imgs := set(chain.from_iterable(sub_article.imgs for sub_article in article_dto.sub_articles))
+            sub_imgs := set(
+                chain.from_iterable(
+                    sub_article.imgs for sub_article in article_dto.sub_articles
+                )
+            )
         ):
             img_for_delete = sub_imgs - set(
-                chain.from_iterable(sub_article.imgs for sub_article in command.sub_articles)
+                chain.from_iterable(
+                    sub_article.imgs for sub_article in command.sub_articles
+                )
             )
             await self._file_manager.delete_files(img_for_delete)

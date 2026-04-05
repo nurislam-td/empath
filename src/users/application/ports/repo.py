@@ -9,7 +9,9 @@ from users.domain import entities
 class UserRepo(Protocol):
     async def create_user(self, user: entities.User) -> None: ...
 
-    async def update_user(self, values: dict[str, Any], filters: dict[str, Any]) -> None: ...
+    async def update_user(
+        self, values: dict[str, Any], filters: dict[str, Any]
+    ) -> None: ...
 
 
 class UserReader(Protocol):

@@ -17,4 +17,6 @@ class GetArticleByIdHandler(QueryHandler[GetArticleById, ArticleDTO]):
     _reader: ArticleReader
 
     async def __call__(self, query: GetArticleById) -> ArticleDTO:
-        return await self._reader.get_article_by_id(user_id=query.user_id, article_id=query.article_id)
+        return await self._reader.get_article_by_id(
+            user_id=query.user_id, article_id=query.article_id
+        )

@@ -23,17 +23,25 @@ class LikeCommentHandler(CommandHandler[LikeComment, None]):
     _uow: UnitOfWork
 
     async def __call__(self, command: LikeComment) -> None:
-        comment = await self._comment_reader.get_comment_by_id(comment_id=command.id, user_id=command.user_id)
+        comment = await self._comment_reader.get_comment_by_id(
+            comment_id=command.id, user_id=command.user_id
+        )
         plus_rating = 1
 
         try:
-            await self._comment_repo.cancel_dislike_comment(comment_id=command.id, user_id=command.user_id)
+            await self._comment_repo.cancel_dislike_comment(
+                comment_id=command.id, user_id=command.user_id
+            )
         except NothingToCancelError:
             pass
         else:
             plus_rating += 1
 
-        await self._comment_repo.like_comment(comment_id=command.id, user_id=command.user_id)
+        await self._comment_repo.like_comment(
+            comment_id=command.id, user_id=command.user_id
+        )
         user = await self._user_reader.get_user_by_id(comment.author.id)
-        await self._user_repo.update_user({"rating": user.rating + plus_rating}, {"id": user.id})
+        await self._user_repo.update_user(
+            {"rating": user.rating + plus_rating}, {"id": user.id}
+        )
         await self._uow.commit()

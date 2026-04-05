@@ -30,4 +30,6 @@ class RelCVSkillDAO:
         await self._repo.execute(insert_stmt)
 
     async def unmap_skills_from_cv(self, cv_id: UUID) -> None:
-        await self._repo.execute(delete(self._rel_skill_cv).where(self._rel_skill_cv.cv_id == cv_id))
+        await self._repo.execute(
+            delete(self._rel_skill_cv).where(self._rel_skill_cv.cv_id == cv_id)
+        )

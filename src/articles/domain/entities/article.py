@@ -37,4 +37,6 @@ class Article(Aggregate):
 
     def dislike_article(self, dislike_owner_id: UUID) -> None:
         self.dislikes_cnt += 1
-        self.record_event(ArticleDisliked(dislike_owner_id=dislike_owner_id, article_id=self.id))
+        self.record_event(
+            ArticleDisliked(dislike_owner_id=dislike_owner_id, article_id=self.id)
+        )

@@ -9,14 +9,27 @@ from litestar import Controller, get, status_codes
 from common.api.exception_handlers import error_handler
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
-from job.common.application.dto import EmploymentTypeDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
+from job.common.application.dto import (
+    EmploymentTypeDTO,
+    SkillDTO,
+    WorkFormatDTO,
+    WorkScheduleDTO,
+)
 from job.common.application.exceptions import VacancyIdNotExistError
 from job.common.application.queries.get_cv_by_id import GetCVByIdHandler
-from job.common.application.queries.get_employment_types import GetEmploymentTypesHandler
+from job.common.application.queries.get_employment_types import (
+    GetEmploymentTypesHandler,
+)
 from job.common.application.queries.get_skills import GetSkillsHandler
-from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
-from job.common.application.queries.get_work_formats import GetWorkFormatsHandler
-from job.common.application.queries.get_work_schedules import GetWorkSchedulesHandler
+from job.common.application.queries.get_vacancy_by_id import (
+    GetVacancyByIdHandler,
+)
+from job.common.application.queries.get_work_formats import (
+    GetWorkFormatsHandler,
+)
+from job.common.application.queries.get_work_schedules import (
+    GetWorkSchedulesHandler,
+)
 from job.employment.application.dto import DetailedCVDTO
 from job.recruitment.application.dto import DetailedVacancyDTO
 
@@ -47,7 +60,9 @@ class JobController(Controller):
 
     @get("/work-schedules", status_code=status_codes.HTTP_200_OK)
     @inject
-    async def get_work_schedules(self, get_schedules: Depends[GetWorkSchedulesHandler]) -> list[WorkScheduleDTO]:
+    async def get_work_schedules(
+        self, get_schedules: Depends[GetWorkSchedulesHandler]
+    ) -> list[WorkScheduleDTO]:
         return await get_schedules()
 
     @get("/employment-types", status_code=status_codes.HTTP_200_OK)

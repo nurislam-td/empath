@@ -3,7 +3,13 @@ from datetime import datetime
 from uuid import UUID
 
 from common.application.dto import DTO
-from job.common.application.dto import EmploymentTypeDTO, SalaryDTO, SkillDTO, WorkFormatDTO, WorkScheduleDTO
+from job.common.application.dto import (
+    EmploymentTypeDTO,
+    SalaryDTO,
+    SkillDTO,
+    WorkFormatDTO,
+    WorkScheduleDTO,
+)
 from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
 
 

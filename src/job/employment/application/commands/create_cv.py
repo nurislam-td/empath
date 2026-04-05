@@ -7,7 +7,11 @@ from common.application.uow import UnitOfWork
 from job.common.domain.enums import EducationEnum
 from job.employment.api.schemas import CreateCVSchema
 from job.employment.infrastructure.repositories.cv import AlchemyCVRepo
-from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.application.exceptions import (
+    EmptyEmploymentTypesError,
+    EmptySkillsError,
+    EmptyWorkSchedulesError,
+)
 
 
 @dataclass(frozen=True)

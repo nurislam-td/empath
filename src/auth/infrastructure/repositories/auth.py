@@ -13,7 +13,9 @@ class AlchemyAuthRepo(AlchemyRepo, AuthRepo):
     refresh_token = RefreshToken
 
     async def create_jwt(self, jwt: JWTPair, user_id: UUID) -> None:
-        query = insert(self.refresh_token).values(refresh_token=jwt.refresh_token, user_id=user_id)
+        query = insert(self.refresh_token).values(
+            refresh_token=jwt.refresh_token, user_id=user_id
+        )
         await self.execute(query=query)
 
     async def refresh_jwt(self, jwt: JWTPair, user_id: UUID) -> None:
@@ -33,7 +35,9 @@ class AlchemyAuthReader(AlchemyReader, AuthReader):
     token = RefreshToken
 
     async def get_refresh_token(self, user_id: UUID) -> str:
-        refresh_token = await self.fetch_one(select(self.token.__table__).where(self.token.user_id == user_id))
+        refresh_token = await self.fetch_one(
+            select(self.token.__table__).where(self.token.user_id == user_id)
+        )
         if not refresh_token:
             raise TokenSubNotFoundError(sub=user_id)
         return refresh_token.refresh_token

@@ -33,7 +33,10 @@ class AlchemyArticleStatRepo:
 
     async def cancel_dislike_article(self, article_id: UUID, user_id: UUID) -> None:
         if not await self.reader.fetch_one(
-            select(self._dislike).where((self._dislike.article_id == article_id) & (self._dislike.user_id == user_id)),
+            select(self._dislike).where(
+                (self._dislike.article_id == article_id)
+                & (self._dislike.user_id == user_id)
+            ),
         ):
             raise NothingToCancelError
         await asyncio.gather(
@@ -44,19 +47,25 @@ class AlchemyArticleStatRepo:
             ),
             self.base.execute(
                 delete(self._dislike).where(
-                    (self._dislike.article_id == article_id) & (self._dislike.user_id == user_id)
+                    (self._dislike.article_id == article_id)
+                    & (self._dislike.user_id == user_id)
                 ),
             ),
         )
 
     async def cancel_like_article(self, article_id: UUID, user_id: UUID) -> None:
         if not await self.reader.fetch_one(
-            select(self._like).where((self._like.article_id == article_id) & (self._like.user_id == user_id)),
+            select(self._like).where(
+                (self._like.article_id == article_id) & (self._like.user_id == user_id)
+            ),
         ):
             raise NothingToCancelError
         await asyncio.gather(
             self.base.execute(
-                delete(self._like).where((self._like.article_id == article_id) & (self._like.user_id == user_id)),
+                delete(self._like).where(
+                    (self._like.article_id == article_id)
+                    & (self._like.user_id == user_id)
+                ),
             ),
             self.base.execute(
                 update(self._article)
@@ -68,19 +77,25 @@ class AlchemyArticleStatRepo:
     async def like_article(self, article_id: UUID, user_id: UUID) -> None:
         try:
             await self.base.execute(
-                insert(self._like).values({"article_id": article_id, "user_id": user_id}),
+                insert(self._like).values(
+                    {"article_id": article_id, "user_id": user_id}
+                ),
             )
         except IntegrityError as e:
             raise LikeAlreadyExistError from e
 
         await self.base.execute(
-            update(self._article).values(likes_cnt=self._article.likes_cnt + 1).where(self._article.id == article_id),
+            update(self._article)
+            .values(likes_cnt=self._article.likes_cnt + 1)
+            .where(self._article.id == article_id),
         )
 
     async def dislike_article(self, article_id: UUID, user_id: UUID) -> None:
         try:
             await self.base.execute(
-                insert(self._dislike).values({"article_id": article_id, "user_id": user_id}),
+                insert(self._dislike).values(
+                    {"article_id": article_id, "user_id": user_id}
+                ),
             )
         except IntegrityError as e:
             raise DislikeAlreadyExistError from e
@@ -94,7 +109,9 @@ class AlchemyArticleStatRepo:
     async def view_article(self, article_id: UUID, user_id: UUID) -> None:
         try:
             await self.base.execute(
-                insert(self._view).values({"article_id": article_id, "user_id": user_id}),
+                insert(self._view).values(
+                    {"article_id": article_id, "user_id": user_id}
+                ),
             )
         except IntegrityError as e:
             raise ViewAlreadyExistError from e

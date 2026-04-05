@@ -15,9 +15,19 @@ from litestar.response import Response
 from auth.api.schemas import JWTUserPayload
 from common.api.exception_handlers import error_handler
 from common.application.query import PaginationParams
-from users.api.schemas import UpdateAvatarResponse, UserUpdateFullnameSchema, UserUpdateSchema
-from users.application.commands.update_avatar import UpdateAvatar, UpdateAvatarHandler
-from users.application.commands.update_fullname import UpdateFullname, UpdateFullnameHandler
+from users.api.schemas import (
+    UpdateAvatarResponse,
+    UserUpdateFullnameSchema,
+    UserUpdateSchema,
+)
+from users.application.commands.update_avatar import (
+    UpdateAvatar,
+    UpdateAvatarHandler,
+)
+from users.application.commands.update_fullname import (
+    UpdateFullname,
+    UpdateFullnameHandler,
+)
 from users.application.commands.update_user import UpdateUser, UpdateUserHandler
 from users.application.dto.user import PaginatedUserDTO, UserDTO
 from users.application.exceptions import UserIdNotExistError
@@ -47,9 +57,13 @@ class UserController(Controller):
     )
     @inject
     async def get_users(
-        self, pagination_params: PaginationParams, get_users: Depends[GetUsersHandler]
+        self,
+        pagination_params: PaginationParams,
+        get_users: Depends[GetUsersHandler],
     ) -> PaginatedUserDTO:
-        return await get_users(GetUsers(page=pagination_params.page, per_page=pagination_params.per_page))
+        return await get_users(
+            GetUsers(page=pagination_params.page, per_page=pagination_params.per_page)
+        )
 
     @put(path="/me/avatar", status_code=status_codes.HTTP_200_OK)
     @inject
@@ -60,7 +74,11 @@ class UserController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> UpdateAvatarResponse:
         content = await data.read()
-        command = UpdateAvatar(user_id=request.user.sub, file=BytesIO(content), filename=data.filename)
+        command = UpdateAvatar(
+            user_id=request.user.sub,
+            file=BytesIO(content),
+            filename=data.filename,
+        )
         new_url = await update_avatar(command)
         return UpdateAvatarResponse(url=new_url)
 

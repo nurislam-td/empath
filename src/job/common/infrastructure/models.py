@@ -6,7 +6,12 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from common.infrastructure.models import TimedBaseModel
-from job.common.domain.enums import EducationEnum, VacancyResponseStatusEnum, WorkExpEnum, WorkFormatEnum
+from job.common.domain.enums import (
+    EducationEnum,
+    VacancyResponseStatusEnum,
+    WorkExpEnum,
+    WorkFormatEnum,
+)
 
 
 class JobBase(TimedBaseModel):
@@ -32,7 +37,9 @@ class Vacancy(JobBase):
     additional_description: Mapped[str | None]
     address: Mapped[str | None]
 
-    author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
+    author_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("auth.user.id", ondelete="CASCADE")
+    )
 
     def __str__(self) -> str:
         return f"title = {self.title} | date = {self.created_at} | id = {self.id} "
@@ -79,7 +86,9 @@ class RelVacancyWorkFormat(JobBase):
         ForeignKey("job.work_format.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelVacancyEmploymentType(JobBase):
@@ -87,9 +96,12 @@ class RelVacancyEmploymentType(JobBase):
 
     id: None = None  # type: ignore  # noqa: PGH003
     employment_type_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("job.employment_type.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("job.employment_type.id", ondelete="CASCADE"),
+        primary_key=True,
     )
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelVacancyWorkSchedule(JobBase):
@@ -100,29 +112,41 @@ class RelVacancyWorkSchedule(JobBase):
         ForeignKey("job.work_schedule.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelVacancySkill(JobBase):
     __tablename__ = "rel_vacancy_skill"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+    skill_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True
+    )
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelVacancyAdditionalSkill(JobBase):
     __tablename__ = "rel_vacancy_additional_skill"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+    skill_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True
+    )
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class Recruiter(JobBase):
     __tablename__ = "recruiter"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True
+    )
 
     company_name: Mapped[str]
     about_us: Mapped[str]
@@ -138,7 +162,9 @@ class CV(JobBase):
     salary_from: Mapped[int | None] = mapped_column(BigInteger)
     salary_to: Mapped[int | None] = mapped_column(BigInteger)
 
-    education: Mapped[EducationEnum] = mapped_column(Enum(EducationEnum, native_enum=False, length=50))
+    education: Mapped[EducationEnum] = mapped_column(
+        Enum(EducationEnum, native_enum=False, length=50)
+    )
     email: Mapped[str]
 
     about_me: Mapped[str | None]
@@ -146,7 +172,9 @@ class CV(JobBase):
 
     cv_file: Mapped[str | None]
 
-    author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("auth.user.id", ondelete="CASCADE"))
+    author_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("auth.user.id", ondelete="CASCADE")
+    )
 
     author = relationship("User", backref="cvs")
 
@@ -199,7 +227,9 @@ class WorkExp(JobBase):
     start_date: Mapped[date]
     end_date: Mapped[date | None]
     is_relevant: Mapped[bool]
-    cv_id: Mapped[uuid.UUID] = mapped_column(UUID, ForeignKey("job.cv.id", ondelete="CASCADE"))
+    cv_id: Mapped[uuid.UUID] = mapped_column(
+        UUID, ForeignKey("job.cv.id", ondelete="CASCADE")
+    )
     cv = relationship("CV", backref="work_experiences")
 
     def __str__(self) -> str:
@@ -214,7 +244,9 @@ class RelCVWorkFormat(JobBase):
         ForeignKey("job.work_format.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+    cv_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelCVEmploymentType(JobBase):
@@ -222,9 +254,12 @@ class RelCVEmploymentType(JobBase):
 
     id: None = None  # type: ignore  # noqa: PGH003
     employment_type_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("job.employment_type.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("job.employment_type.id", ondelete="CASCADE"),
+        primary_key=True,
     )
-    cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+    cv_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelCVWorkSchedule(JobBase):
@@ -235,31 +270,45 @@ class RelCVWorkSchedule(JobBase):
         ForeignKey("job.work_schedule.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+    cv_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelCVSkill(JobBase):
     __tablename__ = "rel_cv_skill"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
-    cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+    skill_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True
+    )
+    cv_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelCVAdditionalSkill(JobBase):
     __tablename__ = "rel_cv_additional_skill"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    skill_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True)
-    cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
+    skill_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.skill.id", ondelete="CASCADE"), primary_key=True
+    )
+    cv_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True
+    )
 
 
 class RelCVVacancy(JobBase):
     __tablename__ = "rel_cv_vacancy"
 
     id: None = None  # type: ignore  # noqa: PGH003
-    cv_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True)
-    vacancy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True)
+    cv_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.cv.id", ondelete="CASCADE"), primary_key=True
+    )
+    vacancy_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("job.vacancy.id", ondelete="CASCADE"), primary_key=True
+    )
     status: Mapped[VacancyResponseStatusEnum] = mapped_column(
         String(length=50),
         server_default=VacancyResponseStatusEnum.PENDING.value,

@@ -1,9 +1,17 @@
 from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
-from articles.application.commands.cancel_dislike_article import CancelDislikeArticleHandler
-from articles.application.commands.cancel_dislike_comment import CancelDislikeCommentHandler
-from articles.application.commands.cancel_like_article import CancelLikeArticleHandler
-from articles.application.commands.cancel_like_comment import CancelLikeCommentHandler
+from articles.application.commands.cancel_dislike_article import (
+    CancelDislikeArticleHandler,
+)
+from articles.application.commands.cancel_dislike_comment import (
+    CancelDislikeCommentHandler,
+)
+from articles.application.commands.cancel_like_article import (
+    CancelLikeArticleHandler,
+)
+from articles.application.commands.cancel_like_comment import (
+    CancelLikeCommentHandler,
+)
 from articles.application.commands.create_article import CreateArticleHandler
 from articles.application.commands.create_comment import CreateCommentHandler
 from articles.application.commands.delete_article import DeleteArticleHandler
@@ -15,18 +23,41 @@ from articles.application.commands.edit_comment import EditCommentHandler
 from articles.application.commands.like_article import LikeArticleHandler
 from articles.application.commands.like_comment import LikeCommentHandler
 from articles.application.commands.view_article import ViewArticleHandler
-from articles.application.ports.repo import ArticleReader, ArticleRepo, CommentReader, CommentRepo
+from articles.application.ports.repo import (
+    ArticleReader,
+    ArticleRepo,
+    CommentReader,
+    CommentRepo,
+)
 from articles.application.queries.get_article_by_id import GetArticleByIdHandler
 from articles.application.queries.get_articles import GetArticlesHandler
 from articles.application.queries.get_comments import GetCommentsHandler
-from articles.application.queries.get_specialization import GetSpecializationsHandler
+from articles.application.queries.get_specialization import (
+    GetSpecializationsHandler,
+)
 from articles.application.queries.get_tag_list import GetTagListHandler
-from articles.infrastructure.repositories.article import AlchemyArticleReader, AlchemyArticleRepo
-from articles.infrastructure.repositories.article_stats import AlchemyArticleStatRepo
-from articles.infrastructure.repositories.comment import AlchemyCommentReader, AlchemyCommentRepo
-from articles.infrastructure.repositories.comment_stats import AlchemyCommentStatRepo
-from articles.infrastructure.repositories.sub_article import AlchemySubArticleReader, AlchemySubArticleRepo
-from articles.infrastructure.repositories.tag import AlchemyTagReader, AlchemyTagRepo
+from articles.infrastructure.repositories.article import (
+    AlchemyArticleReader,
+    AlchemyArticleRepo,
+)
+from articles.infrastructure.repositories.article_stats import (
+    AlchemyArticleStatRepo,
+)
+from articles.infrastructure.repositories.comment import (
+    AlchemyCommentReader,
+    AlchemyCommentRepo,
+)
+from articles.infrastructure.repositories.comment_stats import (
+    AlchemyCommentStatRepo,
+)
+from articles.infrastructure.repositories.sub_article import (
+    AlchemySubArticleReader,
+    AlchemySubArticleRepo,
+)
+from articles.infrastructure.repositories.tag import (
+    AlchemyTagReader,
+    AlchemyTagRepo,
+)
 
 
 class ArticleProvider(Provider):

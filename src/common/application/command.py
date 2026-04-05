@@ -13,7 +13,11 @@ class Command(ABC, Generic[CRes]):
         return asdict(self)
 
     def to_dict_exclude_unset(self) -> dict[str, Any]:
-        return {attr: value for attr, value in asdict(self).items() if value is not Empty.UNSET}
+        return {
+            attr: value
+            for attr, value in asdict(self).items()
+            if value is not Empty.UNSET
+        }
 
 
 C = TypeVar("C", bound=Command)  # type: ignore

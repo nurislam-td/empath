@@ -15,7 +15,9 @@ from job.common.infrastructure.query_builders import vacancy_responses as qb
 from job.employment.application.dto import VacancyResponseDTO
 
 if TYPE_CHECKING:
-    from job.common.application.queries.get_vacancy_responses import GetVacancyResponsesQuery
+    from job.common.application.queries.get_vacancy_responses import (
+        GetVacancyResponsesQuery,
+    )
 
 
 @dataclass(slots=True)
@@ -41,7 +43,9 @@ class AlchemyVacancyResponseReader:
 
         vacancy_responses = await self._base.fetch_all(qs)
         if not vacancy_responses:
-            return PaginatedDTO[VacancyResponseDTO](count=value_count, page=pagination.page, results=[])
+            return PaginatedDTO[VacancyResponseDTO](
+                count=value_count, page=pagination.page, results=[]
+            )
 
         return PaginatedDTO[VacancyResponseDTO](
             count=value_count,

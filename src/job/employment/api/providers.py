@@ -2,21 +2,32 @@ from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
 from job.employment.application.commands.create_cv import CreateCVHandler
 from job.employment.application.commands.delete_cv import DeleteCVHandler
-from job.employment.application.commands.response_to_vacancy import ResponseToVacancyHandler
+from job.employment.application.commands.response_to_vacancy import (
+    ResponseToVacancyHandler,
+)
 from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.employment.application.queries.get_cv_list import GetCvListHandler
 from job.employment.application.queries.get_responses import GetResponsesHandler
 from job.employment.application.queries.get_vacancies import GetVacanciesHandler
 from job.employment.infrastructure.dao.employment_type import EmploymentTypeDAO
-from job.employment.infrastructure.dao.rel_additional_skill_cv import RelCVAdditionalSkillDAO
+from job.employment.infrastructure.dao.rel_additional_skill_cv import (
+    RelCVAdditionalSkillDAO,
+)
 from job.employment.infrastructure.dao.rel_skill_cv import RelCVSkillDAO
 from job.employment.infrastructure.dao.skill import SkillDAO
 from job.employment.infrastructure.dao.work_exp import WorkExpDAO
 from job.employment.infrastructure.dao.work_format import WorkFormatDAO
 from job.employment.infrastructure.dao.work_schedule import WorkScheduleDAO
-from job.employment.infrastructure.repositories.cv import AlchemyCVRepo, AlchemyEmploymentCVReader
-from job.employment.infrastructure.repositories.response_to_vacancy import AlchemyVacancyResponseRepo
-from job.employment.infrastructure.repositories.vacancy import AlchemyEmploymentVacancyReader
+from job.employment.infrastructure.repositories.cv import (
+    AlchemyCVRepo,
+    AlchemyEmploymentCVReader,
+)
+from job.employment.infrastructure.repositories.response_to_vacancy import (
+    AlchemyVacancyResponseRepo,
+)
+from job.employment.infrastructure.repositories.vacancy import (
+    AlchemyEmploymentVacancyReader,
+)
 
 
 class EmploymentProvider(Provider):

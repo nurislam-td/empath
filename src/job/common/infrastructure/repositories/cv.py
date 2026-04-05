@@ -26,9 +26,15 @@ class AlchemyCVReader:
             raise CVIdNotExistError(cv_id)
 
         skills = await self._base.fetch_all(qb.get_cv_skill_qs([cv.id]))
-        additional_skills = await self._base.fetch_all(qb.get_cv_additional_skill_qs([cv.id]))
-        work_schedules = await self._base.fetch_all(qb.get_cv_work_schedules_qs([cv.id]))
-        employment_types = await self._base.fetch_all(qb.get_cv_employment_type_qs([cv_id]))
+        additional_skills = await self._base.fetch_all(
+            qb.get_cv_additional_skill_qs([cv.id])
+        )
+        work_schedules = await self._base.fetch_all(
+            qb.get_cv_work_schedules_qs([cv.id])
+        )
+        employment_types = await self._base.fetch_all(
+            qb.get_cv_employment_type_qs([cv_id])
+        )
         work_formats = await self._base.fetch_all(qb.get_cv_work_format_qs([cv.id]))
         work_exp = await self._base.fetch_all(qb.get_cv_work_exp_qs([cv.id]))
 

@@ -2,16 +2,28 @@ from dishka import Provider, Scope, provide  # type: ignore  # noqa: PGH003
 
 from job.common.application.ports.repo import VacancyReader
 from job.common.application.queries.get_cv_by_id import GetCVByIdHandler
-from job.common.application.queries.get_employment_types import GetEmploymentTypesHandler
+from job.common.application.queries.get_employment_types import (
+    GetEmploymentTypesHandler,
+)
 from job.common.application.queries.get_skills import GetSkillsHandler
 from job.common.application.queries.get_vacancies import GetVacanciesHandler
-from job.common.application.queries.get_vacancy_by_id import GetVacancyByIdHandler
-from job.common.application.queries.get_vacancy_responses import GetVacancyResponsesHandler
-from job.common.application.queries.get_work_formats import GetWorkFormatsHandler
-from job.common.application.queries.get_work_schedules import GetWorkSchedulesHandler
+from job.common.application.queries.get_vacancy_by_id import (
+    GetVacancyByIdHandler,
+)
+from job.common.application.queries.get_vacancy_responses import (
+    GetVacancyResponsesHandler,
+)
+from job.common.application.queries.get_work_formats import (
+    GetWorkFormatsHandler,
+)
+from job.common.application.queries.get_work_schedules import (
+    GetWorkSchedulesHandler,
+)
 from job.common.infrastructure.repositories.cv import AlchemyCVReader
 from job.common.infrastructure.repositories.vacancy import AlchemyVacancyReader
-from job.common.infrastructure.repositories.vacancy_responses import AlchemyVacancyResponseReader
+from job.common.infrastructure.repositories.vacancy_responses import (
+    AlchemyVacancyResponseReader,
+)
 
 
 class JobProvider(Provider):

@@ -33,12 +33,15 @@ class CreateArticleHandler(CommandHandler[CreateArticle, None]):
 
     async def __call__(self, command: CreateArticle) -> None:
         converted_data = {
-            key: convert_strategy.get(key, lambda x: x)(value) for key, value in command.to_dict().items()
+            key: convert_strategy.get(key, lambda x: x)(value)
+            for key, value in command.to_dict().items()
         }
         article = Article(**converted_data)
         if not article.tags:
             raise EmptyTagListError
-        article.record_event(ArticleCreated(author_id=article.author_id, article_id=article.id))
+        article.record_event(
+            ArticleCreated(author_id=article.author_id, article_id=article.id)
+        )
         await self._article_repo.create_article(command)
         article.pull_events()
         await self._uow.commit()

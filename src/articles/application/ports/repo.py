@@ -1,14 +1,27 @@
 from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
-from articles.application.dto.article import ArticleDTO, CommentDTO, PaginatedArticleDTO, SpecializationDTO, TagDTO
+from articles.application.dto.article import (
+    ArticleDTO,
+    CommentDTO,
+    PaginatedArticleDTO,
+    SpecializationDTO,
+    TagDTO,
+)
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
 
 if TYPE_CHECKING:
-    from articles.application.commands import CreateArticle, CreateComment, EditArticle, EditComment
+    from articles.application.commands import (
+        CreateArticle,
+        CreateComment,
+        EditArticle,
+        EditComment,
+    )
     from articles.application.queries import GetArticles, GetTagList
-    from articles.application.queries.get_specialization import GetSpecializations
+    from articles.application.queries.get_specialization import (
+        GetSpecializations,
+    )
 
 
 class ArticleRepo(Protocol):
@@ -23,10 +36,14 @@ class ArticleRepo(Protocol):
 
 
 class ArticleReader(Protocol):
-    async def get_article_by_id(self, article_id: UUID, user_id: UUID | None = None) -> ArticleDTO: ...
+    async def get_article_by_id(
+        self, article_id: UUID, user_id: UUID | None = None
+    ) -> ArticleDTO: ...
     async def get_tag_list(self, query: "GetTagList") -> PaginatedDTO[TagDTO]: ...
     async def get_articles(self, query: "GetArticles") -> PaginatedArticleDTO: ...
-    async def get_specialization(self, query: "GetSpecializations") -> PaginatedDTO[SpecializationDTO]: ...
+    async def get_specialization(
+        self, query: "GetSpecializations"
+    ) -> PaginatedDTO[SpecializationDTO]: ...
 
 
 class CommentRepo(Protocol):
@@ -46,4 +63,6 @@ class CommentReader(Protocol):
         article_id: UUID,
         pagination: PaginationParams,
     ) -> PaginatedDTO[CommentDTO]: ...
-    async def get_comment_by_id(self, comment_id: UUID, user_id: UUID | None = None) -> CommentDTO: ...
+    async def get_comment_by_id(
+        self, comment_id: UUID, user_id: UUID | None = None
+    ) -> CommentDTO: ...

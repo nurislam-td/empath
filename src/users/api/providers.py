@@ -8,7 +8,10 @@ from users.application.commands.update_user import UpdateUserHandler
 from users.application.ports.repo import UserReader, UserRepo
 from users.application.queries.get_users import GetUsersHandler
 from users.application.queries.user_by_id import GetUserByIdHandler
-from users.infrastructure.repositories.user import AlchemyUserReader, AlchemyUserRepo
+from users.infrastructure.repositories.user import (
+    AlchemyUserReader,
+    AlchemyUserRepo,
+)
 
 
 class UsersProvider(Provider):

@@ -44,10 +44,13 @@ class ArticleQueryBuilder:
     _rel_tag_article = RelArticleTag
 
     @classmethod
-    def _filter_article(cls, qs: Select[Any], article_filter: ArticleFilter) -> Select[Any]:
+    def _filter_article(
+        cls, qs: Select[Any], article_filter: ArticleFilter
+    ) -> Select[Any]:
         if search := article_filter.search:
             search_qs = select(cls._sub_article.article_id).where(
-                cls._sub_article.title.ilike(f"%{search}%") | cls._sub_article.text.ilike(f"%{search}%")
+                cls._sub_article.title.ilike(f"%{search}%")
+                | cls._sub_article.text.ilike(f"%{search}%")
             )
             search_filter = (
                 cls._article.title.ilike(f"%{search}%")
@@ -59,7 +62,8 @@ class ArticleQueryBuilder:
         if article_filter.liked_user_id:
             qs = qs.join(
                 cls._like.__table__,
-                (cls._article.id == cls._like.article_id) & (cls._like.user_id == article_filter.liked_user_id),
+                (cls._article.id == cls._like.article_id)
+                & (cls._like.user_id == article_filter.liked_user_id),
             )
         if article_filter.disliked_user_id:
             qs = qs.join(
@@ -70,14 +74,18 @@ class ArticleQueryBuilder:
         if article_filter.viewed_user_id:
             qs = qs.join(
                 cls._view.__table__,
-                (cls._article.id == cls._view.article_id) & (cls._view.user_id == article_filter.viewed_user_id),
+                (cls._article.id == cls._view.article_id)
+                & (cls._view.user_id == article_filter.viewed_user_id),
             )
         if article_filter.specializations_id:
-            qs = qs.where(cls._article.specialization_id.in_(article_filter.specializations_id))
+            qs = qs.where(
+                cls._article.specialization_id.in_(article_filter.specializations_id)
+            )
         if article_filter.tags_id:
             tag_qs = select(cls._rel_tag_article.article_id).join(
                 cls._tag.__table__,
-                (cls._tag.id == cls._rel_tag_article.tag_id) & (cls._tag.id.in_(article_filter.tags_id)),
+                (cls._tag.id == cls._rel_tag_article.tag_id)
+                & (cls._tag.id.in_(article_filter.tags_id)),
             )
             qs = qs.where(cls._article.id.in_(tag_qs))
         if article_filter.exclude_words:
@@ -97,7 +105,8 @@ class ArticleQueryBuilder:
                 | cls._article.text.ilike(f"%{word}%")
                 | cls._article.id.in_(
                     select(cls._sub_article.article_id).where(
-                        cls._sub_article.text.ilike(f"%{word}%") | cls._sub_article.title.ilike(f"%{word}%"),
+                        cls._sub_article.text.ilike(f"%{word}%")
+                        | cls._sub_article.title.ilike(f"%{word}%"),
                     )
                 )
                 for word in article_filter.include_words
@@ -106,26 +115,42 @@ class ArticleQueryBuilder:
         return qs
 
     @classmethod
-    def get_articles_qs(cls, user_id: UUID | None = None, article_filter: ArticleFilter | None = None) -> Select[Any]:
+    def get_articles_qs(
+        cls,
+        user_id: UUID | None = None,
+        article_filter: ArticleFilter | None = None,
+    ) -> Select[Any]:
         article_authors_join = cls._article.__table__.join(
             cls._author.__table__,
             cls._article.author_id == cls._author.id,
-        ).outerjoin(cls._specialization.__table__, cls._article.specialization_id == cls._specialization.id)
+        ).outerjoin(
+            cls._specialization.__table__,
+            cls._article.specialization_id == cls._specialization.id,
+        )
         is_liked_subq = select(
             exists()
-            .where(cls._like.article_id == cls._article.id, cls._like.user_id == user_id)
+            .where(
+                cls._like.article_id == cls._article.id,
+                cls._like.user_id == user_id,
+            )
             .correlate(cls._article),
         ).scalar_subquery()
 
         is_disliked_subq = select(
             exists()
-            .where(cls._dislike.article_id == cls._article.id, cls._dislike.user_id == user_id)
+            .where(
+                cls._dislike.article_id == cls._article.id,
+                cls._dislike.user_id == user_id,
+            )
             .correlate(cls._article),
         ).scalar_subquery()
 
         is_viewed_subq = select(
             exists()
-            .where(cls._view.article_id == cls._article.id, cls._view.user_id == user_id)
+            .where(
+                cls._view.article_id == cls._article.id,
+                cls._view.user_id == user_id,
+            )
             .correlate(cls._article),
         ).scalar_subquery()
 

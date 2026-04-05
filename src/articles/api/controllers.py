@@ -3,7 +3,17 @@ from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, delete, get, patch, post, put, status_codes
+from litestar import (
+    Controller,
+    Request,
+    Response,
+    delete,
+    get,
+    patch,
+    post,
+    put,
+    status_codes,
+)
 from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.dto import DTOData
@@ -15,24 +25,66 @@ from articles.api.schemas import (
     EditCommentSchema,
     GetArticleFilters,
 )
-from articles.application.commands.cancel_dislike_article import CancelDislikeArticle, CancelDislikeArticleHandler
-from articles.application.commands.cancel_dislike_comment import CancelDislikeComment, CancelDislikeCommentHandler
-from articles.application.commands.cancel_like_article import CancelLikeArticle, CancelLikeArticleHandler
-from articles.application.commands.cancel_like_comment import CancelLikeComment, CancelLikeCommentHandler
+from articles.application.commands.cancel_dislike_article import (
+    CancelDislikeArticle,
+    CancelDislikeArticleHandler,
+)
+from articles.application.commands.cancel_dislike_comment import (
+    CancelDislikeComment,
+    CancelDislikeCommentHandler,
+)
+from articles.application.commands.cancel_like_article import (
+    CancelLikeArticle,
+    CancelLikeArticleHandler,
+)
+from articles.application.commands.cancel_like_comment import (
+    CancelLikeComment,
+    CancelLikeCommentHandler,
+)
 from articles.application.commands.create_article import (
     CreateArticle,
     CreateArticleHandler,
 )
-from articles.application.commands.create_comment import CreateComment, CreateCommentHandler
-from articles.application.commands.delete_article import DeleteArticle, DeleteArticleHandler
-from articles.application.commands.delete_comment import DeleteComment, DeleteCommentHandler
-from articles.application.commands.dislike_article import DislikeArticle, DislikeArticleHandler
-from articles.application.commands.dislike_comment import DislikeComment, DislikeCommentHandler
-from articles.application.commands.edit_article import EditArticle, EditArticleHandler
-from articles.application.commands.edit_comment import EditComment, EditCommentHandler
-from articles.application.commands.like_article import LikeArticle, LikeArticleHandler
-from articles.application.commands.like_comment import LikeComment, LikeCommentHandler
-from articles.application.commands.view_article import ViewArticle, ViewArticleHandler
+from articles.application.commands.create_comment import (
+    CreateComment,
+    CreateCommentHandler,
+)
+from articles.application.commands.delete_article import (
+    DeleteArticle,
+    DeleteArticleHandler,
+)
+from articles.application.commands.delete_comment import (
+    DeleteComment,
+    DeleteCommentHandler,
+)
+from articles.application.commands.dislike_article import (
+    DislikeArticle,
+    DislikeArticleHandler,
+)
+from articles.application.commands.dislike_comment import (
+    DislikeComment,
+    DislikeCommentHandler,
+)
+from articles.application.commands.edit_article import (
+    EditArticle,
+    EditArticleHandler,
+)
+from articles.application.commands.edit_comment import (
+    EditComment,
+    EditCommentHandler,
+)
+from articles.application.commands.like_article import (
+    LikeArticle,
+    LikeArticleHandler,
+)
+from articles.application.commands.like_comment import (
+    LikeComment,
+    LikeCommentHandler,
+)
+from articles.application.commands.view_article import (
+    ViewArticle,
+    ViewArticleHandler,
+)
 from articles.application.dto.article import (
     ArticleDTO,
     CommentDTO,
@@ -51,11 +103,27 @@ from articles.application.exceptions import (
     NothingToCancelError,
     ViewAlreadyExistError,
 )
-from articles.application.queries.get_article_by_id import GetArticleById, GetArticleByIdHandler
-from articles.application.queries.get_articles import ArticleFilter, GetArticles, GetArticlesHandler
-from articles.application.queries.get_comments import GetComments, GetCommentsHandler
-from articles.application.queries.get_specialization import GetSpecializations, GetSpecializationsHandler
-from articles.application.queries.get_tag_list import GetTagList, GetTagListHandler
+from articles.application.queries.get_article_by_id import (
+    GetArticleById,
+    GetArticleByIdHandler,
+)
+from articles.application.queries.get_articles import (
+    ArticleFilter,
+    GetArticles,
+    GetArticlesHandler,
+)
+from articles.application.queries.get_comments import (
+    GetComments,
+    GetCommentsHandler,
+)
+from articles.application.queries.get_specialization import (
+    GetSpecializations,
+    GetSpecializationsHandler,
+)
+from articles.application.queries.get_tag_list import (
+    GetTagList,
+    GetTagListHandler,
+)
 from articles.domain.entities.article import EmptyTagListError
 from articles.domain.value_objects.article_title import TooLongArticleTitleError
 from articles.domain.value_objects.tag_name import TooLongTagNameError
@@ -67,10 +135,16 @@ from common.application.query import PaginationParams
 
 class ArticleController(Controller):
     exception_handlers: ClassVar = {  # type: ignore  # noqa: PGH003
-        TooLongArticleTitleError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
+        TooLongArticleTitleError: error_handler(
+            status_codes.HTTP_422_UNPROCESSABLE_ENTITY
+        ),
         TooLongTagNameError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
-        EmptyTagListError: error_handler(status_code=status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
-        EmptyArticleUpdatesError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
+        EmptyTagListError: error_handler(
+            status_code=status_codes.HTTP_422_UNPROCESSABLE_ENTITY
+        ),
+        EmptyArticleUpdatesError: error_handler(
+            status_codes.HTTP_422_UNPROCESSABLE_ENTITY
+        ),
         ContentAuthorMismatchError: error_handler(status_codes.HTTP_403_FORBIDDEN),
         DislikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
         LikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
@@ -124,7 +198,9 @@ class ArticleController(Controller):
         if tags := kwargs.get("tags"):  # .schema.TagSchema
             kwargs["tags"] = [TagDTO(**tag.to_dict()) for tag in tags]
         if sub_articles := kwargs.get("sub_articles"):  # .schema.SubArticleSchema
-            kwargs["sub_articles"] = [SubArticleDTO(**sub_article.to_dict()) for sub_article in sub_articles]
+            kwargs["sub_articles"] = [
+                SubArticleDTO(**sub_article.to_dict()) for sub_article in sub_articles
+            ]
         command = EditArticle(id=article_id, author_id=request.user.sub, **kwargs)
         await edit_article(command)
         return Response(content="", status_code=status_codes.HTTP_200_OK)
@@ -174,7 +250,9 @@ class ArticleController(Controller):
 
     @delete("/{article_id:uuid}")
     @inject
-    async def delete_article(self, article_id: UUID, delete_article: Depends[DeleteArticleHandler]) -> None:
+    async def delete_article(
+        self, article_id: UUID, delete_article: Depends[DeleteArticleHandler]
+    ) -> None:
         await delete_article(DeleteArticle(article_id=article_id))
 
     @post(
@@ -190,7 +268,9 @@ class ArticleController(Controller):
         create_comment: Depends[CreateCommentHandler],
         request: Request[JWTUserPayload, str, State],
     ) -> Response[str]:
-        await create_comment(data.create_instance(author_id=request.user.sub, article_id=article_id))
+        await create_comment(
+            data.create_instance(author_id=request.user.sub, article_id=article_id)
+        )
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
 
     @put(
@@ -207,7 +287,11 @@ class ArticleController(Controller):
         edit_comment: Depends[EditCommentHandler],
         request: Request[JWTUserPayload, str, State],
     ) -> Response[str]:
-        await edit_comment(data.create_instance(article_id=article_id, author_id=request.user.sub, id=comment_id))
+        await edit_comment(
+            data.create_instance(
+                article_id=article_id, author_id=request.user.sub, id=comment_id
+            )
+        )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
     @delete(
@@ -215,7 +299,9 @@ class ArticleController(Controller):
         status_code=status_codes.HTTP_204_NO_CONTENT,
     )
     @inject
-    async def delete_comment(self, comment_id: UUID, delete_comment: Depends[DeleteCommentHandler]) -> None:
+    async def delete_comment(
+        self, comment_id: UUID, delete_comment: Depends[DeleteCommentHandler]
+    ) -> None:
         await delete_comment(DeleteComment(comment_id=comment_id))
 
     @get(
@@ -231,7 +317,11 @@ class ArticleController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[CommentDTO]:
         return await get_comments(
-            GetComments(pagination=pagination_params, user_id=request.user.sub, article_id=article_id)
+            GetComments(
+                pagination=pagination_params,
+                user_id=request.user.sub,
+                article_id=article_id,
+            )
         )
 
     @get(
@@ -245,7 +335,9 @@ class ArticleController(Controller):
         pagination_params: PaginationParams,
         name: str | None = None,
     ) -> PaginatedDTO[SpecializationDTO]:
-        return await get_specializations(GetSpecializations(pagination=pagination_params, name=name))
+        return await get_specializations(
+            GetSpecializations(pagination=pagination_params, name=name)
+        )
 
     @post(
         "/{article_id:uuid}/likes",
@@ -272,7 +364,9 @@ class ArticleController(Controller):
         request: Request[JWTUserPayload, str, State],
         cancel_like_article: Depends[CancelLikeArticleHandler],
     ) -> Response[str]:
-        await cancel_like_article(CancelLikeArticle(id=article_id, user_id=request.user.sub))
+        await cancel_like_article(
+            CancelLikeArticle(id=article_id, user_id=request.user.sub)
+        )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
     @post(
@@ -300,7 +394,9 @@ class ArticleController(Controller):
         request: Request[JWTUserPayload, str, State],
         cancel_dislike_article: Depends[CancelDislikeArticleHandler],
     ) -> Response[str]:
-        await cancel_dislike_article(CancelDislikeArticle(id=article_id, user_id=request.user.sub))
+        await cancel_dislike_article(
+            CancelDislikeArticle(id=article_id, user_id=request.user.sub)
+        )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
     @post(
@@ -342,7 +438,9 @@ class ArticleController(Controller):
         request: Request[JWTUserPayload, str, State],
         cancel_like_comment: Depends[CancelLikeCommentHandler],
     ) -> Response[str]:
-        await cancel_like_comment(CancelLikeComment(id=comment_id, user_id=request.user.sub))
+        await cancel_like_comment(
+            CancelLikeComment(id=comment_id, user_id=request.user.sub)
+        )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
     @post(
@@ -370,5 +468,7 @@ class ArticleController(Controller):
         request: Request[JWTUserPayload, str, State],
         cancel_dislike_comment: Depends[CancelDislikeCommentHandler],
     ) -> Response[str]:
-        await cancel_dislike_comment(CancelDislikeComment(id=comment_id, user_id=request.user.sub))
+        await cancel_dislike_comment(
+            CancelDislikeComment(id=comment_id, user_id=request.user.sub)
+        )
         return Response(content="", status_code=status_codes.HTTP_200_OK)

@@ -4,7 +4,11 @@ from uuid import UUID
 from common.application.uow import UnitOfWork
 from job.employment.api.schemas import UpdateCVSchema
 from job.employment.infrastructure.repositories.cv import AlchemyCVRepo
-from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.application.exceptions import (
+    EmptyEmploymentTypesError,
+    EmptySkillsError,
+    EmptyWorkSchedulesError,
+)
 
 
 @dataclass(slots=True)

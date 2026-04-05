@@ -35,7 +35,12 @@ class TimedBaseModel(BaseModel):
     """An abstract base model that adds created_at and updated_at timestamp fields to the model."""
 
     __abstract__ = True
-    created_at: Mapped[datetime] = mapped_column(sa.types.DateTime, nullable=False, server_default=sa.func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        sa.types.DateTime, nullable=False, server_default=sa.func.now()
+    )
     updated_at: Mapped[datetime] = mapped_column(
-        sa.types.DateTime, nullable=False, server_default=sa.func.now(), onupdate=sa.func.now()
+        sa.types.DateTime,
+        nullable=False,
+        server_default=sa.func.now(),
+        onupdate=sa.func.now(),
     )

@@ -93,12 +93,15 @@ def get_vacancy_skill_qs(
         .add_columns(_rel_skill_vacancy.vacancy_id)
         .join(
             _rel_skill_vacancy.__table__,
-            (_rel_skill_vacancy.skill_id == _skill.id) & _rel_skill_vacancy.vacancy_id.in_(vacancy_ids),
+            (_rel_skill_vacancy.skill_id == _skill.id)
+            & _rel_skill_vacancy.vacancy_id.in_(vacancy_ids),
         )
     )
 
 
-def get_work_schedules_qs(vacancies_id: list[UUID] | None = None) -> Select[Any]:
+def get_work_schedules_qs(
+    vacancies_id: list[UUID] | None = None,
+) -> Select[Any]:
     qs = select(_schedule.__table__)
     if vacancies_id:
         qs = qs.add_columns(
@@ -111,7 +114,9 @@ def get_work_schedules_qs(vacancies_id: list[UUID] | None = None) -> Select[Any]
     return qs
 
 
-def get_employment_type_qs(vacancies_id: list[UUID] | None = None) -> Select[Any]:
+def get_employment_type_qs(
+    vacancies_id: list[UUID] | None = None,
+) -> Select[Any]:
     qs = select(_employment_type.__table__)
     if vacancies_id:
         qs = qs.add_columns(_rel_employment_vacancy.vacancy_id).join(
@@ -136,8 +141,14 @@ def get_work_format_qs(vacancies_id: list[UUID] | None = None) -> Select[Any]:
 def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:
     if search == "":
         return qs
-    search_table = _rel_skill_vacancy.__table__.join(_skill.__table__, _rel_skill_vacancy.skill_id == _skill.id)
-    skill = select(_rel_skill_vacancy.vacancy_id).select_from(search_table).where(_skill.name.ilike(f"%{search}%"))
+    search_table = _rel_skill_vacancy.__table__.join(
+        _skill.__table__, _rel_skill_vacancy.skill_id == _skill.id
+    )
+    skill = (
+        select(_rel_skill_vacancy.vacancy_id)
+        .select_from(search_table)
+        .where(_skill.name.ilike(f"%{search}%"))
+    )
     additional_skill = select(_rel_additional_skill_vacancy.vacancy_id)
     additional_skill = additional_skill.select_from(
         _rel_additional_skill_vacancy.__table__.join(
@@ -160,8 +171,12 @@ def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:
     )
 
 
-def get_vacancy_qs(filters: "GetVacanciesQuery | None" = None, search: str | None = None) -> Select[Any]:
-    table = _vacancy.__table__.outerjoin(_recruiter.__table__, _vacancy.author_id == _recruiter.id)
+def get_vacancy_qs(
+    filters: "GetVacanciesQuery | None" = None, search: str | None = None
+) -> Select[Any]:
+    table = _vacancy.__table__.outerjoin(
+        _recruiter.__table__, _vacancy.author_id == _recruiter.id
+    )
     qs = select(
         _vacancy.__table__,
         _recruiter.company_name.label("company_name"),
@@ -177,7 +192,9 @@ def get_vacancy_qs(filters: "GetVacanciesQuery | None" = None, search: str | Non
 
 
 def get_weight_qs(skill_ids: set[UUID]) -> Select[tuple[UUID, str, float]]:
-    doc_count = select(func.count().label("N")).select_from(_vacancy.__table__).cte("doc_count")
+    doc_count = (
+        select(func.count().label("N")).select_from(_vacancy.__table__).cte("doc_count")
+    )
 
     df = (  # noqa: PD901
         select(
@@ -185,7 +202,10 @@ def get_weight_qs(skill_ids: set[UUID]) -> Select[tuple[UUID, str, float]]:
             _skill.name.label("skill_name"),
             func.count(func.distinct(_rel_skill_vacancy.vacancy_id)).label("df"),
         )
-        .join(_skill.__table__, (_skill.id == _rel_skill_vacancy.skill_id) & (_skill.id.in_(skill_ids)))
+        .join(
+            _skill.__table__,
+            (_skill.id == _rel_skill_vacancy.skill_id) & (_skill.id.in_(skill_ids)),
+        )
         .group_by(_rel_skill_vacancy.skill_id, _skill.name)
         .cte("df")
     )

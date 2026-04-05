@@ -14,7 +14,12 @@ from litestar.response import Stream
 
 from common.api.exception_handlers import error_handler
 from file_storage.api.schema import FileStorageResponse
-from file_storage.application.commands.upload_file import FileType, StorageNames, UploadFile, UploadFileHandler
+from file_storage.application.commands.upload_file import (
+    FileType,
+    StorageNames,
+    UploadFile,
+    UploadFileHandler,
+)
 from file_storage.application.exceptions import FileNotExistError
 from file_storage.application.queries.download_file import (
     DownloadFile,
@@ -22,7 +27,9 @@ from file_storage.application.queries.download_file import (
 )
 
 
-async def bytes_io_generator(bytes_io: BytesIO, chunk_size: int = 1024) -> AsyncIterable[bytes]:
+async def bytes_io_generator(
+    bytes_io: BytesIO, chunk_size: int = 1024
+) -> AsyncIterable[bytes]:
     bytes_io.seek(0)
 
     while chunk := bytes_io.read(chunk_size):
@@ -39,7 +46,9 @@ class FileStorageController(Controller):
         status_code=status_codes.HTTP_200_OK,
     )
     @inject
-    async def download_file(self, filepath: str, download_file: Depends[DownloadFileHandler]) -> Stream:
+    async def download_file(
+        self, filepath: str, download_file: Depends[DownloadFileHandler]
+    ) -> Stream:
         query = DownloadFile(filepath=filepath)
         file_bytes = await download_file(query)
         media_type, _ = mimetypes.guess_type(filepath)
@@ -54,7 +63,9 @@ class FileStorageController(Controller):
         self,
         file_type: FileType,
         storage_name: StorageNames,
-        data: Annotated[LitestarUploadFile, Body(media_type=RequestEncodingType.MULTI_PART)],
+        data: Annotated[
+            LitestarUploadFile, Body(media_type=RequestEncodingType.MULTI_PART)
+        ],
         upload_file: Depends[UploadFileHandler],
     ) -> FileStorageResponse:
         content = await data.read()

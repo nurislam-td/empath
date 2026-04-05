@@ -51,7 +51,10 @@ class CreateCVSchema(BaseStruct):
 
 
 create_cv_dto = MsgspecDTO[
-    Annotated[CreateCVSchema, DTOConfig(exclude={"id", "author_id"}, rename_fields={"salary.from_": "from"})]
+    Annotated[
+        CreateCVSchema,
+        DTOConfig(exclude={"id", "author_id"}, rename_fields={"salary.from_": "from"}),
+    ]
 ]
 
 
@@ -78,4 +81,6 @@ class ResponseToVacancySchema(BaseStruct):
     vacancy_id: UUID
 
 
-response_to_vacancy_dto = MsgspecDTO[Annotated[ResponseToVacancySchema, DTOConfig(exclude={"vacancy_id"})]]
+response_to_vacancy_dto = MsgspecDTO[
+    Annotated[ResponseToVacancySchema, DTOConfig(exclude={"vacancy_id"})]
+]

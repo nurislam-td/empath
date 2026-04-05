@@ -4,7 +4,16 @@ from uuid import UUID
 
 from dishka import FromDishka as Depends
 from dishka.integrations.litestar import inject
-from litestar import Controller, Request, Response, delete, get, patch, post, status_codes
+from litestar import (
+    Controller,
+    Request,
+    Response,
+    delete,
+    get,
+    patch,
+    post,
+    status_codes,
+)
 from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.dto import DTOData
@@ -25,7 +34,9 @@ from job.employment.api.schemas import (
 )
 from job.employment.application.commands.create_cv import CreateCVHandler
 from job.employment.application.commands.delete_cv import DeleteCVHandler
-from job.employment.application.commands.response_to_vacancy import ResponseToVacancyHandler
+from job.employment.application.commands.response_to_vacancy import (
+    ResponseToVacancyHandler,
+)
 from job.employment.application.commands.update_cv import UpdateCVHandler
 from job.employment.application.dto import (
     CVDTO,
@@ -34,7 +45,11 @@ from job.employment.application.dto import (
 from job.employment.application.queries.get_cv_list import GetCvListHandler
 from job.employment.application.queries.get_responses import GetResponsesHandler
 from job.employment.application.queries.get_vacancies import GetVacanciesHandler
-from job.recruitment.application.exceptions import EmptyEmploymentTypesError, EmptySkillsError, EmptyWorkSchedulesError
+from job.recruitment.application.exceptions import (
+    EmptyEmploymentTypesError,
+    EmptySkillsError,
+    EmptyWorkSchedulesError,
+)
 
 
 class ResponseController(Controller):
@@ -59,7 +74,9 @@ class ResponseController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[VacancyDTO]:
         return await get_vacancies(
-            query=GetVacanciesQuery(**filters.to_dict()), employer_id=request.user.sub, pagination=pagination_params
+            query=GetVacanciesQuery(**filters.to_dict()),
+            employer_id=request.user.sub,
+            pagination=pagination_params,
         )
 
     @post("/cv", status_code=status_codes.HTTP_201_CREATED, dto=create_cv_dto)
@@ -115,7 +132,9 @@ class ResponseController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[VacancyDTO]:
         return await get_responses(
-            query=GetVacanciesQuery(**filters.to_dict()), employer_id=request.user.sub, pagination=pagination_params
+            query=GetVacanciesQuery(**filters.to_dict()),
+            employer_id=request.user.sub,
+            pagination=pagination_params,
         )
 
     @get(
@@ -130,7 +149,9 @@ class ResponseController(Controller):
         get_cv_list: Depends[GetCvListHandler],
         request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[CVDTO]:
-        return await get_cv_list(employer_id=request.user.sub, pagination=pagination_params)
+        return await get_cv_list(
+            employer_id=request.user.sub, pagination=pagination_params
+        )
 
     @delete(
         "/cv/{cv_id:uuid}",

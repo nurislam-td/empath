@@ -3,7 +3,12 @@ from dataclasses import dataclass
 from functools import partial
 from uuid import UUID
 
-from job.common.application.dto import CvAuthorDTO, CvWithWeightDTO, RecommendationsDTO, SkillNameWeightDTO
+from job.common.application.dto import (
+    CvAuthorDTO,
+    CvWithWeightDTO,
+    RecommendationsDTO,
+    SkillNameWeightDTO,
+)
 from job.common.application.ports.repo import VacancyReader
 from job.employment.application.dto import CVDTO
 
@@ -15,7 +20,11 @@ class GetRecommendationsHandler:
     def _get_cv_weight(self, cv: CVDTO, weight_map: dict[str, float]) -> float:
         all_skills = set(cv.skills) | set(cv.additional_skills or ())
         all_skills = {s for s in all_skills if s in weight_map}
-        return sum(weight_map.get(s, 0.0) for s in all_skills) / sum(weight_map.values()) if weight_map else 0.0
+        return (
+            sum(weight_map.get(s, 0.0) for s in all_skills) / sum(weight_map.values())
+            if weight_map
+            else 0.0
+        )
 
     async def __call__(self, vacancy_id: UUID) -> RecommendationsDTO:
         vacancy = await self._reader.get_vacancy_by_id(vacancy_id=vacancy_id)
@@ -32,9 +41,15 @@ class GetRecommendationsHandler:
         recommendations: list[CvWithWeightDTO] = []
         for cv in top_cvs:
             w = calculate_cv_weight(cv)
-            skills_dto = [SkillNameWeightDTO(name=s, weight=weight_map.get(s, 0.0)) for s in cv.skills]
+            skills_dto = [
+                SkillNameWeightDTO(name=s, weight=weight_map.get(s, 0.0))
+                for s in cv.skills
+            ]
             add_skills = cv.additional_skills or []
-            additional_dto = [SkillNameWeightDTO(name=s, weight=weight_map.get(s, 0.0)) for s in add_skills] or None
+            additional_dto = [
+                SkillNameWeightDTO(name=s, weight=weight_map.get(s, 0.0))
+                for s in add_skills
+            ] or None
 
             recommendations.append(
                 CvWithWeightDTO(
@@ -51,4 +66,6 @@ class GetRecommendationsHandler:
                 ),
             )
 
-        return RecommendationsDTO(recommendations=recommendations, weights=skill_weights)
+        return RecommendationsDTO(
+            recommendations=recommendations, weights=skill_weights
+        )

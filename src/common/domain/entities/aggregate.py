@@ -8,7 +8,9 @@ from .entity import Entity
 
 @dataclass(slots=True)
 class Aggregate(Entity, ABC):
-    _events: list[Event] = field(default_factory=list, init=False, repr=False, hash=False, compare=False)
+    _events: list[Event] = field(
+        default_factory=list, init=False, repr=False, hash=False, compare=False
+    )
 
     def record_event(self, event: Event) -> None:
         self._events.append(event)

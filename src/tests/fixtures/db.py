@@ -6,7 +6,12 @@ import alembic.command
 import pytest
 from alembic.config import Config as AlembicConfig
 from sqlalchemy import URL, Connection, text
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from testcontainers.postgres import PostgresContainer
 
 
@@ -17,7 +22,11 @@ class PostgresDbManager:
     async def create_database(self, database: str, template: str = "template1") -> None:
         async with self._engine.connect() as connection:
             # "template1" is the default template name for the `CREATE DATABASE` statement
-            await connection.execute(text(f'CREATE DATABASE "{database}" ENCODING \'utf8\' TEMPLATE "{template}"'))
+            await connection.execute(
+                text(
+                    f'CREATE DATABASE "{database}" ENCODING \'utf8\' TEMPLATE "{template}"'
+                )
+            )
 
     async def drop_database(self, database: str) -> None:
         async with self._engine.connect() as connection:
@@ -26,7 +35,9 @@ class PostgresDbManager:
 
 @pytest.fixture(scope="session")
 def postgres() -> Generator[PostgresContainer]:
-    with PostgresContainer("postgres:16", dbname="template-db", driver="asyncpg") as postgres:
+    with PostgresContainer(
+        "postgres:16", dbname="template-db", driver="asyncpg"
+    ) as postgres:
         yield postgres
 
 
@@ -41,7 +52,9 @@ def run_migrations(connection: Connection) -> None:
 
 
 @pytest.fixture(scope="session")
-async def template_db_engine(postgres: PostgresContainer) -> AsyncGenerator[AsyncEngine]:
+async def template_db_engine(
+    postgres: PostgresContainer,
+) -> AsyncGenerator[AsyncEngine]:
     postgres_url = postgres.get_connection_url()
     engine = create_async_engine(postgres_url)
     async with engine.connect() as connection:
@@ -92,7 +105,9 @@ async def engine(test_postgres_url: str) -> AsyncGenerator[AsyncEngine]:
 
 
 @pytest.fixture
-async def session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
+async def session_factory(
+    engine: AsyncEngine,
+) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(
         engine,
         autoflush=False,
@@ -103,6 +118,8 @@ async def session_factory(engine: AsyncEngine) -> async_sessionmaker[AsyncSessio
 
 
 @pytest.fixture
-async def session(session_factory: async_sessionmaker[AsyncSession]) -> AsyncGenerator[AsyncSession]:
+async def session(
+    session_factory: async_sessionmaker[AsyncSession],
+) -> AsyncGenerator[AsyncSession]:
     async with session_factory() as session:
         yield session

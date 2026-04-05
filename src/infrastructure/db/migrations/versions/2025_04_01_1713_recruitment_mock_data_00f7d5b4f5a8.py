@@ -30,7 +30,10 @@ def upgrade() -> None:
             VALUES (:full_time_id, 'Full-time'),
                    (:part_time_id, 'Part-time')
             """
-        ).bindparams(full_time_id=(employment_type_full_time), part_time_id=(employment_type_part_time)),
+        ).bindparams(
+            full_time_id=(employment_type_full_time),
+            part_time_id=(employment_type_part_time),
+        ),
     )
 
     # Вставляем данные в таблицу work_schedule

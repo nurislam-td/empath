@@ -27,18 +27,26 @@ class AlchemyTagRepo:
 
     async def create_tags_if_not_exists(self, tags: list[TagDTO]) -> None:
         await self.base.execute(
-            insert(self.tag).values([tag.to_dict() for tag in tags]).on_conflict_do_nothing(),
+            insert(self.tag)
+            .values([tag.to_dict() for tag in tags])
+            .on_conflict_do_nothing(),
         )
 
     async def map_tags_to_article(self, tag_ids: set[UUID], article_id: UUID) -> None:
         if not tag_ids:
             return
         await self.base.execute(
-            insert(self.rel_article_tag).values([{"tag_id": tag_id, "article_id": article_id} for tag_id in tag_ids])
+            insert(self.rel_article_tag).values(
+                [{"tag_id": tag_id, "article_id": article_id} for tag_id in tag_ids]
+            )
         )
 
     async def unmap_tags_from_article(self, article_id: UUID) -> None:
-        await self.base.execute(delete(self.rel_article_tag).filter(self.rel_article_tag.article_id == article_id))
+        await self.base.execute(
+            delete(self.rel_article_tag).filter(
+                self.rel_article_tag.article_id == article_id
+            )
+        )
 
     async def update_article_tags(self, article_id: UUID, tags: list[TagDTO]) -> None:
         await asyncio.gather(
@@ -66,7 +74,8 @@ class AlchemyTagReader:
             selected.append(self.rel_article_tag.article_id)
             table = table.join(
                 self.rel_article_tag.__table__,
-                (self.tag.id == self.rel_article_tag.tag_id) & (self.rel_article_tag.article_id.in_(article_ids)),
+                (self.tag.id == self.rel_article_tag.tag_id)
+                & (self.rel_article_tag.article_id.in_(article_ids)),
             )
 
         return select(*selected).select_from(table)
@@ -76,12 +85,16 @@ class AlchemyTagReader:
         qs = TagFilters(name=query.name).filter_qs(qs).order_by(self.tag.name)
 
         paginated_query = self.paginator.paginate(
-            query=qs, page=query.pagination.page, per_page=query.pagination.per_page
+            query=qs,
+            page=query.pagination.page,
+            per_page=query.pagination.per_page,
         )
         value_count = await self.base.count(qs)
         tags = await self.base.fetch_all(paginated_query)
         if not tags:
-            return PaginatedDTO[TagDTO](count=value_count, page=query.pagination.page, results=[])
+            return PaginatedDTO[TagDTO](
+                count=value_count, page=query.pagination.page, results=[]
+            )
 
         return PaginatedDTO[TagDTO](
             count=value_count,

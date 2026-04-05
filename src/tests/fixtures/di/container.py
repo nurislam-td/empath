@@ -12,7 +12,9 @@ from job.employment.api.providers import EmploymentProvider
 
 
 @pytest.fixture
-def app_container(session_factory: async_sessionmaker[AsyncSession]) -> AsyncContainer:
+def app_container(
+    session_factory: async_sessionmaker[AsyncSession],
+) -> AsyncContainer:
     return make_async_container(
         AppProvider(),
         AuthProvider(),
@@ -26,6 +28,8 @@ def app_container(session_factory: async_sessionmaker[AsyncSession]) -> AsyncCon
 
 
 @pytest.fixture
-async def request_container(app_container: AsyncContainer) -> AsyncIterable[AsyncContainer]:
+async def request_container(
+    app_container: AsyncContainer,
+) -> AsyncIterable[AsyncContainer]:
     async with app_container() as container:
         yield container

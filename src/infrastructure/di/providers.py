@@ -13,7 +13,9 @@ from config import Settings
 
 class AppProvider(Provider):
     config = from_context(provides=Settings, scope=Scope.APP)
-    session_maker = from_context(provides=async_sessionmaker[AsyncSession], scope=Scope.APP)
+    session_maker = from_context(
+        provides=async_sessionmaker[AsyncSession], scope=Scope.APP
+    )
 
     @provide(scope=Scope.REQUEST)
     async def provide_session(

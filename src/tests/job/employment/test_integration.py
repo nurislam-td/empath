@@ -5,11 +5,21 @@ import pytest
 from dishka import AsyncContainer
 from mimesis import Field, Locale, Schema
 
-from job.employment.application.commands.create_cv import CreateCV, CreateCVHandler, Salary, Skill, WorkExp
+from job.employment.application.commands.create_cv import (
+    CreateCV,
+    CreateCVHandler,
+    Salary,
+    Skill,
+    WorkExp,
+)
 from tests.job.employment.protocols import CVDataFactory
 
 if TYPE_CHECKING:
-    from tests.job.employment.protocols import CVData, CVDataFactory, CVDataKwargs
+    from tests.job.employment.protocols import (
+        CVData,
+        CVDataFactory,
+        CVDataKwargs,
+    )
 
 _ = Field(Locale.RU)
 
@@ -50,7 +60,10 @@ def cv_data_factory() -> "CVDataFactory":
                 "work_exp": [random_work_exp() for _ in range(2)],
                 "work_formats_id": [str(uuid4()) for _ in range(2)],
                 "skills": [random_skill() for _ in range(3)],
-                "education": _("choice", items=["school", "bachelor", "master", "doctorate"]),
+                "education": _(
+                    "choice",
+                    items=["school", "bachelor", "master", "doctorate"],
+                ),
                 "email": _("person.email"),
                 "author_id": str(uuid4()),
                 "additional_skills": [random_skill() for _ in range(2)],
@@ -72,7 +85,9 @@ async def cv_data(cv_data_factory: CVDataFactory) -> CVData:
 
 
 @pytest.fixture
-async def create_cv_handler(request_container: AsyncContainer) -> CreateCVHandler:
+async def create_cv_handler(
+    request_container: AsyncContainer,
+) -> CreateCVHandler:
     return await request_container.get(CreateCVHandler)
 
 

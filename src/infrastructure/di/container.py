@@ -28,5 +28,8 @@ def get_ioc() -> AsyncContainer:
         RecruitmentProvider(),
         EmploymentProvider(),
         JobProvider(),
-        context={Settings: get_settings(), async_sessionmaker[AsyncSession]: get_async_sessionmaker()},
+        context={
+            Settings: get_settings(),
+            async_sessionmaker[AsyncSession]: get_async_sessionmaker(),
+        },
     )

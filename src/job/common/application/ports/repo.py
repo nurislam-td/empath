@@ -4,7 +4,13 @@ from uuid import UUID
 
 from common.application.dto import PaginatedDTO
 from common.application.query import PaginationParams
-from job.common.application.dto import EmploymentTypeDTO, SkillDTO, SkillWithWeightDTO, WorkFormatDTO, WorkScheduleDTO
+from job.common.application.dto import (
+    EmploymentTypeDTO,
+    SkillDTO,
+    SkillWithWeightDTO,
+    WorkFormatDTO,
+    WorkScheduleDTO,
+)
 from job.employment.application.dto import CVDTO
 from job.recruitment.application.dto import (
     DetailedVacancyDTO,
@@ -23,7 +29,9 @@ class VacancyReader(Protocol):
     ) -> PaginatedDTO[VacancyDTO]: ...
 
     async def get_vacancy_by_id(self, vacancy_id: UUID) -> DetailedVacancyDTO: ...
-    async def get_skills(self, search: str | None, pagination: PaginationParams) -> PaginatedDTO[SkillDTO]: ...
+    async def get_skills(
+        self, search: str | None, pagination: PaginationParams
+    ) -> PaginatedDTO[SkillDTO]: ...
 
     async def get_work_schedules(self) -> list[WorkScheduleDTO]: ...
     async def get_employment_types(self) -> list[EmploymentTypeDTO]: ...

@@ -3,7 +3,9 @@ from uuid import UUID
 
 from common.application.dto import DTO, PaginatedDTO
 from common.application.query import PaginationParams
-from job.common.infrastructure.repositories.vacancy_responses import AlchemyVacancyResponseReader
+from job.common.infrastructure.repositories.vacancy_responses import (
+    AlchemyVacancyResponseReader,
+)
 from job.employment.application.dto import VacancyResponseDTO
 
 
@@ -23,4 +25,6 @@ class GetVacancyResponsesHandler:
         query: GetVacancyResponsesQuery,
         pagination: PaginationParams,
     ) -> PaginatedDTO[VacancyResponseDTO]:
-        return await self._reader.get_vacancy_responses(query=query, pagination=pagination)
+        return await self._reader.get_vacancy_responses(
+            query=query, pagination=pagination
+        )

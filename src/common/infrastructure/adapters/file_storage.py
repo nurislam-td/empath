@@ -6,12 +6,17 @@ from botocore.exceptions import ClientError  # type: ignore  # noqa: PGH003
 
 from common.application.ports.file_storage import FileStorage
 from config import Settings
-from file_storage.application.exceptions import FileNotExistError, FileUploadError
+from file_storage.application.exceptions import (
+    FileNotExistError,
+    FileUploadError,
+)
 
 
 class S3Client(Protocol):
     async def upload_fileobj(self, Fileobj: BytesIO, Bucket: str, Key: str) -> None: ...  # noqa: N803
-    async def download_fileobj(self, Bucket: str, Key: str, Fileobj: BytesIO) -> None: ...  # noqa: N803
+    async def download_fileobj(
+        self, Bucket: str, Key: str, Fileobj: BytesIO
+    ) -> None: ...  # noqa: N803
     async def delete_object(self, Bucket: str, Key: str) -> None: ...  # noqa: N803
 
 
