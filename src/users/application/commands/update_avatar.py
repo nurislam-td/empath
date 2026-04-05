@@ -26,7 +26,7 @@ class UpdateAvatarHandler(CommandHandler[UpdateAvatar, str]):
 
         await self._file_storage.upload_file(file=command.file, file_name=file_name)
         await self._user_repo.update_user(
-            values=dict(image=file_name), filters=dict(id=command.user_id)
+            values=dict(image=file_name), filters=dict(id=command.user_id),
         )
         await self._uow.commit()
         return file_name

@@ -1,4 +1,9 @@
-from dishka import Provider, Scope, from_context, provide  # type: ignore  # noqa: PGH003
+from dishka import (  # type: ignore  # noqa: PGH003
+    Provider,
+    Scope,
+    from_context,
+    provide,
+)
 
 from common.application.ports.file_storage import FileStorage
 from common.infrastructure.adapters.file_storage import S3FileStorage

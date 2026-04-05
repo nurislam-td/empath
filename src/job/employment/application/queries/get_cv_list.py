@@ -14,8 +14,8 @@ class GetCvListHandler:
     _reader: AlchemyEmploymentCVReader
 
     async def __call__(
-        self, pagination: PaginationParams, employer_id: UUID
+        self, pagination: PaginationParams, employer_id: UUID,
     ) -> PaginatedDTO[CVDTO]:
         return await self._reader.get_cv_list(
-            pagination=pagination, employer_id=employer_id
+            pagination=pagination, employer_id=employer_id,
         )

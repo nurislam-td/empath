@@ -67,5 +67,5 @@ class GetRecommendationsHandler:
             )
 
         return RecommendationsDTO(
-            recommendations=recommendations, weights=skill_weights
+            recommendations=recommendations, weights=skill_weights,
         )

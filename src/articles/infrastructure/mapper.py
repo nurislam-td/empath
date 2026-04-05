@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 def convert_db_to_sub_article_dto_list(
-    sub_articles: Sequence[RowMapping], sub_article_imgs: Sequence[RowMapping]
+    sub_articles: Sequence[RowMapping], sub_article_imgs: Sequence[RowMapping],
 ) -> list[SubArticleWithArticleIdDTO]:
     img_map: dict[UUID, list[str]] = defaultdict(list)
     for i in sub_article_imgs:
@@ -79,7 +79,7 @@ def convert_db_to_article_dto(
                     key: value
                     for key, value in sub_article.to_dict().items()
                     if key != "article_id"
-                }
+                },
             )
             for sub_article in sub_articles
         ],
@@ -89,7 +89,7 @@ def convert_db_to_article_dto(
         dislikes_cnt=article.dislikes_cnt,
         imgs=list(imgs),
         specialization=SpecializationDTO(
-            name=article.specialization_name, id=article.specialization_id
+            name=article.specialization_name, id=article.specialization_id,
         )
         if article.specialization_id
         else None,

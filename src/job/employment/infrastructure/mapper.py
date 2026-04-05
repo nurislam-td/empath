@@ -5,16 +5,11 @@ from uuid import UUID
 from sqlalchemy import RowMapping
 
 from job.common.application.dto import (
-    EmploymentTypeDTO,
     SalaryDTO,
-    SkillDTO,
-    WorkFormatDTO,
-    WorkScheduleDTO,
 )
 from job.employment.application.dto import (
     CVDTO,
     AuthorDTO,
-    DetailedCVDTO,
     VacancyDTO,
 )
 
@@ -31,7 +26,7 @@ def convert_db_to_vacancy(  # noqa: PLR0913
         title=vacancy.title,
         salary=SalaryDTO(from_=vacancy.salary_from, to=vacancy.salary_to),
         address=vacancy.address,
-        author=AuthorDTO(name=vacancy.company_name if vacancy.company_name else ""),
+        author=AuthorDTO(name=vacancy.company_name or ""),
         work_exp=vacancy.work_exp,
         work_schedules=[s.name for s in work_schedules],
         employment_types=[t.name for t in employment_types],
@@ -100,12 +95,12 @@ def convert_db_to_cv(
         author=AuthorDTO(
             name=" ".join(
                 [
-                    cv.author_lastname if cv.author_lastname else "",
-                    cv.author_name if cv.author_name else "",
-                    cv.author_patronymic if cv.author_patronymic else "",
+                    cv.author_lastname or "",
+                    cv.author_name or "",
+                    cv.author_patronymic or "",
                 ],
             ),
-            email=cv.author_email if cv.author_email else "",
+            email=cv.author_email or "",
         ),
         additional_skills=[s.name for s in additional_skills],
         about_me=cv.about_me,

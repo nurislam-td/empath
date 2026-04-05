@@ -62,7 +62,7 @@ class UserController(Controller):
         get_users: Depends[GetUsersHandler],
     ) -> PaginatedUserDTO:
         return await get_users(
-            GetUsers(page=pagination_params.page, per_page=pagination_params.per_page)
+            GetUsers(page=pagination_params.page, per_page=pagination_params.per_page),
         )
 
     @put(path="/me/avatar", status_code=status_codes.HTTP_200_OK)

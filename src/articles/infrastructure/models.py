@@ -31,7 +31,7 @@ class Article(ArticleBase):
     text: Mapped[str] = mapped_column(Text)
     is_visible: Mapped[bool] = mapped_column(Boolean, default=False)
     author_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE")
+        ForeignKey("auth.user.id", ondelete="CASCADE"),
     )
     views_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     likes_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
@@ -53,10 +53,10 @@ class RelArticleTag(ArticleBase):
     id: None = None  # type: ignore  # noqa: PGH003
 
     article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True,
     )
     tag_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.tag.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("article.tag.id", ondelete="CASCADE"), primary_key=True,
     )
 
 
@@ -65,7 +65,7 @@ class ArticleImg(ArticleBase):
 
     url: Mapped[str] = mapped_column(Text)
     article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.article.id", ondelete="CASCADE")
+        ForeignKey("article.article.id", ondelete="CASCADE"),
     )
 
 
@@ -73,7 +73,7 @@ class SubArticle(ArticleBase):
     __tablename__ = "sub_article"
 
     article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.article.id", ondelete="CASCADE")
+        ForeignKey("article.article.id", ondelete="CASCADE"),
     )
     title: Mapped[str] = mapped_column(String(ARTICLE_TITLE_LEN))
     text: Mapped[str] = mapped_column(Text)
@@ -84,7 +84,7 @@ class SubArticleImg(ArticleBase):
 
     url: Mapped[str] = mapped_column(Text)
     sub_article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.sub_article.id", ondelete="CASCADE")
+        ForeignKey("article.sub_article.id", ondelete="CASCADE"),
     )
 
 
@@ -93,18 +93,18 @@ class Comment(ArticleBase):
 
     text: Mapped[str] = mapped_column(Text)
     article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.article.id", ondelete="CASCADE")
+        ForeignKey("article.article.id", ondelete="CASCADE"),
     )
     author_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE")
+        ForeignKey("auth.user.id", ondelete="CASCADE"),
     )
     like_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     dislikes_cnt: Mapped[int] = mapped_column(BigInteger, default=0)
     parent_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.comment.id", ondelete="SET NULL"), nullable=True
+        ForeignKey("article.comment.id", ondelete="SET NULL"), nullable=True,
     )
     is_visible: Mapped[bool] = mapped_column(
-        Boolean, server_default="true", nullable=False
+        Boolean, server_default="true", nullable=False,
     )
 
 
@@ -112,10 +112,10 @@ class RelArticleUserLike(ArticleBase):
     __tablename__ = "rel_article_user_like"
     id: None = None  # type: ignore  # noqa: PGH003
     article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True,
     )
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True,
     )
 
 
@@ -123,10 +123,10 @@ class RelArticleUserDislike(ArticleBase):
     __tablename__ = "rel_article_user_dislike"
     id: None = None  # type: ignore  # noqa: PGH003
     article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True,
     )
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True,
     )
 
 
@@ -134,10 +134,10 @@ class RelArticleUserView(ArticleBase):
     __tablename__ = "rel_article_user_view"
     id: None = None  # type: ignore  # noqa: PGH003
     article_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("article.article.id", ondelete="CASCADE"), primary_key=True,
     )
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True,
     )
 
 
@@ -145,10 +145,10 @@ class RelCommentUserLike(ArticleBase):
     __tablename__ = "rel_comment_user_like"
     id: None = None  # type: ignore  # noqa: PGH003
     comment_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.comment.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("article.comment.id", ondelete="CASCADE"), primary_key=True,
     )
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True,
     )
 
 
@@ -156,8 +156,8 @@ class RelCommentUserDislike(ArticleBase):
     __tablename__ = "rel_comment_user_dislike"
     id: None = None  # type: ignore  # noqa: PGH003
     comment_id: Mapped[UUID] = mapped_column(
-        ForeignKey("article.comment.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("article.comment.id", ondelete="CASCADE"), primary_key=True,
     )
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("auth.user.id", ondelete="CASCADE"), primary_key=True,
     )

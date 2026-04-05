@@ -37,12 +37,12 @@ class ArticleRepo(Protocol):
 
 class ArticleReader(Protocol):
     async def get_article_by_id(
-        self, article_id: UUID, user_id: UUID | None = None
+        self, article_id: UUID, user_id: UUID | None = None,
     ) -> ArticleDTO: ...
     async def get_tag_list(self, query: "GetTagList") -> PaginatedDTO[TagDTO]: ...
     async def get_articles(self, query: "GetArticles") -> PaginatedArticleDTO: ...
     async def get_specialization(
-        self, query: "GetSpecializations"
+        self, query: "GetSpecializations",
     ) -> PaginatedDTO[SpecializationDTO]: ...
 
 
@@ -64,5 +64,5 @@ class CommentReader(Protocol):
         pagination: PaginationParams,
     ) -> PaginatedDTO[CommentDTO]: ...
     async def get_comment_by_id(
-        self, comment_id: UUID, user_id: UUID | None = None
+        self, comment_id: UUID, user_id: UUID | None = None,
     ) -> CommentDTO: ...

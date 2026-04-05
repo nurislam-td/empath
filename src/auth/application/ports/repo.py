@@ -19,7 +19,7 @@ class AuthReader(Protocol):
 
 class VerifyCodeRepo(Protocol):
     async def set_verify_code(
-        self, email: str, code: str, expires_in: int | timedelta | None = None
+        self, email: str, code: str, expires_in: int | timedelta | None = None,
     ) -> None: ...
 
     async def get_verify_code(self, email: str) -> str | None: ...

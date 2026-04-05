@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Any
-from uuid import UUID
 
-from sqlalchemy import Select, func, or_, select
+from sqlalchemy import Select, select
 
 from auth.infrastructure.models import User
 from job.common.infrastructure.models import (
@@ -22,7 +21,7 @@ _rel_cv_vacancy = RelCVVacancy
 
 
 def filter_vacancy_response(
-    qs: Select[Any], filters: "GetVacancyResponsesQuery"
+    qs: Select[Any], filters: "GetVacancyResponsesQuery",
 ) -> Select[Any]:
     if filters.vacancy_id:
         qs = qs.where(_rel_cv_vacancy.vacancy_id == filters.vacancy_id)

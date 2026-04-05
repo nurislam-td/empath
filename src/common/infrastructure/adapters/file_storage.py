@@ -15,8 +15,8 @@ from file_storage.application.exceptions import (
 class S3Client(Protocol):
     async def upload_fileobj(self, Fileobj: BytesIO, Bucket: str, Key: str) -> None: ...  # noqa: N803
     async def download_fileobj(
-        self, Bucket: str, Key: str, Fileobj: BytesIO
-    ) -> None: ...  # noqa: N803
+        self, Bucket: str, Key: str, Fileobj: BytesIO,
+    ) -> None: ...
     async def delete_object(self, Bucket: str, Key: str) -> None: ...  # noqa: N803
 
 

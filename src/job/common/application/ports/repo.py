@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from typing import TYPE_CHECKING, Protocol
 from uuid import UUID
 
@@ -30,7 +29,7 @@ class VacancyReader(Protocol):
 
     async def get_vacancy_by_id(self, vacancy_id: UUID) -> DetailedVacancyDTO: ...
     async def get_skills(
-        self, search: str | None, pagination: PaginationParams
+        self, search: str | None, pagination: PaginationParams,
     ) -> PaginatedDTO[SkillDTO]: ...
 
     async def get_work_schedules(self) -> list[WorkScheduleDTO]: ...

@@ -10,7 +10,6 @@ from job.common.domain.enums import (
     EducationEnum,
     VacancyResponseStatusEnum,
     WorkExpEnum,
-    WorkFormatEnum,
 )
 
 

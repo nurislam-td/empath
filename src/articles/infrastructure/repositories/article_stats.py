@@ -1,5 +1,4 @@
 import asyncio
-import contextlib
 from uuid import UUID
 
 from sqlalchemy import delete, select, update
@@ -35,7 +34,7 @@ class AlchemyArticleStatRepo:
         if not await self.reader.fetch_one(
             select(self._dislike).where(
                 (self._dislike.article_id == article_id)
-                & (self._dislike.user_id == user_id)
+                & (self._dislike.user_id == user_id),
             ),
         ):
             raise NothingToCancelError
@@ -48,7 +47,7 @@ class AlchemyArticleStatRepo:
             self.base.execute(
                 delete(self._dislike).where(
                     (self._dislike.article_id == article_id)
-                    & (self._dislike.user_id == user_id)
+                    & (self._dislike.user_id == user_id),
                 ),
             ),
         )
@@ -56,7 +55,7 @@ class AlchemyArticleStatRepo:
     async def cancel_like_article(self, article_id: UUID, user_id: UUID) -> None:
         if not await self.reader.fetch_one(
             select(self._like).where(
-                (self._like.article_id == article_id) & (self._like.user_id == user_id)
+                (self._like.article_id == article_id) & (self._like.user_id == user_id),
             ),
         ):
             raise NothingToCancelError
@@ -64,7 +63,7 @@ class AlchemyArticleStatRepo:
             self.base.execute(
                 delete(self._like).where(
                     (self._like.article_id == article_id)
-                    & (self._like.user_id == user_id)
+                    & (self._like.user_id == user_id),
                 ),
             ),
             self.base.execute(
@@ -78,7 +77,7 @@ class AlchemyArticleStatRepo:
         try:
             await self.base.execute(
                 insert(self._like).values(
-                    {"article_id": article_id, "user_id": user_id}
+                    {"article_id": article_id, "user_id": user_id},
                 ),
             )
         except IntegrityError as e:
@@ -94,7 +93,7 @@ class AlchemyArticleStatRepo:
         try:
             await self.base.execute(
                 insert(self._dislike).values(
-                    {"article_id": article_id, "user_id": user_id}
+                    {"article_id": article_id, "user_id": user_id},
                 ),
             )
         except IntegrityError as e:
@@ -110,7 +109,7 @@ class AlchemyArticleStatRepo:
         try:
             await self.base.execute(
                 insert(self._view).values(
-                    {"article_id": article_id, "user_id": user_id}
+                    {"article_id": article_id, "user_id": user_id},
                 ),
             )
         except IntegrityError as e:

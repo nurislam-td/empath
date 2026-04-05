@@ -10,7 +10,7 @@ from auth.application.ports.jwt import JWTManager
 @dataclass(slots=True)
 class PyJWTManager(JWTManager):
     def _encode_jwt(
-        self, payload: dict[str, Any], expire_minutes: int, key: str
+        self, payload: dict[str, Any], expire_minutes: int, key: str,
     ) -> str:
         to_encode = payload.copy()
         now = datetime.now(tz=UTC)

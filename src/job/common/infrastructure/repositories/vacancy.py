@@ -61,18 +61,18 @@ class AlchemyVacancyReader:
         vacancies = await self._base.fetch_all(qs)
         if not vacancies:
             return PaginatedDTO[VacancyDTO](
-                count=value_count, page=pagination.page, results=[]
+                count=value_count, page=pagination.page, results=[],
             )
         vacancies_id = [vacancy.id for vacancy in vacancies]
         skills = await self._base.fetch_all(qb.get_vacancy_skill_qs(vacancies_id))
         additional_skills = await self._base.fetch_all(
-            qb.get_vacancy_additional_skill_qs(vacancies_id)
+            qb.get_vacancy_additional_skill_qs(vacancies_id),
         )
         work_schedules = await self._base.fetch_all(
-            qb.get_work_schedules_qs(vacancies_id)
+            qb.get_work_schedules_qs(vacancies_id),
         )
         employment_types = await self._base.fetch_all(
-            qb.get_employment_type_qs(vacancies_id)
+            qb.get_employment_type_qs(vacancies_id),
         )
         work_formats = await self._base.fetch_all(qb.get_work_format_qs(vacancies_id))
 
@@ -98,13 +98,13 @@ class AlchemyVacancyReader:
 
         skills = await self._base.fetch_all(qb.get_vacancy_skill_qs([vacancy.id]))
         additional_skills = await self._base.fetch_all(
-            qb.get_vacancy_additional_skill_qs([vacancy.id])
+            qb.get_vacancy_additional_skill_qs([vacancy.id]),
         )
         work_schedules = await self._base.fetch_all(
-            qb.get_work_schedules_qs([vacancy.id])
+            qb.get_work_schedules_qs([vacancy.id]),
         )
         employment_types = await self._base.fetch_all(
-            qb.get_employment_type_qs([vacancy_id])
+            qb.get_employment_type_qs([vacancy_id]),
         )
         work_formats = await self._base.fetch_all(qb.get_work_format_qs([vacancy.id]))
 
@@ -118,7 +118,7 @@ class AlchemyVacancyReader:
         )
 
     async def get_skills(
-        self, search: str | None, pagination: PaginationParams
+        self, search: str | None, pagination: PaginationParams,
     ) -> PaginatedDTO[SkillDTO]:
         qs = job.common.infrastructure.query_builders.common.get_skill_qs(search=search)
 
@@ -129,7 +129,7 @@ class AlchemyVacancyReader:
 
         if not skills:
             return PaginatedDTO[SkillDTO](
-                count=value_count, page=pagination.page, results=[]
+                count=value_count, page=pagination.page, results=[],
             )
 
         return PaginatedDTO[SkillDTO](
@@ -185,7 +185,7 @@ class AlchemyVacancyReader:
 
         skills = await self._base.fetch_all(qb_cv.get_cv_skill_qs(cv_ids))
         additional_skills = await self._base.fetch_all(
-            qb_cv.get_cv_additional_skill_qs(cv_ids)
+            qb_cv.get_cv_additional_skill_qs(cv_ids),
         )
 
         return convert_db_to_cv_list(

@@ -45,9 +45,9 @@ def convert_db_detailed_vacancy(  # noqa: PLR0913
         salary=SalaryDTO(from_=vacancy.salary_from, to=vacancy.salary_to),
         address=vacancy.address,
         author=DetailedAuthorDTO(
-            name=vacancy.company_name if vacancy.company_name else "",
-            about_us=vacancy.about_company if vacancy.about_company else "",
-            email=vacancy.company_email if vacancy.company_email else "",
+            name=vacancy.company_name or "",
+            about_us=vacancy.about_company or "",
+            email=vacancy.company_email or "",
         ),
         work_exp=vacancy.work_exp,
         work_schedules=[WorkScheduleDTO(name=s.name, id=s.id) for s in work_schedules],
@@ -80,7 +80,7 @@ def convert_db_to_vacancy(  # noqa: PLR0913
         title=vacancy.title,
         salary=SalaryDTO(from_=vacancy.salary_from, to=vacancy.salary_to),
         address=vacancy.address,
-        author=AuthorDTO(name=vacancy.company_name if vacancy.company_name else ""),
+        author=AuthorDTO(name=vacancy.company_name or ""),
         work_exp=vacancy.work_exp,
         work_schedules=[s.name for s in work_schedules],
         employment_types=[t.name for t in employment_types],
@@ -170,9 +170,9 @@ def convert_db_to_detailed_cv(  # noqa: PLR0913
         author=CVAuthorDTO(
             name=" ".join(
                 [
-                    cv.author_lastname if cv.author_lastname else "",
-                    cv.author_name if cv.author_name else "",
-                    cv.author_patronymic if cv.author_patronymic else "",
+                    cv.author_lastname or "",
+                    cv.author_name or "",
+                    cv.author_patronymic or "",
                 ],
             ),
         ),
@@ -189,9 +189,9 @@ def convert_db_to_vacancy_responses(response: RowMapping) -> VacancyResponseDTO:
         created_at=response.created_at,
         response_author=" ".join(
             [
-                response.author_lastname if response.author_lastname else "",
-                response.author_name if response.author_name else "",
-                response.author_patronymic if response.author_patronymic else "",
+                response.author_lastname or "",
+                response.author_name or "",
+                response.author_patronymic or "",
             ],
         ),
         response_email=response.response_email,

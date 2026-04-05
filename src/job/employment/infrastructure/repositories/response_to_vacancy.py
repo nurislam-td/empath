@@ -22,7 +22,7 @@ class AlchemyVacancyResponseRepo:
         await self._base.execute(insert(self._rel_cv_vacancy).values(values))
 
     async def update_response_to_vacancy(
-        self, command: ResponseToVacancySchema
+        self, command: ResponseToVacancySchema,
     ) -> None:
         values = command.to_dict()
 
@@ -36,8 +36,8 @@ class AlchemyVacancyResponseRepo:
     async def delete_response_from_vacancy(self, vacancy_id: UUID) -> None:
         await self._base.execute(
             delete(self._rel_cv_vacancy).where(
-                self._rel_cv_vacancy.vacancy_id == vacancy_id
-            )
+                self._rel_cv_vacancy.vacancy_id == vacancy_id,
+            ),
         )
 
     async def change_response_status(self, command: ChangeResponseStatusSchema) -> None:

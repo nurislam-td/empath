@@ -14,11 +14,11 @@ class GetSpecializations(Query[PaginatedDTO[SpecializationDTO]]):
 
 @dataclass(frozen=True, slots=True)
 class GetSpecializationsHandler(
-    QueryHandler[GetSpecializations, PaginatedDTO[SpecializationDTO]]
+    QueryHandler[GetSpecializations, PaginatedDTO[SpecializationDTO]],
 ):
     _reader: ArticleReader
 
     async def __call__(
-        self, query: GetSpecializations
+        self, query: GetSpecializations,
     ) -> PaginatedDTO[SpecializationDTO]:
         return await self._reader.get_specialization(query)

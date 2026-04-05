@@ -94,4 +94,3 @@ async def create_cv_handler(
 async def test_create_cv_handler(create_cv_handler: CreateCVHandler, cv_data: CVData):
     await create_cv_handler(CreateCV(**cv_data))
 
-    pass

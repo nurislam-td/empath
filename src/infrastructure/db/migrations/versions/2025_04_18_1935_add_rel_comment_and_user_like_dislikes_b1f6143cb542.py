@@ -6,17 +6,16 @@ Create Date: 2025-04-18 19:35:53.754138
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "b1f6143cb542"
-down_revision: Union[str, None] = "a4c4f0400a3d"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "a4c4f0400a3d"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -50,7 +49,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "comment_id", "user_id", name=op.f("pk_rel_comment_user_dislike")
+            "comment_id", "user_id", name=op.f("pk_rel_comment_user_dislike"),
         ),
         schema="article",
     )
@@ -83,7 +82,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "comment_id", "user_id", name=op.f("pk_rel_comment_user_like")
+            "comment_id", "user_id", name=op.f("pk_rel_comment_user_like"),
         ),
         schema="article",
     )

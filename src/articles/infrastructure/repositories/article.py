@@ -66,8 +66,8 @@ class AlchemyArticleRepo(ArticleRepo):
             return
         await self._base.execute(
             insert(self._article_img).values(
-                [{"article_id": article_id, "url": url} for url in imgs]
-            )
+                [{"article_id": article_id, "url": url} for url in imgs],
+            ),
         )
 
     async def create_article(self, article: CreateArticle) -> None:
@@ -84,7 +84,7 @@ class AlchemyArticleRepo(ArticleRepo):
         tasks: list[Coroutine[Any, Any, Any]] = []
         if article.sub_articles:
             tasks.append(
-                self._sub_article.create_sub_articles(article.id, article.sub_articles)
+                self._sub_article.create_sub_articles(article.id, article.sub_articles),
             )
         if article.imgs:
             tasks.append(self._create_article_imgs(article.id, article.imgs))
@@ -97,7 +97,7 @@ class AlchemyArticleRepo(ArticleRepo):
 
     async def _delete_article_imgs(self, article_id: UUID) -> None:
         await self._base.execute(
-            delete(self._article_img).filter(self._article_img.article_id == article_id)
+            delete(self._article_img).filter(self._article_img.article_id == article_id),
         )
 
     async def update_article_imgs(self, article_id: UUID, imgs: list[str]) -> None:
@@ -124,7 +124,7 @@ class AlchemyArticleRepo(ArticleRepo):
         if article.sub_articles is not Empty.UNSET:
             tasks.append(
                 self._sub_article.update_sub_articles(
-                    article_id=article_id, sub_articles=article.sub_articles
+                    article_id=article_id, sub_articles=article.sub_articles,
                 ),
             )
 
@@ -138,7 +138,7 @@ class AlchemyArticleRepo(ArticleRepo):
 
     async def delete_article(self, article_id: UUID) -> None:
         await self._base.execute(
-            delete(self._article).where(self._article.id == article_id)
+            delete(self._article).where(self._article.id == article_id),
         )
 
     async def like_article(self, article_id: UUID, user_id: UUID) -> None:
@@ -180,7 +180,7 @@ class AlchemyArticleReader(ArticleReader):
         return await self._tag.get_tag_list(query)
 
     async def get_article_by_id(
-        self, article_id: UUID, user_id: UUID | None = None
+        self, article_id: UUID, user_id: UUID | None = None,
     ) -> ArticleDTO:
         qs = self._qb.get_articles_qs(user_id)
         qs = qs.where(self._article.id == article_id)
@@ -193,26 +193,26 @@ class AlchemyArticleReader(ArticleReader):
             self._base.fetch_all(self._tag.get_tags_qs({article_id})),
         )
         return convert_db_to_article_dto(
-            article, sub_articles, article_imgs, article_tags
+            article, sub_articles, article_imgs, article_tags,
         )
 
     async def get_articles(self, query: GetArticles) -> PaginatedArticleDTO:
         qs = self._qb.get_articles_qs(
-            user_id=query.user_id, article_filter=query.articles_filter
+            user_id=query.user_id, article_filter=query.articles_filter,
         )
 
         value_count = await self._base.count(qs)
         qs = self._paginator.paginate(
-            qs, query.pagination.page, query.pagination.per_page
+            qs, query.pagination.page, query.pagination.per_page,
         )
         page_count = self._paginator.get_page_count(
-            value_count, query.pagination.per_page
+            value_count, query.pagination.per_page,
         )
 
         articles = await self._base.fetch_all(qs)
         if not articles:
             return PaginatedDTO[ArticleDTO](
-                count=page_count, page=query.pagination.page, results=[]
+                count=page_count, page=query.pagination.page, results=[],
             )
 
         article_ids = {article.id for article in articles}
@@ -235,18 +235,18 @@ class AlchemyArticleReader(ArticleReader):
         )
 
     async def get_specialization(
-        self, query: "GetSpecializations"
+        self, query: "GetSpecializations",
     ) -> PaginatedDTO[SpecializationDTO]:
         qs = self._qb.get_specialization_qs(name=query.name)
         value_count = await self._base.count(qs)
         qs = self._paginator.paginate(
-            qs, query.pagination.page, query.pagination.per_page
+            qs, query.pagination.page, query.pagination.per_page,
         )
 
         specializations = await self._base.fetch_all(qs)
         if not specializations:
             return PaginatedDTO[SpecializationDTO](
-                count=value_count, page=query.pagination.page, results=[]
+                count=value_count, page=query.pagination.page, results=[],
             )
 
         return PaginatedDTO[SpecializationDTO](

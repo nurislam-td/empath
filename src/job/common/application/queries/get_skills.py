@@ -11,6 +11,6 @@ class GetSkillsHandler:
     _reader: VacancyReader
 
     async def __call__(
-        self, search: str | None, pagination: PaginationParams
+        self, search: str | None, pagination: PaginationParams,
     ) -> PaginatedDTO[SkillDTO]:
         return await self._reader.get_skills(search, pagination=pagination)

@@ -44,7 +44,7 @@ class AlchemyVacancyResponseReader:
         vacancy_responses = await self._base.fetch_all(qs)
         if not vacancy_responses:
             return PaginatedDTO[VacancyResponseDTO](
-                count=value_count, page=pagination.page, results=[]
+                count=value_count, page=pagination.page, results=[],
             )
 
         return PaginatedDTO[VacancyResponseDTO](

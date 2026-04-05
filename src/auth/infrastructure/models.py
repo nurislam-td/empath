@@ -44,6 +44,6 @@ class RefreshToken(AuthBase):
     __tablename__ = "refresh_token"
 
     user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("auth.user.id", ondelete="CASCADE")
+        ForeignKey("auth.user.id", ondelete="CASCADE"),
     )
     refresh_token: Mapped[str] = mapped_column(String, nullable=False)

@@ -6,16 +6,16 @@ Create Date: 2025-03-08 21:32:18.251673
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "372360d9cf8a"
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -48,7 +48,7 @@ def upgrade() -> None:
         schema="article",
     )
     op.create_index(
-        op.f("ix_article_tag_id"), "tag", ["id"], unique=False, schema="article"
+        op.f("ix_article_tag_id"), "tag", ["id"], unique=False, schema="article",
     )
     op.create_table(
         "user",
@@ -94,7 +94,7 @@ def upgrade() -> None:
         schema="auth",
     )
     op.create_index(
-        op.f("ix_auth_user_id"), "user", ["id"], unique=False, schema="auth"
+        op.f("ix_auth_user_id"), "user", ["id"], unique=False, schema="auth",
     )
     op.create_table(
         "article",
@@ -244,7 +244,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "article_id", "tag_id", name=op.f("pk_rel_article_tag")
+            "article_id", "tag_id", name=op.f("pk_rel_article_tag"),
         ),
         schema="article",
     )

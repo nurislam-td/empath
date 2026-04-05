@@ -28,7 +28,7 @@ from file_storage.application.queries.download_file import (
 
 
 async def bytes_io_generator(
-    bytes_io: BytesIO, chunk_size: int = 1024
+    bytes_io: BytesIO, chunk_size: int = 1024,
 ) -> AsyncIterable[bytes]:
     bytes_io.seek(0)
 
@@ -47,7 +47,7 @@ class FileStorageController(Controller):
     )
     @inject
     async def download_file(
-        self, filepath: str, download_file: Depends[DownloadFileHandler]
+        self, filepath: str, download_file: Depends[DownloadFileHandler],
     ) -> Stream:
         query = DownloadFile(filepath=filepath)
         file_bytes = await download_file(query)
@@ -64,7 +64,7 @@ class FileStorageController(Controller):
         file_type: FileType,
         storage_name: StorageNames,
         data: Annotated[
-            LitestarUploadFile, Body(media_type=RequestEncodingType.MULTI_PART)
+            LitestarUploadFile, Body(media_type=RequestEncodingType.MULTI_PART),
         ],
         upload_file: Depends[UploadFileHandler],
     ) -> FileStorageResponse:

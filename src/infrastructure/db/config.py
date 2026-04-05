@@ -12,5 +12,5 @@ def get_async_sessionmaker() -> async_sessionmaker[AsyncSession]:
     db_settings = settings.db
     async_engine = create_async_engine(db_settings.ASYNC_DATABASE_URL)
     return async_sessionmaker(
-        async_engine, autoflush=False, expire_on_commit=False, autocommit=False
+        async_engine, autoflush=False, expire_on_commit=False, autocommit=False,
     )

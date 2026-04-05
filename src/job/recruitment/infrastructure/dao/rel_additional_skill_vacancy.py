@@ -23,7 +23,7 @@ class RelVacancyAdditionalSkillDAO:
     _reader: AlchemyReader
 
     async def map_additional_skills_to_vacancy(
-        self, vacancy_id: UUID, skills_id: list[UUID]
+        self, vacancy_id: UUID, skills_id: list[UUID],
     ) -> None:
         existing_skills_id = await self._reader.fetch_sequence(
             select(self._skill.id).where(self._skill.id.in_(skills_id)),
@@ -32,13 +32,13 @@ class RelVacancyAdditionalSkillDAO:
             [
                 {"vacancy_id": vacancy_id, "skill_id": skill_id}
                 for skill_id in existing_skills_id
-            ]
+            ],
         )
         await self._repo.execute(insert_stmt)
 
     async def unmap_additional_skills(self, vacancy_id: UUID) -> None:
         await self._repo.execute(
             delete(self._rel_additional_skill_vacancy).where(
-                self._rel_additional_skill_vacancy.vacancy_id == vacancy_id
-            )
+                self._rel_additional_skill_vacancy.vacancy_id == vacancy_id,
+            ),
         )

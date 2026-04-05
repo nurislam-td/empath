@@ -61,7 +61,7 @@ class JobController(Controller):
     @get("/work-schedules", status_code=status_codes.HTTP_200_OK)
     @inject
     async def get_work_schedules(
-        self, get_schedules: Depends[GetWorkSchedulesHandler]
+        self, get_schedules: Depends[GetWorkSchedulesHandler],
     ) -> list[WorkScheduleDTO]:
         return await get_schedules()
 

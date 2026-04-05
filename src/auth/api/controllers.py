@@ -4,7 +4,6 @@ from typing import Annotated, ClassVar
 from dishka.integrations.litestar import FromDishka as Depends
 from dishka.integrations.litestar import inject
 from litestar import Controller, Request, post, status_codes
-from litestar.background_tasks import BackgroundTask
 from litestar.datastructures import State
 from litestar.dto.dataclass_dto import DataclassDTO
 from litestar.response.base import Response
@@ -25,19 +24,10 @@ from auth.application.commands.forget_password import (
 from auth.application.commands.logout import Logout, LogoutHandler
 from auth.application.commands.refresh import Refresh, RefreshHandler
 from auth.application.commands.reset_email import ResetEmail, ResetEmailHandler
-from auth.application.commands.reset_password import (
-    ResetPassword,
-    ResetPasswordHandler,
-)
+from auth.application.commands.reset_password import ResetPassword, ResetPasswordHandler
 from auth.application.commands.signup import SignUp, SignUpHandler
-from auth.application.commands.signup_email import (
-    SignUpEmail,
-    SignUpEmailHandler,
-)
-from auth.application.commands.verify_email import (
-    VerifyEmail,
-    VerifyEmailHandler,
-)
+from auth.application.commands.signup_email import SignUpEmail, SignUpEmailHandler
+from auth.application.commands.verify_email import VerifyEmail, VerifyEmailHandler
 from auth.application.exceptions import (
     InvalidCredentialsError,
     InvalidPreviousPasswordError,
@@ -75,7 +65,7 @@ class AuthController(Controller):
     )
     @inject
     async def login(
-        self, data: LoginSchema, login_handler: Depends[LoginHandler]
+        self, data: LoginSchema, login_handler: Depends[LoginHandler],
     ) -> JWTPair:
         login_command = Login(email=data.email, password=data.password)
         return await login_handler(command=login_command)
@@ -102,7 +92,7 @@ class AuthController(Controller):
     )
     @inject
     async def send_signup_email(
-        self, email: str, send_signup_email: Depends[SignUpEmailHandler]
+        self, email: str, send_signup_email: Depends[SignUpEmailHandler],
     ) -> Response[str]:
         command = SignUpEmail(email=email)
         await send_signup_email(command)
@@ -118,7 +108,7 @@ class AuthController(Controller):
     )
     @inject
     async def send_reset_email(
-        self, email: str, send_reset_email: Depends[ResetEmailHandler]
+        self, email: str, send_reset_email: Depends[ResetEmailHandler],
     ) -> Response[str]:
         command = ResetEmail(email=email)
         await send_reset_email(command)
@@ -131,7 +121,7 @@ class AuthController(Controller):
     )
     @inject
     async def verify_code(
-        self, email: str, code: str, verify_email: Depends[VerifyEmailHandler]
+        self, email: str, code: str, verify_email: Depends[VerifyEmailHandler],
     ) -> Response[str]:
         command = VerifyEmail(email=email, code=code)
         await verify_email(command)
@@ -179,7 +169,7 @@ class AuthController(Controller):
     )
     @inject
     async def refresh_token(
-        self, data: RefreshTokenSchema, refresh_token: Depends[RefreshHandler]
+        self, data: RefreshTokenSchema, refresh_token: Depends[RefreshHandler],
     ) -> JWTPair:
         command = Refresh(refresh_token=data.refresh_token)
         return await refresh_token(command=command)

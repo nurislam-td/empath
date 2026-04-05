@@ -136,14 +136,14 @@ from common.application.query import PaginationParams
 class ArticleController(Controller):
     exception_handlers: ClassVar = {  # type: ignore  # noqa: PGH003
         TooLongArticleTitleError: error_handler(
-            status_codes.HTTP_422_UNPROCESSABLE_ENTITY
+            status_codes.HTTP_422_UNPROCESSABLE_ENTITY,
         ),
         TooLongTagNameError: error_handler(status_codes.HTTP_422_UNPROCESSABLE_ENTITY),
         EmptyTagListError: error_handler(
-            status_code=status_codes.HTTP_422_UNPROCESSABLE_ENTITY
+            status_code=status_codes.HTTP_422_UNPROCESSABLE_ENTITY,
         ),
         EmptyArticleUpdatesError: error_handler(
-            status_codes.HTTP_422_UNPROCESSABLE_ENTITY
+            status_codes.HTTP_422_UNPROCESSABLE_ENTITY,
         ),
         ContentAuthorMismatchError: error_handler(status_codes.HTTP_403_FORBIDDEN),
         DislikeAlreadyExistError: error_handler(status_codes.HTTP_409_CONFLICT),
@@ -251,7 +251,7 @@ class ArticleController(Controller):
     @delete("/{article_id:uuid}")
     @inject
     async def delete_article(
-        self, article_id: UUID, delete_article: Depends[DeleteArticleHandler]
+        self, article_id: UUID, delete_article: Depends[DeleteArticleHandler],
     ) -> None:
         await delete_article(DeleteArticle(article_id=article_id))
 
@@ -269,7 +269,7 @@ class ArticleController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> Response[str]:
         await create_comment(
-            data.create_instance(author_id=request.user.sub, article_id=article_id)
+            data.create_instance(author_id=request.user.sub, article_id=article_id),
         )
         return Response(content="", status_code=status_codes.HTTP_201_CREATED)
 
@@ -289,8 +289,8 @@ class ArticleController(Controller):
     ) -> Response[str]:
         await edit_comment(
             data.create_instance(
-                article_id=article_id, author_id=request.user.sub, id=comment_id
-            )
+                article_id=article_id, author_id=request.user.sub, id=comment_id,
+            ),
         )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
@@ -300,7 +300,7 @@ class ArticleController(Controller):
     )
     @inject
     async def delete_comment(
-        self, comment_id: UUID, delete_comment: Depends[DeleteCommentHandler]
+        self, comment_id: UUID, delete_comment: Depends[DeleteCommentHandler],
     ) -> None:
         await delete_comment(DeleteComment(comment_id=comment_id))
 
@@ -321,7 +321,7 @@ class ArticleController(Controller):
                 pagination=pagination_params,
                 user_id=request.user.sub,
                 article_id=article_id,
-            )
+            ),
         )
 
     @get(
@@ -336,7 +336,7 @@ class ArticleController(Controller):
         name: str | None = None,
     ) -> PaginatedDTO[SpecializationDTO]:
         return await get_specializations(
-            GetSpecializations(pagination=pagination_params, name=name)
+            GetSpecializations(pagination=pagination_params, name=name),
         )
 
     @post(
@@ -365,7 +365,7 @@ class ArticleController(Controller):
         cancel_like_article: Depends[CancelLikeArticleHandler],
     ) -> Response[str]:
         await cancel_like_article(
-            CancelLikeArticle(id=article_id, user_id=request.user.sub)
+            CancelLikeArticle(id=article_id, user_id=request.user.sub),
         )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
@@ -395,7 +395,7 @@ class ArticleController(Controller):
         cancel_dislike_article: Depends[CancelDislikeArticleHandler],
     ) -> Response[str]:
         await cancel_dislike_article(
-            CancelDislikeArticle(id=article_id, user_id=request.user.sub)
+            CancelDislikeArticle(id=article_id, user_id=request.user.sub),
         )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
@@ -439,7 +439,7 @@ class ArticleController(Controller):
         cancel_like_comment: Depends[CancelLikeCommentHandler],
     ) -> Response[str]:
         await cancel_like_comment(
-            CancelLikeComment(id=comment_id, user_id=request.user.sub)
+            CancelLikeComment(id=comment_id, user_id=request.user.sub),
         )
         return Response(content="", status_code=status_codes.HTTP_200_OK)
 
@@ -469,6 +469,6 @@ class ArticleController(Controller):
         cancel_dislike_comment: Depends[CancelDislikeCommentHandler],
     ) -> Response[str]:
         await cancel_dislike_comment(
-            CancelDislikeComment(id=comment_id, user_id=request.user.sub)
+            CancelDislikeComment(id=comment_id, user_id=request.user.sub),
         )
         return Response(content="", status_code=status_codes.HTTP_200_OK)

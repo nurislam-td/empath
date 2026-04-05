@@ -23,13 +23,13 @@ class ForgetPasswordHandler(CommandHandler[ForgetPassword, None]):
 
     async def __call__(self, command: ForgetPassword) -> None:
         user = await self._user_reader.get_user_by_email(
-            email=Email(command.email).to_base()
+            email=Email(command.email).to_base(),
         )
         await self._user_repo.update_user(
             values={
                 "password": self._pwd_manager.hash_password(
-                    Password(command.password).to_base()
-                )
+                    Password(command.password).to_base(),
+                ),
             },
             filters={"id": user.id},
         )

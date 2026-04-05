@@ -23,7 +23,7 @@ class UpdateUser(Command[None]):
 
 class UpdateUserHandler(CommandHandler[UpdateUser, None]):
     def __init__(
-        self, user_repo: UserRepo, user_reader: UserReader, uow: UnitOfWork
+        self, user_repo: UserRepo, user_reader: UserReader, uow: UnitOfWork,
     ) -> None:
         self._user_repo = user_repo
         self._user_reader = user_reader

@@ -32,13 +32,13 @@ class SkillDAO:
         await self._base.execute(insert_stmt)
 
     async def create_skills_for_cv(
-        self, skills: list[SkillSchema], cv_id: UUID
+        self, skills: list[SkillSchema], cv_id: UUID,
     ) -> None:
         await self.create_skills(skills)
         await self._rel_skill_cv.map_skills_to_cv(cv_id, [skill.id for skill in skills])
 
     async def update_skills_for_cv(
-        self, skills: list[SkillSchema], cv_id: UUID
+        self, skills: list[SkillSchema], cv_id: UUID,
     ) -> None:
         await self._rel_skill_cv.unmap_skills_from_cv(cv_id)
         if not skills:
@@ -47,20 +47,20 @@ class SkillDAO:
         await self._rel_skill_cv.map_skills_to_cv(cv_id, [skill.id for skill in skills])
 
     async def create_additional_skills_for_cv(
-        self, skills: list[SkillSchema], cv_id: UUID
+        self, skills: list[SkillSchema], cv_id: UUID,
     ) -> None:
         await self.create_skills(skills)
         await self._rel_additional_skill_cv.map_additional_skills_to_cv(
-            cv_id, [skill.id for skill in skills]
+            cv_id, [skill.id for skill in skills],
         )
 
     async def update_additional_skills_for_cv(
-        self, skills: list[SkillSchema], cv_id: UUID
+        self, skills: list[SkillSchema], cv_id: UUID,
     ) -> None:
         await self._rel_additional_skill_cv.unmap_additional_skills_from_cv(cv_id)
         if not skills:
             return
         await self.create_skills(skills)
         await self._rel_additional_skill_cv.map_additional_skills_to_cv(
-            cv_id, [skill.id for skill in skills]
+            cv_id, [skill.id for skill in skills],
         )

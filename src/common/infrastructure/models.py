@@ -36,7 +36,7 @@ class TimedBaseModel(BaseModel):
 
     __abstract__ = True
     created_at: Mapped[datetime] = mapped_column(
-        sa.types.DateTime, nullable=False, server_default=sa.func.now()
+        sa.types.DateTime, nullable=False, server_default=sa.func.now(),
     )
     updated_at: Mapped[datetime] = mapped_column(
         sa.types.DateTime,

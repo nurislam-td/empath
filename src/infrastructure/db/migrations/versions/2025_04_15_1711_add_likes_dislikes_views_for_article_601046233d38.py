@@ -6,17 +6,16 @@ Create Date: 2025-04-15 17:11:00.720481
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "601046233d38"
-down_revision: Union[str, None] = "0fb9d84960d2"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "0fb9d84960d2"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -50,7 +49,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "article_id", "user_id", name=op.f("pk_rel_article_user_dislike")
+            "article_id", "user_id", name=op.f("pk_rel_article_user_dislike"),
         ),
         schema="article",
     )
@@ -83,7 +82,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "article_id", "user_id", name=op.f("pk_rel_article_user_like")
+            "article_id", "user_id", name=op.f("pk_rel_article_user_like"),
         ),
         schema="article",
     )
@@ -116,7 +115,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "article_id", "user_id", name=op.f("pk_rel_article_user_view")
+            "article_id", "user_id", name=op.f("pk_rel_article_user_view"),
         ),
         schema="article",
     )

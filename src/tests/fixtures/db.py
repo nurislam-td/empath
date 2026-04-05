@@ -24,8 +24,8 @@ class PostgresDbManager:
             # "template1" is the default template name for the `CREATE DATABASE` statement
             await connection.execute(
                 text(
-                    f'CREATE DATABASE "{database}" ENCODING \'utf8\' TEMPLATE "{template}"'
-                )
+                    f'CREATE DATABASE "{database}" ENCODING \'utf8\' TEMPLATE "{template}"',
+                ),
             )
 
     async def drop_database(self, database: str) -> None:
@@ -36,7 +36,7 @@ class PostgresDbManager:
 @pytest.fixture(scope="session")
 def postgres() -> Generator[PostgresContainer]:
     with PostgresContainer(
-        "postgres:16", dbname="template-db", driver="asyncpg"
+        "postgres:16", dbname="template-db", driver="asyncpg",
     ) as postgres:
         yield postgres
 

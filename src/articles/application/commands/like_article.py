@@ -24,13 +24,13 @@ class LikeArticleHandler(CommandHandler[LikeArticle, None]):
 
     async def __call__(self, command: LikeArticle) -> None:
         article = await self._article_reader.get_article_by_id(
-            user_id=command.user_id, article_id=command.id
+            user_id=command.user_id, article_id=command.id,
         )
         plus_rating = 1
 
         try:
             await self._article_repo.cancel_dislike_article(
-                article_id=command.id, user_id=command.user_id
+                article_id=command.id, user_id=command.user_id,
             )
         except NothingToCancelError:
             pass
@@ -38,10 +38,10 @@ class LikeArticleHandler(CommandHandler[LikeArticle, None]):
             plus_rating += 1
 
         await self._article_repo.like_article(
-            article_id=command.id, user_id=command.user_id
+            article_id=command.id, user_id=command.user_id,
         )
         user = await self._user_reader.get_user_by_id(article.author.id)
         await self._user_repo.update_user(
-            {"rating": user.rating + plus_rating}, {"id": user.id}
+            {"rating": user.rating + plus_rating}, {"id": user.id},
         )
         await self._uow.commit()

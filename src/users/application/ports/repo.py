@@ -10,7 +10,7 @@ class UserRepo(Protocol):
     async def create_user(self, user: entities.User) -> None: ...
 
     async def update_user(
-        self, values: dict[str, Any], filters: dict[str, Any]
+        self, values: dict[str, Any], filters: dict[str, Any],
     ) -> None: ...
 
 

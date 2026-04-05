@@ -150,7 +150,7 @@ class ResponseController(Controller):
         request: Request[JWTUserPayload, str, State],
     ) -> PaginatedDTO[CVDTO]:
         return await get_cv_list(
-            employer_id=request.user.sub, pagination=pagination_params
+            employer_id=request.user.sub, pagination=pagination_params,
         )
 
     @delete(

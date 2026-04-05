@@ -24,16 +24,16 @@ class AlchemySubArticleRepo:
         self.base = base
 
     async def create_sub_article_imgs(
-        self, sub_article_id: UUID, imgs: list[str]
+        self, sub_article_id: UUID, imgs: list[str],
     ) -> None:
         await self.base.execute(
             insert(self.sub_article_img).values(
-                [{"sub_article_id": sub_article_id, "url": url} for url in imgs]
-            )
+                [{"sub_article_id": sub_article_id, "url": url} for url in imgs],
+            ),
         )
 
     async def create_sub_articles(
-        self, article_id: UUID, sub_articles: list[SubArticleDTO]
+        self, article_id: UUID, sub_articles: list[SubArticleDTO],
     ) -> None:
         if not sub_articles:
             return
@@ -57,16 +57,16 @@ class AlchemySubArticleRepo:
                 self.create_sub_article_imgs(dto.id, dto.imgs)
                 for dto in sub_articles
                 if dto.imgs
-            )
+            ),
         )
 
     async def delete_sub_articles(self, article_id: UUID) -> None:
         await self.base.execute(
-            delete(self.sub_article).filter(self.sub_article.article_id == article_id)
+            delete(self.sub_article).filter(self.sub_article.article_id == article_id),
         )
 
     async def update_sub_articles(
-        self, article_id: UUID, sub_articles: list[SubArticleDTO]
+        self, article_id: UUID, sub_articles: list[SubArticleDTO],
     ) -> None:
         await self.delete_sub_articles(article_id)
         await self.create_sub_articles(article_id=article_id, sub_articles=sub_articles)
@@ -82,7 +82,7 @@ class AlchemySubArticleReader:
         self.base = base
 
     async def get_sub_article_imgs(
-        self, sub_article_ids: set[UUID]
+        self, sub_article_ids: set[UUID],
     ) -> Sequence[RowMapping]:
         return await self.base.fetch_all(
             select(self.sub_article_img.__table__).where(
@@ -91,7 +91,7 @@ class AlchemySubArticleReader:
         )
 
     async def get_sub_articles(
-        self, article_ids: Iterable[UUID] | None = None
+        self, article_ids: Iterable[UUID] | None = None,
     ) -> list[SubArticleWithArticleIdDTO]:
         query = select(self.sub_article.__table__)
 
@@ -102,5 +102,5 @@ class AlchemySubArticleReader:
         sub_article_imgs = await self.get_sub_article_imgs(sub_article_ids)
 
         return convert_db_to_sub_article_dto_list(
-            sub_articles=sub_articles, sub_article_imgs=sub_article_imgs
+            sub_articles=sub_articles, sub_article_imgs=sub_article_imgs,
         )

@@ -34,11 +34,11 @@ class SkillDAO:
         await self._base.execute(insert_stmt)
 
     async def create_skills_for_vacancy(
-        self, skills: list[SkillSchema], vacancy_id: UUID
+        self, skills: list[SkillSchema], vacancy_id: UUID,
     ) -> None:
         await self.create_skills(skills)
         await self._rel_skill_vacancy.map_skills_to_vacancy(
-            vacancy_id, [skill.id for skill in skills]
+            vacancy_id, [skill.id for skill in skills],
         )
 
     async def update_skills(self, skills: list[SkillSchema], vacancy_id: UUID) -> None:
@@ -47,24 +47,24 @@ class SkillDAO:
             return
         await self.create_skills(skills)
         await self._rel_skill_vacancy.map_skills_to_vacancy(
-            vacancy_id, [skill.id for skill in skills]
+            vacancy_id, [skill.id for skill in skills],
         )
 
     async def create_additional_skills_for_vacancy(
-        self, skills: list[SkillSchema], vacancy_id: UUID
+        self, skills: list[SkillSchema], vacancy_id: UUID,
     ) -> None:
         await self.create_skills(skills)
         await self._rel_additional_skill_vacancy.map_additional_skills_to_vacancy(
-            vacancy_id, [skill.id for skill in skills]
+            vacancy_id, [skill.id for skill in skills],
         )
 
     async def update_additional_skills(
-        self, skills: list[SkillSchema], vacancy_id: UUID
+        self, skills: list[SkillSchema], vacancy_id: UUID,
     ) -> None:
         await self._rel_additional_skill_vacancy.unmap_additional_skills(vacancy_id)
         if not skills:
             return
         await self.create_skills(skills)
         await self._rel_additional_skill_vacancy.map_additional_skills_to_vacancy(
-            vacancy_id, [skill.id for skill in skills]
+            vacancy_id, [skill.id for skill in skills],
         )

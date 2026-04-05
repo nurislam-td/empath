@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
-from uuid import UUID
 
-from sqlalchemy import delete, update
+from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
 
 from common.infrastructure.repositories.base import AlchemyRepo

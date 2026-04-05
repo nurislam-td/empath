@@ -24,5 +24,5 @@ class GetVacanciesHandler:
         employer_id: UUID,
     ) -> PaginatedDTO[VacancyDTO]:
         return await self._reader.get_vacancies(
-            query, pagination=pagination, employer_id=employer_id
+            query, pagination=pagination, employer_id=employer_id,
         )

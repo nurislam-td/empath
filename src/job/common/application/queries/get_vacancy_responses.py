@@ -26,5 +26,5 @@ class GetVacancyResponsesHandler:
         pagination: PaginationParams,
     ) -> PaginatedDTO[VacancyResponseDTO]:
         return await self._reader.get_vacancy_responses(
-            query=query, pagination=pagination
+            query=query, pagination=pagination,
         )

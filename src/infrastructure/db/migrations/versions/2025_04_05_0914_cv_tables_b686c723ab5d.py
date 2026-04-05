@@ -6,16 +6,16 @@ Create Date: 2025-04-05 09:14:57.129062
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "b686c723ab5d"
-down_revision: Union[str, None] = "2bd7b266dc3c"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "2bd7b266dc3c"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -100,7 +100,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "skill_id", "cv_id", name=op.f("pk_rel_cv_additional_skill")
+            "skill_id", "cv_id", name=op.f("pk_rel_cv_additional_skill"),
         ),
         schema="job",
     )
@@ -199,7 +199,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "work_format_id", "cv_id", name=op.f("pk_rel_cv_work_format")
+            "work_format_id", "cv_id", name=op.f("pk_rel_cv_work_format"),
         ),
         schema="job",
     )
@@ -232,7 +232,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "work_schedule_id", "cv_id", name=op.f("pk_rel_cv_work_schedule")
+            "work_schedule_id", "cv_id", name=op.f("pk_rel_cv_work_schedule"),
         ),
         schema="job",
     )

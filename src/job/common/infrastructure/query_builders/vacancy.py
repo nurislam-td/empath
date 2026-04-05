@@ -142,7 +142,7 @@ def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:
     if search == "":
         return qs
     search_table = _rel_skill_vacancy.__table__.join(
-        _skill.__table__, _rel_skill_vacancy.skill_id == _skill.id
+        _skill.__table__, _rel_skill_vacancy.skill_id == _skill.id,
     )
     skill = (
         select(_rel_skill_vacancy.vacancy_id)
@@ -172,10 +172,10 @@ def search_vacancy(qs: Select[Any], search: str) -> Select[Any]:
 
 
 def get_vacancy_qs(
-    filters: "GetVacanciesQuery | None" = None, search: str | None = None
+    filters: "GetVacanciesQuery | None" = None, search: str | None = None,
 ) -> Select[Any]:
     table = _vacancy.__table__.outerjoin(
-        _recruiter.__table__, _vacancy.author_id == _recruiter.id
+        _recruiter.__table__, _vacancy.author_id == _recruiter.id,
     )
     qs = select(
         _vacancy.__table__,
@@ -196,7 +196,7 @@ def get_weight_qs(skill_ids: set[UUID]) -> Select[tuple[UUID, str, float]]:
         select(func.count().label("N")).select_from(_vacancy.__table__).cte("doc_count")
     )
 
-    df = (  # noqa: PD901
+    df = (
         select(
             _rel_skill_vacancy.skill_id,
             _skill.name.label("skill_name"),

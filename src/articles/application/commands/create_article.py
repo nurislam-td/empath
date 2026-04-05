@@ -40,7 +40,7 @@ class CreateArticleHandler(CommandHandler[CreateArticle, None]):
         if not article.tags:
             raise EmptyTagListError
         article.record_event(
-            ArticleCreated(author_id=article.author_id, article_id=article.id)
+            ArticleCreated(author_id=article.author_id, article_id=article.id),
         )
         await self._article_repo.create_article(command)
         article.pull_events()

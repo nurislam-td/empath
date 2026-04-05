@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from auth.api.providers import AuthProvider
 from config import Settings, get_settings
 from infrastructure.di.providers import AppProvider
-from users.api.providers import UsersProvider
 from job.employment.api.providers import EmploymentProvider
+from users.api.providers import UsersProvider
 
 
 @pytest.fixture

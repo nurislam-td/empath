@@ -18,7 +18,7 @@ class JWTManager(ABC):
 
     @abstractmethod
     def _encode_jwt(
-        self, payload: dict[str, Any], expire_minutes: int, key: str
+        self, payload: dict[str, Any], expire_minutes: int, key: str,
     ) -> str: ...
 
     @abstractmethod
@@ -39,10 +39,10 @@ class JWTManager(ABC):
 
     def decode_refresh(self, refresh_token: str) -> dict[str, Any]:
         return self._decode_jwt(
-            token=refresh_token, key=self.refresh_public_path.read_text()
+            token=refresh_token, key=self.refresh_public_path.read_text(),
         )
 
     def decode_access(self, access_token: str) -> dict[str, Any]:
         return self._decode_jwt(
-            token=access_token, key=self.access_public_path.read_text()
+            token=access_token, key=self.access_public_path.read_text(),
         )

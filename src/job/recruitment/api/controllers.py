@@ -126,7 +126,7 @@ class VacancyController(Controller):
     )
     @inject
     async def delete_vacancy(
-        self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler]
+        self, vacancy_id: UUID, delete_vacancy: Depends[DeleteVacancyHandler],
     ) -> None:
         await delete_vacancy(vacancy_id)
 
@@ -202,7 +202,7 @@ class VacancyController(Controller):
         return await get_responses(
             pagination=pagination_params,
             query=GetVacancyResponsesQuery(
-                vacancy_id=vacancy_id, vacancy_author_id=request.user.sub
+                vacancy_id=vacancy_id, vacancy_author_id=request.user.sub,
             ),
         )
 

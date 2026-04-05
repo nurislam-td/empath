@@ -1,7 +1,7 @@
 from typing import NotRequired, Protocol, TypedDict, Unpack
 from uuid import UUID
 
-from msgspec import UNSET, UnsetType
+from msgspec import UnsetType
 
 from job.common.domain.enums import EducationEnum
 from job.employment.application.commands.create_cv import Salary, Skill, WorkExp

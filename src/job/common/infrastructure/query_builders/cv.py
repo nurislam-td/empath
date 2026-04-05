@@ -55,7 +55,7 @@ def filter_cv_skill(qs: Select[Any], include_skills: set[UUID]) -> Select[Any]:
     )
 
     additional_skill = select(_rel_cv_additional_skill.cv_id).where(
-        _rel_cv_additional_skill.skill_id.in_(include_skills)
+        _rel_cv_additional_skill.skill_id.in_(include_skills),
     )
     return qs.where(
         _cv.id.in_(skill) | _cv.id.in_(additional_skill),

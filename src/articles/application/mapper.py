@@ -40,7 +40,7 @@ convert_strategy: dict[str, Callable[[Any], Any]] = {
 
 def convert_dto_to_subarticle(dto: SubArticleDTO) -> SubArticle:
     return SubArticle(
-        text=dto.text, title=ArticleTitle(dto.title), imgs=dto.imgs, id=dto.id
+        text=dto.text, title=ArticleTitle(dto.title), imgs=dto.imgs, id=dto.id,
     )
 
 

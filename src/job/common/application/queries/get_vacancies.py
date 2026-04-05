@@ -26,6 +26,6 @@ class GetVacanciesHandler:
     _reader: VacancyReader
 
     async def __call__(
-        self, query: GetVacanciesQuery, pagination: PaginationParams
+        self, query: GetVacanciesQuery, pagination: PaginationParams,
     ) -> PaginatedDTO[VacancyDTO]:
         return await self._reader.get_vacancies(query, pagination=pagination)

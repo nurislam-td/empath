@@ -1,5 +1,4 @@
 import asyncio
-import contextlib
 from uuid import UUID
 
 from sqlalchemy import delete, select, update
@@ -32,7 +31,7 @@ class AlchemyCommentStatRepo:
         if not await self.reader.fetch_one(
             select(self._dislike).where(
                 (self._dislike.comment_id == comment_id)
-                & (self._dislike.user_id == user_id)
+                & (self._dislike.user_id == user_id),
             ),
         ):
             raise NothingToCancelError
@@ -45,7 +44,7 @@ class AlchemyCommentStatRepo:
             self.base.execute(
                 delete(self._dislike).where(
                     (self._dislike.comment_id == comment_id)
-                    & (self._dislike.user_id == user_id)
+                    & (self._dislike.user_id == user_id),
                 ),
             ),
         )
@@ -53,7 +52,7 @@ class AlchemyCommentStatRepo:
     async def cancel_like_comment(self, comment_id: UUID, user_id: UUID) -> None:
         if not await self.reader.fetch_one(
             select(self._like).where(
-                (self._like.comment_id == comment_id) & (self._like.user_id == user_id)
+                (self._like.comment_id == comment_id) & (self._like.user_id == user_id),
             ),
         ):
             raise NothingToCancelError
@@ -61,7 +60,7 @@ class AlchemyCommentStatRepo:
             self.base.execute(
                 delete(self._like).where(
                     (self._like.comment_id == comment_id)
-                    & (self._like.user_id == user_id)
+                    & (self._like.user_id == user_id),
                 ),
             ),
             self.base.execute(
@@ -75,7 +74,7 @@ class AlchemyCommentStatRepo:
         try:
             await self.base.execute(
                 insert(self._like).values(
-                    {"comment_id": comment_id, "user_id": user_id}
+                    {"comment_id": comment_id, "user_id": user_id},
                 ),
             )
         except IntegrityError as e:
@@ -91,7 +90,7 @@ class AlchemyCommentStatRepo:
         try:
             await self.base.execute(
                 insert(self._dislike).values(
-                    {"comment_id": comment_id, "user_id": user_id}
+                    {"comment_id": comment_id, "user_id": user_id},
                 ),
             )
         except IntegrityError as e:

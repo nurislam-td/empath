@@ -6,17 +6,16 @@ Create Date: 2025-04-03 18:32:08.489017
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "90c6732549c2"
-down_revision: Union[str, None] = "7741741c6e55"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "7741741c6e55"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -49,7 +48,7 @@ def upgrade() -> None:
         schema="job",
     )
     op.create_index(
-        op.f("ix_job_skill_id"), "skill", ["id"], unique=False, schema="job"
+        op.f("ix_job_skill_id"), "skill", ["id"], unique=False, schema="job",
     )
     # ### end Alembic commands ###
 

@@ -2,7 +2,13 @@ from collections.abc import AsyncIterable
 from typing import cast
 
 import aioboto3  # type: ignore  # noqa: PGH003
-from dishka import AnyOf, Provider, Scope, from_context, provide  # type: ignore  # noqa: PGH003
+from dishka import (  # type: ignore  # noqa: PGH003
+    AnyOf,
+    Provider,
+    Scope,
+    from_context,
+    provide,
+)
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
@@ -14,7 +20,7 @@ from config import Settings
 class AppProvider(Provider):
     config = from_context(provides=Settings, scope=Scope.APP)
     session_maker = from_context(
-        provides=async_sessionmaker[AsyncSession], scope=Scope.APP
+        provides=async_sessionmaker[AsyncSession], scope=Scope.APP,
     )
 
     @provide(scope=Scope.REQUEST)

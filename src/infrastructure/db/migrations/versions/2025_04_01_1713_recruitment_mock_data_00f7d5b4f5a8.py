@@ -7,16 +7,16 @@ Create Date: 2025-04-01 17:13:13.315836
 """
 
 import uuid
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "00f7d5b4f5a8"
-down_revision: Union[str, None] = "c76ad69b7bcf"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "c76ad69b7bcf"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -29,7 +29,7 @@ def upgrade() -> None:
             INSERT INTO job.employment_type (id, name)
             VALUES (:full_time_id, 'Full-time'),
                    (:part_time_id, 'Part-time')
-            """
+            """,
         ).bindparams(
             full_time_id=(employment_type_full_time),
             part_time_id=(employment_type_part_time),
@@ -67,7 +67,7 @@ def upgrade() -> None:
                 (:ws_1_3, '1/3'),
                 (:ws_1_2, '1/2'),
                 (:ws_4_4, '4/4')
-            """
+            """,
         ).bindparams(
             ws_5_2=(ws_5_2),
             ws_free=(ws_free),

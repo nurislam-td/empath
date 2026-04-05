@@ -66,13 +66,13 @@ class AlchemyVacancyRepo:
         tasks: list[Coroutine[Any, Any, None]] = [
             self._skill.create_skills_for_vacancy(vacancy.skills, vacancy.id),
             self._employment_type.map_employment_types_to_vacancy(
-                vacancy.id, vacancy.employment_type_ids
+                vacancy.id, vacancy.employment_type_ids,
             ),
             self._work_schedule.map_work_schedules_to_vacancy(
-                vacancy.id, vacancy.work_schedule_ids
+                vacancy.id, vacancy.work_schedule_ids,
             ),
             self._work_format.map_work_format_to_vacancy(
-                vacancy.id, vacancy.work_formats_id
+                vacancy.id, vacancy.work_formats_id,
             ),
         ]
 
@@ -84,13 +84,13 @@ class AlchemyVacancyRepo:
                 for skill in vacancy.additional_skills
             ]
             tasks.append(
-                self._skill.create_additional_skills_for_vacancy(s, vacancy.id)
+                self._skill.create_additional_skills_for_vacancy(s, vacancy.id),
             )
 
         await asyncio.gather(*tasks)
 
     async def update_vacancy(
-        self, vacancy_id: UUID, vacancy: UpdateVacancySchema
+        self, vacancy_id: UUID, vacancy: UpdateVacancySchema,
     ) -> None:
         values = vacancy.to_dict()
         values.pop("salary", None)
@@ -122,27 +122,27 @@ class AlchemyVacancyRepo:
         if vacancy.employment_type_ids is not UNSET:
             tasks.append(
                 self._employment_type.update_employment_types(
-                    vacancy_id, vacancy.employment_type_ids
-                )
+                    vacancy_id, vacancy.employment_type_ids,
+                ),
             )
         if vacancy.work_schedule_ids is not UNSET:
             tasks.append(
                 self._work_schedule.update_work_schedules(
-                    vacancy_id, vacancy.work_schedule_ids
-                )
+                    vacancy_id, vacancy.work_schedule_ids,
+                ),
             )
         if vacancy.work_formats_id is not UNSET:
             tasks.append(
                 self._work_format.update_work_format(
-                    vacancy_id, vacancy.work_formats_id
-                )
+                    vacancy_id, vacancy.work_formats_id,
+                ),
             )
 
         await asyncio.gather(*tasks)
 
     async def delete_vacancy(self, vacancy_id: UUID) -> None:
         await self._repo.execute(
-            delete(self._vacancy).where(self._vacancy.id == vacancy_id)
+            delete(self._vacancy).where(self._vacancy.id == vacancy_id),
         )
 
     async def create_recruiter(self, command: CreateRecruiterSchema) -> None:
@@ -165,7 +165,7 @@ class AlchemyRecruitmentVacancyReader:
 
     async def get_recruiter(self, recruiter_id: UUID) -> DetailedAuthorDTO:
         recruiter = await self._base.fetch_one(
-            select(self._recruiter.__table__).where(self._recruiter.id == recruiter_id)
+            select(self._recruiter.__table__).where(self._recruiter.id == recruiter_id),
         )
         if recruiter is None:
             raise RecruiterIdNotFoundError(recruiter_id)

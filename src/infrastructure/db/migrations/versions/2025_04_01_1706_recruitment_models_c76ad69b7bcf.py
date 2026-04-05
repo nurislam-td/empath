@@ -6,16 +6,16 @@ Create Date: 2025-04-01 17:06:22.665895
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "c76ad69b7bcf"
-down_revision: Union[str, None] = "06aa72dbd11d"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "06aa72dbd11d"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -170,7 +170,7 @@ def upgrade() -> None:
         schema="job",
     )
     op.create_index(
-        op.f("ix_job_vacancy_id"), "vacancy", ["id"], unique=False, schema="job"
+        op.f("ix_job_vacancy_id"), "vacancy", ["id"], unique=False, schema="job",
     )
     op.create_table(
         "rel_vacancy_additional_skill",
@@ -227,7 +227,7 @@ def upgrade() -> None:
             ["employment_type_id"],
             ["job.employment_type.id"],
             name=op.f(
-                "fk_rel_vacancy_employment_type_employment_type_id_employment_type"
+                "fk_rel_vacancy_employment_type_employment_type_id_employment_type",
             ),
             ondelete="CASCADE",
         ),
@@ -273,7 +273,7 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint(
-            "skill_id", "vacancy_id", name=op.f("pk_rel_vacancy_skill")
+            "skill_id", "vacancy_id", name=op.f("pk_rel_vacancy_skill"),
         ),
         schema="job",
     )

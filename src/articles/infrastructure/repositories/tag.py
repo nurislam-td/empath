@@ -6,7 +6,6 @@ from sqlalchemy import Select, delete, select
 from sqlalchemy.dialects.postgresql import insert
 
 from articles.application.dto.article import TagDTO
-from articles.application.ports.repo import ArticleReader, ArticleRepo
 from articles.application.queries.get_tag_list import GetTagList
 from articles.infrastructure.mapper import convert_db_to_tag_dto
 from articles.infrastructure.models import RelArticleTag, Tag
@@ -37,15 +36,15 @@ class AlchemyTagRepo:
             return
         await self.base.execute(
             insert(self.rel_article_tag).values(
-                [{"tag_id": tag_id, "article_id": article_id} for tag_id in tag_ids]
-            )
+                [{"tag_id": tag_id, "article_id": article_id} for tag_id in tag_ids],
+            ),
         )
 
     async def unmap_tags_from_article(self, article_id: UUID) -> None:
         await self.base.execute(
             delete(self.rel_article_tag).filter(
-                self.rel_article_tag.article_id == article_id
-            )
+                self.rel_article_tag.article_id == article_id,
+            ),
         )
 
     async def update_article_tags(self, article_id: UUID, tags: list[TagDTO]) -> None:
@@ -93,7 +92,7 @@ class AlchemyTagReader:
         tags = await self.base.fetch_all(paginated_query)
         if not tags:
             return PaginatedDTO[TagDTO](
-                count=value_count, page=query.pagination.page, results=[]
+                count=value_count, page=query.pagination.page, results=[],
             )
 
         return PaginatedDTO[TagDTO](

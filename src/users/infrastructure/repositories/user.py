@@ -29,7 +29,7 @@ class AlchemyUserRepo(AlchemyRepo, UserRepo):
         await self.execute(query=query)
 
     async def update_user(
-        self, values: dict[str, Any], filters: dict[str, Any]
+        self, values: dict[str, Any], filters: dict[str, Any],
     ) -> None:
         query = update(self.user).values(**values).filter_by(**filters)
         await self.execute(query=query)
@@ -53,7 +53,7 @@ class AlchemyUserReader(AlchemyReader, UserReader):
     ) -> PaginatedDTO[UserDTO]:
         query = self._get_users_query(filters)
         paginated_query = self.paginator.paginate(
-            query=query, page=page, per_page=per_page
+            query=query, page=page, per_page=per_page,
         )
         value_count = await self.count(query)
         page_count = self.paginator.get_page_count(value_count, per_page)
@@ -70,7 +70,7 @@ class AlchemyUserReader(AlchemyReader, UserReader):
     async def get_user_by_email(self, email: str) -> entities.User:
         if not (
             user_map := await self.fetch_one(
-                select(self.user.__table__).where(self.user.email == email)
+                select(self.user.__table__).where(self.user.email == email),
             )
         ):
             raise UserEmailNotExistError(email=email)
@@ -79,7 +79,7 @@ class AlchemyUserReader(AlchemyReader, UserReader):
     async def get_user_by_id(self, user_id: UUID) -> entities.User:
         if not (
             user_map := await self.fetch_one(
-                select(self.user.__table__).where(self.user.id == user_id)
+                select(self.user.__table__).where(self.user.id == user_id),
             )
         ):
             raise UserIdNotExistError(user_id=user_id)
@@ -88,6 +88,6 @@ class AlchemyUserReader(AlchemyReader, UserReader):
     async def check_email_existence(self, email: str) -> bool:
         return bool(
             await self.fetch_one(
-                select(self.user.__table__).where(self.user.email == email)
-            )
+                select(self.user.__table__).where(self.user.email == email),
+            ),
         )

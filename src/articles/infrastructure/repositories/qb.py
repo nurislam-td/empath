@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Select, exists, func, or_, select, true
+from sqlalchemy import Select, exists, func, or_, select
 
 from articles.application.queries.get_articles import ArticleFilter
 from articles.infrastructure.models import (
@@ -45,12 +45,12 @@ class ArticleQueryBuilder:
 
     @classmethod
     def _filter_article(
-        cls, qs: Select[Any], article_filter: ArticleFilter
+        cls, qs: Select[Any], article_filter: ArticleFilter,
     ) -> Select[Any]:
         if search := article_filter.search:
             search_qs = select(cls._sub_article.article_id).where(
                 cls._sub_article.title.ilike(f"%{search}%")
-                | cls._sub_article.text.ilike(f"%{search}%")
+                | cls._sub_article.text.ilike(f"%{search}%"),
             )
             search_filter = (
                 cls._article.title.ilike(f"%{search}%")
@@ -79,7 +79,7 @@ class ArticleQueryBuilder:
             )
         if article_filter.specializations_id:
             qs = qs.where(
-                cls._article.specialization_id.in_(article_filter.specializations_id)
+                cls._article.specialization_id.in_(article_filter.specializations_id),
             )
         if article_filter.tags_id:
             tag_qs = select(cls._rel_tag_article.article_id).join(
@@ -107,7 +107,7 @@ class ArticleQueryBuilder:
                     select(cls._sub_article.article_id).where(
                         cls._sub_article.text.ilike(f"%{word}%")
                         | cls._sub_article.title.ilike(f"%{word}%"),
-                    )
+                    ),
                 )
                 for word in article_filter.include_words
             ]

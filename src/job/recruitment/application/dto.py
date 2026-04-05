@@ -10,7 +10,7 @@ from job.common.application.dto import (
     WorkFormatDTO,
     WorkScheduleDTO,
 )
-from job.common.domain.enums import EducationEnum, WorkExpEnum, WorkFormatEnum
+from job.common.domain.enums import EducationEnum, WorkExpEnum
 
 
 @dataclass(frozen=True, slots=True)
