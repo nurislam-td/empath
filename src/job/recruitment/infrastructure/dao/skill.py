@@ -48,5 +48,6 @@ class SkillDAO:
             return
         await self.create_skills(skills)
         await self._rel_additional_skill_vacancy.map_additional_skills_to_vacancy(
-            vacancy_id, [skill.id for skill in skills]
+            vacancy_id,
+            [skill.id for skill in skills],
         )
