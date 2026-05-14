@@ -27,7 +27,7 @@ def convert_dict_to_tag(data: dict[str, Any]) -> Tag:
 
 
 convert_strategy: dict[str, Callable[[Any], Any]] = {
-    "title": lambda value: ArticleTitle(value),
+    "title": ArticleTitle,
     "sub_articles": lambda value: [convert_dict_to_subarticle(data) for data in value],
     "tags": lambda value: [convert_dict_to_tag(data) for data in value],
 }
